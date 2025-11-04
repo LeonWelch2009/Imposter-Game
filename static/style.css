@@ -1,153 +1,78 @@
-/* ===== Body & Layout ===== */
 body {
-    margin: 0;
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+    background-color: #f0f2f5;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
-.app {
-    width: 100%;
+.container {
+    background: white;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     max-width: 400px;
-    padding: 20px;
+    width: 90%;
 }
 
-/* ===== Card ===== */
-.card {
-    background: #fff;
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
-}
-
-/* ===== Header ===== */
-header h1 {
+h1 {
     text-align: center;
-    margin: 0 0 20px 0;
-    color: #2d3436;
+    color: #333;
 }
 
-/* ===== Message ===== */
-.message {
-    text-align: center;
-    font-size: 1.1em;
-    margin-bottom: 15px;
-    min-height: 24px;
-}
-
-/* ===== Inputs & Buttons ===== */
-input[type="text"] {
-    width: 100%;
+input,
+button {
     padding: 10px;
-    border-radius: 10px;
-    border: 2px solid #dfe6e9;
-    margin-bottom: 10px;
-    font-size: 1em;
+    margin: 5px 0;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
 }
 
 button {
-    padding: 10px;
-    border-radius: 10px;
+    background-color: #4caf50;
+    color: white;
     border: none;
     cursor: pointer;
-    font-size: 1em;
-    transition: all 0.2s ease;
+    transition: background 0.2s;
 }
 
-button.primary {
-    background: #6c5ce7;
-    color: white;
+button:hover {
+    background-color: #45a049;
 }
 
-button.primary:hover {
-    background: #341f97;
-}
-
-button.accent {
-    background: #00b894;
-    color: white;
-}
-
-button.accent:hover {
-    background: #019875;
-}
-
-.btn-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
-
-/* ===== Player List ===== */
-ul#playerList {
+#playerList {
     list-style: none;
-    padding: 0;
+    padding-left: 0;
+    margin: 10px 0;
+    text-align: left;
+}
+
+#infoText,
+#infoTextGame {
+    font-size: 16px;
+    color: #222;
+    margin: 10px 0;
+    word-wrap: break-word;
+}
+
+#currentPlayer {
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
     margin: 10px 0;
 }
 
-ul#playerList li {
-    background: #ffeaa7;
-    padding: 8px 10px;
-    border-radius: 10px;
-    margin-bottom: 5px;
+.reveal-buttons {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-}
-
-.removeBtn {
-    background: #d63031;
-    color: white;
-    font-weight: bold;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
-    line-height: 18px;
-    font-size: 14px;
-    padding: 0;
-    border: none;
-}
-
-/* ===== Category Toggle Checkboxes ===== */
-#categories {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
     margin-top: 10px;
 }
 
-#categories label {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-    max-width: 120px;
-    background: #dfe6e9;
-    border-radius: 25px;
-    padding: 8px 15px;
-    text-align: center;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    user-select: none;
-}
-
-#categories input {
-    display: none;
-    /* hide the default checkbox */
-}
-
-#categories input:checked+span {
-    background: #6c5ce7;
-    color: white;
-}
-
-#categories label span {
-    display: block;
-    transition: color 0.3s ease;
-    pointer-events: none;
+.reveal-buttons button {
+    width: 48%;
 }

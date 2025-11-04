@@ -10,49 +10,34 @@
 
 <body>
 
-    <div class="app">
-
-        <header>
-            <h1>Imposter Word Game</h1>
-        </header>
+    <div class="container">
+        <h1>Imposter Word Game</h1>
 
         <!-- Setup Screen -->
-        <div id="setupScreen" class="card screen active">
-            <div class="message" id="message">Add players and select categories to start</div>
-
-            <!-- Player Input -->
-            <input type="text" id="playerName" placeholder="Enter player name">
-            <button class="primary" id="addPlayerBtn">Add Player</button>
-
-            <!-- Player List -->
+        <div id="setupScreen">
+            <div id="infoText">Add players and select categories to start</div>
+            <input type="text" id="playerEntry" placeholder="Enter Player Name">
+            <button id="addBtn">Add Player</button>
             <ul id="playerList"></ul>
-
-            <!-- Categories -->
             <div id="categories"></div>
-
-            <!-- Start Button -->
-            <div class="btn-row">
-                <button class="primary" id="startGameBtn">Start Game</button>
-            </div>
+            <button id="startBtn">Start Game</button>
         </div>
 
         <!-- Game Screen -->
-        <div id="gameScreen" class="card screen" style="display:none;">
-            <div class="message" id="message"></div>
+        <div id="gameScreen" style="display:none;">
+            <div id="currentPlayer"></div>
+            <div id="infoTextGame"></div>
 
-            <!-- Game Controls -->
-            <div id="gameControls" class="btn-row">
-                <button class="accent" id="revealBtn">Reveal Word</button>
-                <button class="accent" id="nextPlayerBtn">Next Player</button>
+            <div class="reveal-buttons">
+                <button id="revealBtn" style="display:none;">Reveal Word</button>
+                <button id="nextBtn" style="display:none;">Next Player</button>
             </div>
 
-            <!-- End Game Controls -->
-            <div id="endControls" class="btn-row" style="display:none;">
-                <button class="primary" id="showImposterBtn">Reveal Imposter</button>
-                <button class="primary" id="restartBtn">New Game</button>
+            <div class="reveal-buttons" id="endControls" style="display:none;">
+                <button id="showImposterBtn">Reveal Imposter</button>
+                <button id="restartBtn">New Game</button>
             </div>
         </div>
-
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
