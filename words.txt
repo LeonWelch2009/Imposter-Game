@@ -1,0 +1,130 @@
+FRIENDS
+leo morgan
+ed turner
+tristan caiger
+ethan smith
+maani saahand
+brandon fage
+ollie chalmer-smith
+bobby harrington
+kian jalil
+milo ford
+sonny goodvin
+james lotens
+toby kad
+jacob turvey
+ewan williams
+
+THORLEY MANOR
+connor neo
+henry jaques
+james rose
+ethan smith
+riley wiggs
+zack fairclough
+noah beaufond
+dan goodeve
+jacob sear
+ed turner
+jacob turvey
+harry ashford
+mateus
+alfie hanks
+aiden yeoman
+
+CLASH ROYALE
+Knight
+Archers
+Goblins
+Giant
+Miner
+Princess
+Skeletons
+Minions
+Baby Dragon
+Valkyrie
+Musketeer
+Wizard
+Witch
+Hog Rider
+Balloon
+Barbarians
+Minion Horde
+Skeleton Army
+Fire Spirits
+Ice Spirit
+Bats
+Prince
+Golem
+Lava Hound
+Goblin Barrel
+Freeze
+Rage
+Poison
+Lightning
+Rocket
+Graveyard
+Elixir
+Crown Tower
+Trophy
+Chest
+Clan
+Deck
+
+SPORTS
+Soccer
+Basketball
+Tennis
+Baseball
+Golf
+Swimming
+Running
+Cycling
+Boxing
+Wrestling
+Volleyball
+Cricket
+Rugby
+Hockey
+Badminton
+Table tennis
+Skiing
+Snowboarding
+Skateboarding
+Surfing
+Gymnastics
+Martial arts
+Archery
+Fencing
+Weightlifting
+Diving
+Sailing
+Rowing
+Horse racing
+Car racing
+Motocross
+Climbing
+Yoga
+Dance
+Cheerleading
+Bowling
+Fishing
+Hunting
+Hiking
+Skating
+Curling
+Bobsleigh
+Lacrosse
+Polo
+Squash
+Handball
+Water polo
+Triathlon
+Decathlon
+Pentathlon
+
+FRUITS
+apple
+pear
+
+

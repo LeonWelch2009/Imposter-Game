@@ -1,0 +1,45 @@
+=== GAME STARTED ===
+Timestamp: 2025-11-04 12:45:05
+Game #1
+Players: Leo, Ewan, Leon
+Categories: Friends, Thorley manor, Clash royale, Sports
+Selected Category: Friends
+Selected Word: Toby kad
+Imposter: Leo (Index: 0)
+--------------------------------------------------
+=== GAME ENDED ===
+Timestamp: 2025-11-04 12:45:10
+Game #1 completed
+Imposter was: Leo
+==================================================
+
+=== GAME STARTED ===
+Timestamp: 2025-11-04 12:48:26
+Game #1
+Players: Leo, Ewan, Leon
+Categories: Friends, Thorley manor, Clash royale, Sports
+Selected Category: Clash royale
+Selected Word: Rage
+Imposter: Leo (Index: 0)
+--------------------------------------------------
+=== GAME ENDED ===
+Timestamp: 2025-11-04 12:48:30
+Game #1 completed
+Imposter was: Leo
+==================================================
+
+=== GAME STARTED ===
+Timestamp: 2025-11-04 19:10:34
+Game #1
+Players: Leon, Leo, Ewan, Ethan
+Categories: Friends
+Selected Category: Friends
+Selected Word: Tristan caiger
+Imposter: Ethan (Index: 3)
+--------------------------------------------------
+=== GAME ENDED ===
+Timestamp: 2025-11-04 19:10:53
+Game #1 completed
+Imposter was: Ethan
+==================================================
+
