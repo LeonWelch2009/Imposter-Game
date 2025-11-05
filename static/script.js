@@ -1,59 +1,48 @@
-// -------------------- Game State --------------------
-let players = [];
-let categories = {};
-let availableCategories = [];
-let currentPlayerIndex = 0;
-let imposterIndex = -1;
-let currentCategory = "";
-let currentWord = "";
-let allPlayersSeen = false;
-
-// -------------------- HTML Elements --------------------
-const playerEntry = document.getElementById("playerEntry");
-const addBtn = document.getElementById("addBtn");
-const startBtn = document.getElementById("startBtn");
+// Elements
+const playerNameInput = document.getElementById("playerName");
+const addPlayerBtn = document.getElementById("addPlayerBtn");
 const playerList = document.getElementById("playerList");
-const setupInfo = document.getElementById("infoText");
-
-const gameScreen = document.getElementById("gameScreen");
-const setupScreen = document.getElementById("setupScreen");
-const currentPlayerText = document.getElementById("currentPlayer");
-const gameInfo = document.getElementById("infoTextGame");
+const startGameBtn = document.getElementById("startGameBtn");
 const revealBtn = document.getElementById("revealBtn");
-const nextBtn = document.getElementById("nextBtn");
-const endControls = document.getElementById("endControls");
+const nextPlayerBtn = document.getElementById("nextPlayerBtn");
 const showImposterBtn = document.getElementById("showImposterBtn");
 const restartBtn = document.getElementById("restartBtn");
+const exitBtn = document.getElementById("exitBtn");
 
-// -------------------- Helper Functions --------------------
-function capitalizeName(name) {
-    return name.replace(/\b\w/g, char => char.toUpperCase());
+const setupScreen = document.getElementById("setupScreen");
+const gameScreen = document.getElementById("gameScreen");
+const message = document.getElementById("message");
+
+let players = [];
+let categories = {};
+let chosenCategories = [];
+let currentPlayerIndex = 0;
+let imposter = null;
+let currentWord = "";
+
+// Auto-capitalize player names
+function formatName(name) {
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
 }
 
+// Update player list with remove buttons
 function updatePlayerList() {
     playerList.innerHTML = "";
     players.forEach((name, index) => {
         const li = document.createElement("li");
         li.classList.add("player-item");
 
-        // Player name
         const span = document.createElement("span");
         span.innerText = name;
         li.appendChild(span);
 
-        // Remove button
         const removeBtn = document.createElement("button");
         removeBtn.innerText = "×";
         removeBtn.classList.add("remove-btn");
         removeBtn.addEventListener("click", () => {
             players.splice(index, 1);
             updatePlayerList();
-            setupInfo.innerText = `Removed player: ${name}`;
-
-            // Adjust current player and imposter if needed
-            if (currentPlayerIndex > index) currentPlayerIndex--;
-            if (imposterIndex === index) imposterIndex = -1; // Reset imposter if removed
-            else if (imposterIndex > index) imposterIndex--;
+            message.innerText = `${name} removed.`;
         });
 
         li.appendChild(removeBtn);
@@ -61,126 +50,120 @@ function updatePlayerList() {
     });
 }
 
-function addPlayer() {
-    const name = capitalizeName(playerEntry.value.trim());
-    if (!name) return;
-    if (players.includes(name)) {
-        setupInfo.innerText = `Player ${name} already added!`;
-        return;
+// Add player
+addPlayerBtn.addEventListener("click", () => {
+    const name = playerNameInput.value.trim();
+    if (name && !players.includes(formatName(name))) {
+        players.push(formatName(name));
+        playerNameInput.value = "";
+        updatePlayerList();
+    } else {
+        message.innerText = "Enter a unique name.";
     }
-    players.push(name);
-    updatePlayerList();
-    playerEntry.value = "";
-    setupInfo.innerText = `Added player: ${name}`;
-}
+});
 
-// Load categories from server
-async function loadCategories() {
-    const res = await fetch("/get_words");
-    categories = await res.json();
-    availableCategories = Object.keys(categories);
-    setupInfo.innerText = availableCategories.length
-        ? `Loaded ${availableCategories.length} categories`
-        : "No categories found!";
-}
+// Fetch categories from server
+fetch("/get_categories")
+    .then(res => res.json())
+    .then(data => {
+        categories = data;
+        const categoriesDiv = document.getElementById("categories");
+        for (const category in data) {
+            const label = document.createElement("label");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = category;
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(category));
+            categoriesDiv.appendChild(label);
+        }
+    });
 
-// Start Game
-function startGame() {
+// Start game
+startGameBtn.addEventListener("click", () => {
+    chosenCategories = Array.from(document.querySelectorAll("#categories input:checked")).map(cb => cb.value);
     if (players.length < 3) {
-        setupInfo.innerText = "Need at least 3 players!";
+        message.innerText = "At least 3 players are required.";
         return;
     }
-    if (availableCategories.length === 0) {
-        setupInfo.innerText = "No categories available!";
+    if (chosenCategories.length === 0) {
+        message.innerText = "Select at least one category.";
         return;
     }
 
-    // Random imposter and word
-    imposterIndex = Math.floor(Math.random() * players.length);
-    currentPlayerIndex = 0;
-    currentCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
-    currentWord = categories[currentCategory][Math.floor(Math.random() * categories[currentCategory].length)];
+    // Choose random imposter
+    imposter = players[Math.floor(Math.random() * players.length)];
 
-    allPlayersSeen = false;
+    // Pick random word
+    const randomCategory = chosenCategories[Math.floor(Math.random() * chosenCategories.length)];
+    const wordList = categories[randomCategory];
+    currentWord = wordList[Math.floor(Math.random() * wordList.length)];
 
-    // Switch screens
     setupScreen.style.display = "none";
     gameScreen.style.display = "block";
-    currentPlayerText.innerText = `Current Player: ${players[currentPlayerIndex]}`;
-    gameInfo.innerText = "Press 'Reveal Word' to see your word.";
-    revealBtn.style.display = "inline-block";
-    nextBtn.style.display = "inline-block";
+    message.innerText = `${players[currentPlayerIndex]}, press "Reveal Word" to see your word.`;
+});
 
-    // Record game on server
-    fetch("/record_game", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            players,
-            category: currentCategory,
-            word: currentWord,
-            imposter: players[imposterIndex]
-        })
-    });
-}
-
-// Reveal Word
-function revealWord() {
+// Reveal word
+revealBtn.addEventListener("click", () => {
     const currentPlayer = players[currentPlayerIndex];
-    if (currentPlayerIndex === imposterIndex) {
-        gameInfo.innerText = `${currentPlayer} is the IMPOSTER! Category: ${currentCategory}`;
+    if (currentPlayer === imposter) {
+        message.innerText = `${currentPlayer}, your word is: ??? (You are the Imposter!)`;
     } else {
-        gameInfo.innerText = `${currentPlayer}: ${currentWord}`;
+        message.innerText = `${currentPlayer}, your word is: ${currentWord}`;
     }
-}
+    revealBtn.disabled = true;
+    nextPlayerBtn.disabled = false;
+});
 
-// Next Player
-function nextPlayer() {
-    if (currentPlayerIndex === players.length - 1) {
-        allPlayersSeen = true;
-        gameInfo.innerText = "All players have seen their word!";
-        currentPlayerText.innerText = "";
+// Next player
+nextPlayerBtn.addEventListener("click", () => {
+    currentPlayerIndex++;
+    if (currentPlayerIndex < players.length) {
+        revealBtn.disabled = false;
+        nextPlayerBtn.disabled = true;
+        message.innerText = `${players[currentPlayerIndex]}, press "Reveal Word" to see your word.`;
+    } else {
         revealBtn.style.display = "none";
-        nextBtn.style.display = "none";
-        endControls.style.display = "flex";
-    } else {
-        currentPlayerIndex++;
-        currentPlayerText.innerText = `Current Player: ${players[currentPlayerIndex]}`;
-        gameInfo.innerText = "Press 'Reveal Word' to see your word.";
+        nextPlayerBtn.style.display = "none";
+        showImposterBtn.parentElement.style.display = "flex";
+        message.innerText = `${players[Math.floor(Math.random() * players.length)]} starts the conversation!`;
     }
-}
+});
 
-// Show Imposter
-function showImposter() {
-    if (!allPlayersSeen) {
-        gameInfo.innerText = "Not all players have finished yet!";
-        return;
-    }
-    gameInfo.innerText = `The IMPOSTER is: ${players[imposterIndex]}`;
-}
+// Reveal imposter
+showImposterBtn.addEventListener("click", () => {
+    message.innerText = `The imposter was ${imposter}! The word was "${currentWord}".`;
+    showImposterBtn.style.display = "none";
+    restartBtn.style.display = "block";
+});
 
-// Restart Game
-function restartGame() {
+// Restart
+restartBtn.addEventListener("click", () => {
+    players = [];
+    chosenCategories = [];
     currentPlayerIndex = 0;
-    imposterIndex = -1;
-    currentCategory = "";
+    imposter = null;
     currentWord = "";
-    allPlayersSeen = false;
-
+    updatePlayerList();
+    document.querySelectorAll("#categories input").forEach(cb => cb.checked = false);
     setupScreen.style.display = "block";
     gameScreen.style.display = "none";
-    endControls.style.display = "none";
-    setupInfo.innerText = "Add players and select categories to start";
-}
+    message.innerText = "Add players and select categories to start";
+});
 
-// -------------------- Event Listeners --------------------
-addBtn.addEventListener("click", addPlayer);
-playerEntry.addEventListener("keypress", e => { if (e.key === "Enter") addPlayer(); });
-startBtn.addEventListener("click", startGame);
-revealBtn.addEventListener("click", revealWord);
-nextBtn.addEventListener("click", nextPlayer);
-showImposterBtn.addEventListener("click", showImposter);
-restartBtn.addEventListener("click", restartGame);
-
-// -------------------- Initialize --------------------
-window.addEventListener("DOMContentLoaded", loadCategories);
+// Exit to main menu
+exitBtn.addEventListener("click", () => {
+    if (confirm("Return to main menu?")) {
+        players = [];
+        chosenCategories = [];
+        currentPlayerIndex = 0;
+        imposter = null;
+        currentWord = "";
+        updatePlayerList();
+        document.querySelectorAll("#categories input").forEach(cb => cb.checked = false);
+        setupScreen.style.display = "block";
+        gameScreen.style.display = "none";
+        message.innerText = "Add players and select categories to start";
+    }
+});

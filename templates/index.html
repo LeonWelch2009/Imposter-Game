@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Imposter Word Game</title>
+    <link rel="icon" href="{{ url_for('static', filename='icon.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-
     <div class="app">
-
+        <div class="exit-btn" id="exitBtn">×</div>
         <header>
             <h1>Imposter Word Game</h1>
         </header>
@@ -21,36 +21,45 @@
             <div class="message" id="infoText">Add players and select categories to start</div>
 
             <!-- Player Input -->
-            <input type="text" id="playerEntry" placeholder="Enter player name" class="input-box">
+            <input type="text" id="playerEntry" class="input-box" placeholder="Enter player name">
             <button class="primary" id="addBtn">Add Player</button>
 
             <!-- Player List -->
             <ul id="playerList" class="player-list"></ul>
 
-            <!-- Start Button -->
+            <!-- Buttons -->
             <div class="btn-row">
+                <button class="accent" id="showCategoriesBtn">Show Categories</button>
+                <button class="accent" id="auditBtn">Audit Log</button>
                 <button class="primary" id="startBtn">Start Game</button>
             </div>
         </div>
 
         <!-- Game Screen -->
         <div id="gameScreen" class="card screen" style="display:none;">
-            <div class="message" id="currentPlayer"></div>
             <div class="message" id="infoTextGame"></div>
 
-            <!-- Game Controls -->
-            <div id="gameControls" class="btn-row">
+            <div id="currentPlayer" class="message"></div>
+
+            <div class="btn-row">
                 <button class="accent" id="revealBtn">Reveal Word</button>
                 <button class="accent" id="nextBtn">Next Player</button>
             </div>
 
-            <!-- End Game Controls -->
             <div id="endControls" class="btn-row" style="display:none;">
                 <button class="primary" id="showImposterBtn">Reveal Imposter</button>
                 <button class="primary" id="restartBtn">New Game</button>
             </div>
         </div>
+    </div>
 
+    <!-- Popup for categories & audit -->
+    <div id="popup" class="popup hidden">
+        <div class="popup-content">
+            <h3 id="popupTitle"></h3>
+            <ul id="popupList"></ul>
+            <button class="primary" id="closePopup">Close</button>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
