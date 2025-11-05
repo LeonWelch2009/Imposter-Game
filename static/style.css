@@ -14,7 +14,6 @@ body {
     align-items: flex-start;
     padding: 20px;
     color: #333;
-    /* Ensure all main text is visible */
 }
 
 /* App container */
@@ -49,12 +48,25 @@ header h1 {
     margin-bottom: 20px;
 }
 
-/* Messages */
-.message {
-    font-size: 1.1em;
+/* Message Box */
+.message-box {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 12px;
     margin-bottom: 15px;
-    color: #222;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    color: #333;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    word-wrap: break-word;
+}
+
+.message-box .message {
+    color: #333;
     font-weight: 500;
+    font-size: 1.1em;
 }
 
 /* Player input */
@@ -107,7 +119,7 @@ header h1 {
     cursor: pointer;
 }
 
-/* Category checkboxes */
+/* Categories */
 .categories {
     display: flex;
     flex-wrap: wrap;
@@ -212,10 +224,4 @@ button.secondary {
 
 button.secondary:hover {
     background: #5a6268;
-}
-
-/* Input and Label fixes */
-input[type="text"] {
-    color: #333;
-    background-color: #fff;
 }
