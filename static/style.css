@@ -151,48 +151,36 @@ header h1 {
     width: 20px;
     height: 20px;
     border: 2px solid #007bff;
-    border-radius: 6px;
+    border-radius: 4px;
     margin-right: 8px;
-    position: relative;
     cursor: pointer;
-    transition: all 0.2s ease;
+    position: relative;
 }
 
 .category-checkbox input:checked {
     background: #007bff;
+    border-color: #007bff;
 }
 
 .category-checkbox input:checked::after {
     content: '✓';
+    color: white;
+    font-size: 14px;
     position: absolute;
     top: 0;
     left: 3px;
-    color: white;
-    font-weight: bold;
-    font-size: 16px;
-}
-
-.category-checkbox label {
-    cursor: pointer;
-    color: #333;
-    font-weight: 500;
 }
 
 /* Buttons */
-.btn-row {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-}
-
 button.primary {
     background: #007bff;
     color: white;
     border: none;
+    padding: 8px 12px;
     border-radius: 8px;
-    padding: 8px;
+    cursor: pointer;
     flex: 1;
-    margin-right: 5px;
+    margin: 5px 0;
 }
 
 button.primary:hover {
@@ -203,25 +191,32 @@ button.accent {
     background: #28a745;
     color: white;
     border: none;
+    padding: 8px 12px;
     border-radius: 8px;
-    padding: 8px;
+    cursor: pointer;
     flex: 1;
-    margin-right: 5px;
+    margin: 5px 0;
 }
 
 button.accent:hover {
     background: #1e7e34;
 }
 
-button.secondary {
-    background: #6c757d;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 8px;
-    margin-left: 5px;
+/* Button row */
+.btn-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-button.secondary:hover {
-    background: #5a6268;
+/* Responsive */
+@media (max-width: 450px) {
+    .app {
+        padding: 10px;
+    }
+
+    .btn-row {
+        flex-direction: column;
+    }
 }
