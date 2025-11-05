@@ -5,15 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Imposter Word Game</title>
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/616/616408.png" type="image/png">
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="{{ url_for('static', filename='icon.png') }}">
+    <!-- Correctly linking CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
     <div class="app">
-
         <header>
             <h1>Imposter Word Game</h1>
+            <div class="header-buttons">
+                <button id="toggleCategoriesBtn" class="secondary">Categories</button>
+                <button id="auditBtn" class="secondary">Audit</button>
+            </div>
         </header>
 
         <!-- Setup Screen -->
@@ -21,48 +25,44 @@
             <div class="message" id="message">Add players and select categories to start</div>
 
             <!-- Player Input -->
-            <div class="input-row">
+            <div class="player-input">
                 <input type="text" id="playerName" placeholder="Enter player name">
-                <button id="addPlayerBtn">Add</button>
+                <button class="primary" id="addPlayerBtn">Add Player</button>
             </div>
 
             <!-- Player List -->
             <ul id="playerList"></ul>
 
             <!-- Categories -->
-            <div class="btn-row">
-                <button id="toggleCategoriesBtn">Show/Hide Categories</button>
-                <button id="auditBtn">Audit</button>
-            </div>
             <div id="categories" class="categories"></div>
 
             <!-- Start Button -->
             <div class="btn-row">
-                <button id="startGameBtn">Start Game</button>
+                <button class="primary" id="startGameBtn">Start Game</button>
             </div>
         </div>
 
         <!-- Game Screen -->
         <div id="gameScreen" class="screen" style="display:none;">
-            <div class="message" id="message">Waiting for players...</div>
+            <div class="message" id="message"></div>
 
             <!-- Game Controls -->
             <div id="gameControls" class="btn-row">
-                <button id="revealBtn">Reveal Word</button>
-                <button id="nextPlayerBtn">Next Player</button>
+                <button class="accent" id="revealBtn">Reveal Word</button>
+                <button class="accent" id="nextPlayerBtn">Next Player</button>
             </div>
 
             <!-- End Game Controls -->
             <div id="endControls" class="btn-row" style="display:none;">
-                <button id="showImposterBtn">Reveal Imposter</button>
-                <button id="restartBtn">New Game</button>
-                <button id="backMenuBtn">Back to Main Menu</button>
+                <button class="primary" id="showImposterBtn">Reveal Imposter</button>
+                <button class="primary" id="restartBtn">New Game</button>
+                <button class="secondary" id="backMenuBtn">Back to Menu</button>
             </div>
         </div>
-
     </div>
 
-    <script src="script.js"></script>
+    <!-- Correctly linking JS -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 
 </html>
