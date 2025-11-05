@@ -13,6 +13,8 @@ body {
     justify-content: center;
     align-items: flex-start;
     padding: 20px;
+    color: #333;
+    /* Ensure all main text is visible */
 }
 
 /* App container */
@@ -51,6 +53,8 @@ header h1 {
 .message {
     font-size: 1.1em;
     margin-bottom: 15px;
+    color: #222;
+    font-weight: 500;
 }
 
 /* Player input */
@@ -65,6 +69,8 @@ header h1 {
     padding: 8px;
     border-radius: 8px;
     border: 1px solid #ccc;
+    color: #333;
+    background-color: #fff;
 }
 
 .player-input button {
@@ -86,6 +92,7 @@ header h1 {
     justify-content: space-between;
     padding: 6px 10px;
     border-bottom: 1px solid #eee;
+    color: #333;
 }
 
 .remove-player-btn {
@@ -115,16 +122,48 @@ header h1 {
     display: flex;
     align-items: center;
     background: #f0f0f0;
-    padding: 6px 10px;
-    border-radius: 8px;
+    padding: 6px 12px;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.category-checkbox:hover {
+    background: #e0e0e0;
 }
 
 .category-checkbox input {
-    margin-right: 5px;
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #007bff;
+    border-radius: 6px;
+    margin-right: 8px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.categories.show {
-    display: flex !important;
+.category-checkbox input:checked {
+    background: #007bff;
+}
+
+.category-checkbox input:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 0;
+    left: 3px;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.category-checkbox label {
+    cursor: pointer;
+    color: #333;
+    font-weight: 500;
 }
 
 /* Buttons */
@@ -173,4 +212,10 @@ button.secondary {
 
 button.secondary:hover {
     background: #5a6268;
+}
+
+/* Input and Label fixes */
+input[type="text"] {
+    color: #333;
+    background-color: #fff;
 }
