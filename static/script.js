@@ -1,177 +1,231 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // Elements
-    const playerNameInput = document.getElementById("playerName");
-    const addPlayerBtn = document.getElementById("addPlayerBtn");
-    const playerList = document.getElementById("playerList");
-    const startGameBtn = document.getElementById("startGameBtn");
-    const revealBtn = document.getElementById("revealBtn");
-    const nextPlayerBtn = document.getElementById("nextPlayerBtn");
-    const showImposterBtn = document.getElementById("showImposterBtn");
-    const restartBtn = document.getElementById("restartBtn");
-    const backMenuBtn = document.getElementById("backMenuBtn");
-    const message = document.getElementById("message");
-    const categoriesDiv = document.getElementById("categories");
-    const setupScreen = document.getElementById("setupScreen");
-    const gameScreen = document.getElementById("gameScreen");
-    const toggleCategoriesBtn = document.getElementById("toggleCategoriesBtn");
-    const auditBtn = document.getElementById("auditBtn");
+// ----- Game State -----
+let players = [];
+let categories = {};
+let availableCategories = [];
+let currentPlayerIndex = 0;
+let imposterIndex = -1;
+let currentCategory = '';
+let currentWord = '';
+let allPlayersSeen = false;
 
-    // Game variables
-    let players = [];
-    let categories = {};
-    let availableCategories = [];
-    let currentPlayerIndex = 0;
-    let imposterIndex = -1;
-    let currentCategory = "";
-    let currentWord = "";
-    let allPlayersSeen = false;
+// DOM elements
+const messageEl = document.getElementById('message');
+const playerNameInput = document.getElementById('playerName');
+const addPlayerBtn = document.getElementById('addPlayerBtn');
+const playerListEl = document.getElementById('playerList');
+const categoriesEl = document.getElementById('categories');
+const startGameBtn = document.getElementById('startGameBtn');
+const revealBtn = document.getElementById('revealBtn');
+const nextPlayerBtn = document.getElementById('nextPlayerBtn');
+const showImposterBtn = document.getElementById('showImposterBtn');
+const restartBtn = document.getElementById('restartBtn');
+const backMenuBtn = document.getElementById('backMenuBtn');
+const toggleCategoriesBtn = document.getElementById('toggleCategoriesBtn');
+const auditBtn = document.getElementById('auditBtn');
+const setupScreen = document.getElementById('setupScreen');
+const gameScreen = document.getElementById('gameScreen');
+const endControls = document.getElementById('endControls');
+const gameControls = document.getElementById('gameControls');
 
-    // Fetch categories from backend
-    fetch("/get_categories")
+// ----- Initialize -----
+window.addEventListener('load', () => {
+    fetchCategories();
+});
+
+// ----- Fetch Categories from Server -----
+function fetchCategories() {
+    fetch('/get_categories')
         .then(res => res.json())
         .then(data => {
             categories = data;
-            Object.keys(categories).forEach(cat => {
-                const label = document.createElement("label");
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.value = cat;
-                checkbox.checked = true;
-                label.appendChild(checkbox);
-                label.appendChild(document.createTextNode(cat));
-                categoriesDiv.appendChild(label);
-            });
+            availableCategories = Object.keys(categories);
+            renderCategoryCheckboxes();
         });
+}
 
-    // Add player
-    function addPlayer() {
-        const name = playerNameInput.value.trim();
-        if (!name) return;
-        const formattedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-        if (players.includes(formattedName)) {
-            message.textContent = `Player ${formattedName} already added!`;
-            return;
-        }
-        players.push(formattedName);
+// ----- Render Category Checkboxes -----
+function renderCategoryCheckboxes() {
+    categoriesEl.innerHTML = '';
+    for (let cat in categories) {
+        const div = document.createElement('div');
+        div.className = 'category-checkbox';
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.checked = true;
+        input.id = `cat-${cat}`;
+        input.addEventListener('change', () => updateAvailableCategories());
+        const label = document.createElement('label');
+        label.htmlFor = `cat-${cat}`;
+        label.innerText = cat;
+        div.appendChild(input);
+        div.appendChild(label);
+        categoriesEl.appendChild(div);
+    }
+}
 
-        const li = document.createElement("li");
-        li.classList.add("player-item");
-        li.innerHTML = `<span>${formattedName}</span><button class="remove-btn">×</button>`;
-        li.querySelector(".remove-btn").addEventListener("click", () => {
-            players = players.filter(p => p !== formattedName);
-            li.remove();
-        });
-        playerList.appendChild(li);
+// ----- Update Available Categories -----
+function updateAvailableCategories() {
+    availableCategories = [];
+    for (let cat in categories) {
+        const checked = document.getElementById(`cat-${cat}`).checked;
+        if (checked) availableCategories.push(cat);
+    }
+}
 
-        playerNameInput.value = "";
-        message.textContent = `Added player: ${formattedName}`;
+// ----- Add Player -----
+function addPlayer() {
+    let name = playerNameInput.value.trim();
+    if (!name) return;
+    name = name.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+    if (!players.includes(name)) {
+        players.push(name);
+        renderPlayer(name);
+        playerNameInput.value = '';
+        messageEl.innerText = `Added player: ${name}`;
+    } else {
+        messageEl.innerText = `Player ${name} already exists`;
+    }
+}
+
+// ----- Render Player in List -----
+function renderPlayer(name) {
+    const li = document.createElement('li');
+    li.innerText = name;
+
+    const removeBtn = document.createElement('button');
+    removeBtn.innerText = '×';
+    removeBtn.className = 'remove-player-btn';
+    removeBtn.onclick = () => removePlayer(name, li);
+
+    li.appendChild(removeBtn);
+    playerListEl.appendChild(li);
+}
+
+// ----- Remove Player -----
+function removePlayer(name, li) {
+    players = players.filter(p => p !== name);
+    playerListEl.removeChild(li);
+    messageEl.innerText = `Removed player: ${name}`;
+}
+
+// ----- Start Game -----
+function startGame() {
+    if (players.length < 3) {
+        messageEl.innerText = "Add at least 3 players to start!";
+        return;
     }
 
-    addPlayerBtn.addEventListener("click", addPlayer);
-    playerNameInput.addEventListener("keydown", e => { if (e.key === "Enter") addPlayer(); });
+    updateAvailableCategories();
+    if (availableCategories.length === 0) {
+        messageEl.innerText = "Select at least 1 category!";
+        return;
+    }
 
-    // Toggle categories
-    toggleCategoriesBtn.addEventListener("click", () => {
-        categoriesDiv.style.display = categoriesDiv.style.display === "none" ? "flex" : "none";
+    // Random imposter
+    imposterIndex = Math.floor(Math.random() * players.length);
+    currentPlayerIndex = 0;
+    allPlayersSeen = false;
+
+    // Random category and word
+    currentCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
+    const wordList = categories[currentCategory];
+    currentWord = wordList[Math.floor(Math.random() * wordList.length)];
+
+    // Switch screens
+    setupScreen.style.display = 'none';
+    gameScreen.style.display = 'block';
+    gameControls.style.display = 'flex';
+    endControls.style.display = 'none';
+
+    messageEl.innerText = `Game started! Press "Reveal Word" for ${players[currentPlayerIndex]}.`;
+
+    // Record start to server
+    fetch('/record_start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            players,
+            availableCategories,
+            currentCategory,
+            currentWord,
+            imposter: players[imposterIndex]
+        })
     });
+}
 
-    // Audit button
-    auditBtn.addEventListener("click", () => {
-        window.open("/audit", "_blank"); // Flask route serving audit.txt
-    });
+// ----- Reveal Word -----
+function revealWord() {
+    const player = players[currentPlayerIndex];
+    if (currentPlayerIndex === imposterIndex) {
+        messageEl.innerText = `${player} is the IMPOSTER! Category: ${currentCategory}`;
+    } else {
+        messageEl.innerText = `${player}: ${currentWord}`;
+    }
+}
 
-    // Start game
-    startGameBtn.addEventListener("click", () => {
-        if (players.length < 3) { alert("At least 3 players required!"); return; }
-        availableCategories = Array.from(categoriesDiv.querySelectorAll("input:checked")).map(cb => cb.value);
-        if (!availableCategories.length) { alert("Select at least one category!"); return; }
+// ----- Next Player -----
+function nextPlayer() {
+    if (currentPlayerIndex >= players.length - 1) {
+        allPlayersSeen = true;
+        gameControls.style.display = 'none';
+        endControls.style.display = 'flex';
 
-        // Select imposter and word
-        imposterIndex = Math.floor(Math.random() * players.length);
-        currentPlayerIndex = 0;
-        allPlayersSeen = false;
+        // Random player to start
+        const starter = players[Math.floor(Math.random() * players.length)];
+        messageEl.innerText = `${starter} starts the conversation!`;
 
-        currentCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
-        const wordList = categories[currentCategory];
-        currentWord = wordList[Math.floor(Math.random() * wordList.length)];
-
-        setupScreen.style.display = "none";
-        gameScreen.style.display = "block";
-        revealBtn.disabled = false;
-        nextPlayerBtn.disabled = true;
-        showImposterBtn.style.display = "none";
-        backMenuBtn.style.display = "none";
-
-        message.textContent = `${players[currentPlayerIndex]}, press "Reveal Word" to see your word.`;
-
-        // Record start to audit
-        fetch("/record_start", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                players, availableCategories, currentCategory, currentWord, imposter: players[imposterIndex]
-            })
+        // Record game end
+        fetch('/record_end', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imposter: players[imposterIndex], word: currentWord })
         });
-    });
+        return;
+    }
 
-    // Reveal word
-    revealBtn.addEventListener("click", () => {
-        const currentPlayer = players[currentPlayerIndex];
-        if (currentPlayerIndex === imposterIndex) {
-            message.textContent = `${currentPlayer} (IMPOSTER!) Category: ${currentCategory}`;
-        } else {
-            message.textContent = `${currentPlayer}: ${currentWord}`;
-        }
-        revealBtn.disabled = true;
-        nextPlayerBtn.disabled = false;
-    });
+    currentPlayerIndex++;
+    messageEl.innerText = `Next player: ${players[currentPlayerIndex]}. Press "Reveal Word"`;
+}
 
-    // Next player
-    nextPlayerBtn.addEventListener("click", () => {
-        currentPlayerIndex++;
-        if (currentPlayerIndex < players.length) {
-            message.textContent = `${players[currentPlayerIndex]}, press "Reveal Word" to see your word.`;
-            revealBtn.disabled = false;
-            nextPlayerBtn.disabled = true;
-        } else {
-            allPlayersSeen = true;
-            revealBtn.style.display = "none";
-            nextPlayerBtn.style.display = "none";
-            showImposterBtn.style.display = "inline-block";
-            backMenuBtn.style.display = "inline-block";
+// ----- Reveal Imposter -----
+function revealImposter() {
+    messageEl.innerText = `The IMPOSTER is: ${players[imposterIndex]}`;
+}
 
-            const randomStarter = players[Math.floor(Math.random() * players.length)];
-            message.textContent = `${randomStarter} starts the conversation!`;
+// ----- Restart Game -----
+function restartGame() {
+    // Reset state
+    currentPlayerIndex = 0;
+    imposterIndex = -1;
+    currentCategory = '';
+    currentWord = '';
+    allPlayersSeen = false;
 
-            // Record game end to audit
-            fetch("/record_end", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    imposter: players[imposterIndex],
-                    word: currentWord
-                })
-            });
-        }
-    });
+    // Reset screens
+    gameScreen.style.display = 'none';
+    setupScreen.style.display = 'block';
+    playerNameInput.value = '';
+    messageEl.innerText = "Add players and select categories to start";
+}
 
-    // Reveal imposter
-    showImposterBtn.addEventListener("click", () => {
-        message.textContent = `The IMPOSTER is ${players[imposterIndex]}! The word was "${currentWord}".`;
-        showImposterBtn.style.display = "none";
-    });
+// ----- Back to Main Menu -----
+function backToMenu() {
+    restartGame();
+}
 
-    // Back to main menu
-    backMenuBtn.addEventListener("click", () => {
-        gameScreen.style.display = "none";
-        setupScreen.style.display = "block";
-
-        message.textContent = "Add players and select categories to start";
-        revealBtn.style.display = "inline-block";
-        revealBtn.disabled = false;
-        nextPlayerBtn.style.display = "inline-block";
-        nextPlayerBtn.disabled = true;
-        showImposterBtn.style.display = "none";
-        backMenuBtn.style.display = "none";
-    });
+// ----- Event Listeners -----
+addPlayerBtn.addEventListener('click', addPlayer);
+playerNameInput.addEventListener('keypress', e => { if (e.key === 'Enter') addPlayer(); });
+startGameBtn.addEventListener('click', startGame);
+revealBtn.addEventListener('click', revealWord);
+nextPlayerBtn.addEventListener('click', nextPlayer);
+showImposterBtn.addEventListener('click', revealImposter);
+restartBtn.addEventListener('click', restartGame);
+backMenuBtn.addEventListener('click', backToMenu);
+toggleCategoriesBtn.addEventListener('click', () => {
+    categoriesEl.classList.toggle('show');
+});
+auditBtn.addEventListener('click', () => {
+    window.open('/audit', '_blank');
 });
