@@ -1,77 +1,171 @@
+/* Global */
 body {
-    background: #f5f5f5;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Arial', sans-serif;
+    background: #f0f2f5;
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
-    margin: 0;
 }
 
 .app {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    width: 90%;
+    width: 100%;
     max-width: 400px;
-    padding: 2rem;
-    text-align: center;
+    padding: 20px;
 }
 
-h1 {
-    font-size: 1.8rem;
-    margin-bottom: 1.2rem;
+/* Header */
+header h1 {
+    text-align: center;
     color: #333;
 }
 
-input {
-    padding: 0.6rem;
-    width: 70%;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    margin-bottom: 10px;
+/* Screens */
+.screen {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-button {
-    background: #3498db;
-    color: white;
+.message {
+    text-align: center;
+    font-size: 1.1em;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Input row */
+.input-row {
+    display: flex;
+    margin-bottom: 15px;
+}
+
+.input-row input {
+    flex: 1;
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+}
+
+.input-row button {
+    padding: 10px 15px;
     border: none;
     border-radius: 8px;
-    padding: 0.6rem 1.2rem;
+    background: #4caf50;
+    color: white;
     cursor: pointer;
-    transition: 0.3s;
-    font-size: 0.9rem;
 }
 
-button:hover {
-    background: #2980b9;
+.input-row button:hover {
+    background: #45a049;
+}
+
+/* Buttons row */
+.btn-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.btn-row button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background: #2196f3;
+    color: white;
+    cursor: pointer;
+    flex: 1 1 45%;
+    min-width: 120px;
+}
+
+.btn-row button:hover {
+    background: #1976d2;
+}
+
+/* Player List */
+#playerList {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px 0;
 }
 
 .player-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 0.3rem 0;
-    padding: 0.4rem 0.6rem;
-    background: #f0f0f0;
+    background: #f7f7f7;
+    padding: 8px 12px;
     border-radius: 8px;
+    margin-bottom: 8px;
 }
 
-.remove-player {
-    background: #e74c3c;
+.player-item span {
+    font-weight: 500;
+}
+
+.remove-btn {
+    background: #f44336;
     border: none;
-    border-radius: 50%;
     color: white;
-    width: 22px;
-    height: 22px;
-    font-size: 16px;
-    line-height: 1;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
     cursor: pointer;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
 }
 
-.remove-player:hover {
-    background: #c0392b;
+.remove-btn:hover {
+    background: #d32f2f;
+}
+
+/* Categories */
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.categories label {
+    background: #e0e0e0;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.categories input {
+    margin-right: 5px;
+}
+
+/* Game Buttons */
+#gameControls button,
+#endControls button {
+    flex: 1 1 30%;
+}
+
+/* Responsive */
+@media (max-width: 450px) {
+    .input-row {
+        flex-direction: column;
+    }
+
+    .input-row input {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .btn-row button {
+        flex: 1 1 100%;
+    }
 }
