@@ -1,11 +1,12 @@
 let players = [];
 let currentPlayerIndex = 0;
-let imposterIndex = -1;
+let imposterIndexes = [];
 let currentCategory = "";
 let currentWord = "";
 let allPlayersSeen = false;
 let categories = {};
 let availableCategories = [];
+let lastSelectedCategories = JSON.parse(localStorage.getItem("selectedCategories")) || [];
 
 const playerNameInput = document.getElementById("playerName");
 const addPlayerBtn = document.getElementById("addPlayerBtn");
@@ -21,6 +22,7 @@ const restartBtn = document.getElementById("restartBtn");
 const categoriesContainer = document.getElementById("categories");
 const showCategoriesBtn = document.getElementById("showCategoriesBtn");
 const auditBtn = document.getElementById("auditBtn");
+const imposterCountSelect = document.getElementById("imposterCount");
 
 // Hide categories by default
 categoriesContainer.style.display = "none";
@@ -68,30 +70,19 @@ function removePlayer(index) {
     updatePlayerList();
 }
 
-// ===== CATEGORY CHECKBOXES =====
+// Render category checkboxes
 function renderCategoryCheckboxes() {
     categoriesContainer.innerHTML = "";
     Object.keys(categories).forEach(cat => {
-        const checked = localStorage.getItem(`cat_${cat}`) === "true";
+        const checked = lastSelectedCategories.includes(cat) ? "checked" : "";
         const div = document.createElement("div");
         div.classList.add("category-checkbox");
-        div.innerHTML = `
-      <label>
-        <input type="checkbox" value="${cat}" ${checked ? "checked" : ""}>
-        ${cat}
-      </label>`;
+        div.innerHTML = `<label><input type="checkbox" value="${cat}" ${checked}> ${cat}</label>`;
         categoriesContainer.appendChild(div);
-    });
-
-    // Save state when changed
-    document.querySelectorAll("#categories input[type='checkbox']").forEach(cb => {
-        cb.addEventListener("change", () => {
-            localStorage.setItem(`cat_${cb.value}`, cb.checked);
-        });
     });
 }
 
-// ===== START GAME =====
+// Start game
 startGameBtn.onclick = () => {
     if (players.length < 3) {
         alert("Minimum 3 players required!");
@@ -99,65 +90,64 @@ startGameBtn.onclick = () => {
     }
 
     // Get selected categories
-    availableCategories = Array.from(
-        document.querySelectorAll("#categories input:checked")
-    ).map(i => i.value);
-
+    availableCategories = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
     if (!availableCategories.length) {
         alert("Select at least one category!");
         return;
     }
 
-    // Save selected categories to memory
-    availableCategories.forEach(cat => localStorage.setItem(`cat_${cat}`, true));
+    // Save selected categories to local storage
+    localStorage.setItem("selectedCategories", JSON.stringify(availableCategories));
 
-    // Hide setup, show game
+    // Hide main menu
     setupScreen.style.display = "none";
-    gameScreen.style.display = "block";
 
-    // Initialize game
+    // Initialize game state
     currentPlayerIndex = 0;
-    imposterIndex = Math.floor(Math.random() * players.length);
-    currentCategory =
-        availableCategories[Math.floor(Math.random() * availableCategories.length)];
+    const imposterCount = parseInt(imposterCountSelect.value);
+
+    imposterIndexes = [];
+    while (imposterIndexes.length < imposterCount) {
+        const randomIndex = Math.floor(Math.random() * players.length);
+        if (!imposterIndexes.includes(randomIndex)) imposterIndexes.push(randomIndex);
+    }
+
+    currentCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
     const words = categories[currentCategory];
     currentWord = words[Math.floor(Math.random() * words.length)];
+
     allPlayersSeen = false;
 
-    // Reset controls
+    // Show game screen
+    gameScreen.style.display = "block";
     revealBtn.style.display = "inline-block";
     nextPlayerBtn.style.display = "inline-block";
     document.getElementById("endControls").style.display = "none";
 
-    gameMessage.textContent = `Current Player: ${players[currentPlayerIndex]}`;
+    // Show first player
+    gameMessage.textContent = `Player: ${players[currentPlayerIndex]}`;
 };
 
-// ===== REVEAL WORD ON HOLD =====
-function showWord() {
-    if (currentPlayerIndex === imposterIndex) {
-        gameMessage.textContent = `${players[currentPlayerIndex]} (Imposter) - Category: ${currentCategory}`;
+// Reveal word (hold)
+revealBtn.addEventListener("mousedown", revealWord);
+revealBtn.addEventListener("touchstart", revealWord);
+revealBtn.addEventListener("mouseup", hideWord);
+revealBtn.addEventListener("mouseleave", hideWord);
+revealBtn.addEventListener("touchend", hideWord);
+
+function revealWord() {
+    if (imposterIndexes.includes(currentPlayerIndex)) {
+        gameMessage.textContent = `${players[currentPlayerIndex]} (IMPOSTER) - Category: ${currentCategory}`;
     } else {
         gameMessage.textContent = `${players[currentPlayerIndex]} - Word: ${currentWord}`;
     }
 }
 
 function hideWord() {
-    gameMessage.textContent = `Current Player: ${players[currentPlayerIndex]}`;
+    gameMessage.textContent = `Player: ${players[currentPlayerIndex]}`;
 }
 
-revealBtn.addEventListener("mousedown", showWord);
-revealBtn.addEventListener("mouseup", hideWord);
-revealBtn.addEventListener("mouseleave", hideWord);
-revealBtn.addEventListener("touchstart", e => {
-    e.preventDefault();
-    showWord();
-});
-revealBtn.addEventListener("touchend", e => {
-    e.preventDefault();
-    hideWord();
-});
-
-// ===== NEXT PLAYER =====
+// Next player
 nextPlayerBtn.onclick = () => {
     if (currentPlayerIndex === players.length - 1) {
         allPlayersSeen = true;
@@ -170,38 +160,42 @@ nextPlayerBtn.onclick = () => {
         document.getElementById("endControls").style.display = "flex";
     } else {
         currentPlayerIndex++;
-        gameMessage.textContent = `Current Player: ${players[currentPlayerIndex]}`;
+        gameMessage.textContent = `Player: ${players[currentPlayerIndex]}`;
     }
 };
 
-// ===== REVEAL IMPOSTER =====
+// Reveal imposters
 showImposterBtn.onclick = () => {
-    gameMessage.textContent = `The IMPOSTER is: ${players[imposterIndex]}`;
+    const imposters = imposterIndexes.map(i => players[i]).join(", ");
+    gameMessage.textContent = `The IMPOSTER${imposterIndexes.length > 1 ? "S" : ""}: ${imposters}`;
 };
 
-// ===== RESTART =====
+// Restart game
 restartBtn.onclick = () => {
     gameScreen.style.display = "none";
     setupScreen.style.display = "block";
-    gameMessage.textContent = "Add players and select categories to start";
-
+    revealBtn.style.display = "inline-block";
+    nextPlayerBtn.style.display = "inline-block";
+    document.getElementById("endControls").style.display = "none";
     currentPlayerIndex = 0;
-    imposterIndex = -1;
+    imposterIndexes = [];
     currentCategory = "";
     currentWord = "";
     allPlayersSeen = false;
+    gameMessage.textContent = "Add players and select categories to start";
 };
 
-// ===== AUDIT BUTTON =====
+// Audit button
 auditBtn.onclick = () => {
-    if (!currentWord) {
-        alert("No game running yet!");
-    } else {
-        alert(`Category: ${currentCategory}\nWord: ${currentWord}\nImposter: ${players[imposterIndex]}`);
-    }
+    const auditInfo = `
+Players: ${players.join(", ")}
+Categories Selected: ${availableCategories.join(", ")}
+Current Category: ${currentCategory || "None yet"}
+Current Word: ${currentWord || "Not chosen"}
+Imposter Count: ${imposterIndexes.length}
+`;
+    alert(auditInfo);
 };
 
 addPlayerBtn.onclick = addPlayer;
-playerNameInput.addEventListener("keypress", e => {
-    if (e.key === "Enter") addPlayer();
-});
+playerNameInput.addEventListener("keypress", (e) => { if (e.key === "Enter") addPlayer(); });

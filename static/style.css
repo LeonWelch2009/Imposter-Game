@@ -9,6 +9,22 @@ body {
     padding: 20px;
 }
 
+.selector-row {
+    margin: 10px 0 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #e0e0e0;
+}
+
+.selector-row select {
+    background: #2a2a2a;
+    border: 1px solid #333;
+    color: #e0e0e0;
+    border-radius: 6px;
+    padding: 6px;
+}
+
 .app {
     width: 100%;
     max-width: 420px;
