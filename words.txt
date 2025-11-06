@@ -1,0 +1,653 @@
+FRIENDS
+leo morgan
+ed turner
+tristan caiger
+ethan smith
+maani saahand
+brandon fage
+ollie chalmer-smith
+bobby harrington
+kian jalil
+milo ford
+sonny goodvin
+james lotens
+toby kad
+jacob turvey
+ewan williams
+
+THORLEY MANOR
+connor neo
+henry jaques
+james rose
+ethan smith
+riley wiggs
+zack fairclough
+noah beaufond
+dan goodeve
+jacob sear
+ed turner
+jacob turvey
+harry ashford
+mateus
+alfie hanks
+aiden yeoman
+
+CLASH ROYALE
+Knight
+Archers
+Goblins
+Giant
+Miner
+Princess
+Skeletons
+Minions
+Baby Dragon
+Valkyrie
+Musketeer
+Wizard
+Witch
+Hog Rider
+Balloon
+Barbarians
+Minion Horde
+Skeleton Army
+Fire Spirits
+Ice Spirit
+Bats
+Prince
+Golem
+Lava Hound
+Goblin Barrel
+Freeze
+Rage
+Poison
+Lightning
+Rocket
+Graveyard
+Elixir
+Crown Tower
+Trophy
+Chest
+Clan
+Deck
+
+SPORTS
+Soccer
+Basketball
+Tennis
+Baseball
+Golf
+Swimming
+Running
+Cycling
+Boxing
+Wrestling
+Volleyball
+Cricket
+Rugby
+Hockey
+Badminton
+Table tennis
+Skiing
+Snowboarding
+Skateboarding
+Surfing
+Gymnastics
+Martial arts
+Archery
+Fencing
+Weightlifting
+Diving
+Sailing
+Rowing
+Horse racing
+Car racing
+Motocross
+Climbing
+Yoga
+Dance
+Cheerleading
+Bowling
+Fishing
+Hunting
+Hiking
+Skating
+Curling
+Bobsleigh
+Lacrosse
+Polo
+Squash
+Handball
+Water polo
+Triathlon
+Decathlon
+Pentathlon
+
+FRUITS
+Apple
+Banana
+Orange
+Mango
+Pineapple
+Strawberry
+Blueberry
+Raspberry
+Grape
+Cherry
+Watermelon
+Kiwi
+Papaya
+Peach
+Plum
+Apricot
+Nectarine
+Coconut
+Lemon
+Lime
+Pomegranate
+Blackcurrant
+Cranberry
+Dragonfruit
+Passionfruit
+Lychee
+Guava
+Fig
+Date
+Pear
+Tangerine
+Cantaloupe
+Honeydew
+Starfruit
+Mulberry
+Gooseberry
+Persimmon
+Clementine
+Boysenberry
+Prickly pear
+Custard apple
+Jackfruit
+Soursop
+Bilberry
+Redcurrant
+Elderberry
+Jujube
+Sapodilla
+Durian
+Breadfruit
+
+MEALS
+Spaghetti Bolognese
+Pizza Margherita
+Roast Chicken
+Fish and Chips
+Lasagna
+Hamburger
+Hot Dog
+Tacos
+Burrito
+Sushi
+Ramen
+Pad Thai
+Fried Rice
+Chicken Curry
+Shepherd’s Pie
+Steak and Fries
+Grilled Salmon
+Caesar Salad
+Mac and Cheese
+Omelette
+Pancakes
+Waffles
+Club Sandwich
+Beef Stew
+Chilli Con Carne
+Chicken Tikka Masala
+Butter Chicken
+Peking Duck
+Shakshuka
+Fajitas
+Pho
+Bibimbap
+Gnocchi
+Risotto
+Moussaka
+Kebabs
+Burrata Salad
+Clam Chowder
+Jambalaya
+Paella
+Falafel Wrap
+Souvlaki
+Enchiladas
+Pulled Pork
+Carbonara
+Casserole
+Meatloaf
+Chicken Alfredo
+Tempura
+Ratatouille
+
+CITIES
+Paris
+London
+New York
+Tokyo
+Sydney
+Los Angeles
+Dubai
+Rome
+Berlin
+Barcelona
+Toronto
+Beijing
+Moscow
+Bangkok
+Delhi
+Seoul
+Istanbul
+Cairo
+Singapore
+Cape Town
+Rio de Janeiro
+Amsterdam
+Venice
+Vienna
+Prague
+Lisbon
+Mexico City
+San Francisco
+Hong Kong
+Florence
+Budapest
+Marrakech
+Munich
+Stockholm
+Zurich
+Havana
+Athens
+Oslo
+Warsaw
+Dublin
+Edinburgh
+Brussels
+Reykjavik
+Copenhagen
+Buenos Aires
+Jerusalem
+Helsinki
+Kyoto
+Jakarta
+Nairobi
+
+SINGERS
+Taylor Swift
+Ed Sheeran
+Adele
+Beyoncé
+Bruno Mars
+Rihanna
+Justin Bieber
+Billie Eilish
+Shawn Mendes
+Harry Styles
+Lady Gaga
+Ariana Grande
+The Weeknd
+Dua Lipa
+Sam Smith
+Olivia Rodrigo
+Drake
+Selena Gomez
+Katy Perry
+Post Malone
+Doja Cat
+Lana Del Rey
+Charlie Puth
+Sia
+Elton John
+Miley Cyrus
+Calvin Harris
+Lewis Capaldi
+Jennifer Lopez
+Michael Jackson
+Whitney Houston
+Madonna
+Elvis Presley
+Freddie Mercury
+George Michael
+Bob Marley
+Amy Winehouse
+John Legend
+Christina Aguilera
+Usher
+Nicki Minaj
+Cardi B
+Shakira
+Zayn Malik
+Camila Cabello
+Jason Derulo
+Ellie Goulding
+Meghan Trainor
+Halsey
+Alicia Keys
+
+CHARACTERS
+Harry Potter
+Hermione Granger
+Ron Weasley
+Darth Vader
+Luke Skywalker
+Yoda
+Spider-Man
+Iron Man
+Captain America
+Thor
+Hulk
+Black Widow
+Batman
+Superman
+Wonder Woman
+The Joker
+Harley Quinn
+Frodo Baggins
+Gandalf
+Legolas
+Aragorn
+Katniss Everdeen
+Peeta Mellark
+Sherlock Holmes
+Dr Watson
+James Bond
+Indiana Jones
+Jack Sparrow
+Willy Wonka
+Simba
+Mufasa
+Elsa
+Anna
+Olaf
+Woody
+Buzz Lightyear
+SpongeBob SquarePants
+Patrick Star
+Scooby-Doo
+Shrek
+Donkey
+Fiona
+Gru
+Minion
+Optimus Prime
+Megatron
+Neo
+Trinity
+Morpheus
+Black Panther
+Deadpool
+Wolverine
+
+ACTOR
+Leonardo DiCaprio
+Brad Pitt
+Johnny Depp
+Tom Hanks
+Robert Downey Jr.
+Chris Evans
+Chris Hemsworth
+Scarlett Johansson
+Jennifer Lawrence
+Emma Stone
+Anne Hathaway
+Morgan Freeman
+Will Smith
+Denzel Washington
+Hugh Jackman
+Matt Damon
+Keanu Reeves
+Christian Bale
+Tom Cruise
+Natalie Portman
+Ryan Reynolds
+Sandra Bullock
+Julia Roberts
+George Clooney
+Meryl Streep
+Kate Winslet
+Heath Ledger
+Cillian Murphy
+Florence Pugh
+Margot Robbie
+Adam Driver
+Timothée Chalamet
+Zendaya
+Benedict Cumberbatch
+Daniel Craig
+Jake Gyllenhaal
+Samuel L. Jackson
+Robert De Niro
+Al Pacino
+Joaquin Phoenix
+Nicole Kidman
+Charlize Theron
+Anne Hathaway
+Harrison Ford
+Rami Malek
+Emma Watson
+Ben Affleck
+Mark Ruffalo
+Chris Pratt
+Jason Momoa
+
+HISTORICAL FIGURE
+Albert Einstein
+Isaac Newton
+Nikola Tesla
+Marie Curie
+Galileo Galilei
+Charles Darwin
+Leonardo da Vinci
+Aristotle
+Socrates
+Plato
+Alexander the Great
+Julius Caesar
+Cleopatra
+Napoleon Bonaparte
+Queen Elizabeth I
+Winston Churchill
+Martin Luther King Jr.
+Mahatma Gandhi
+Nelson Mandela
+Abraham Lincoln
+George Washington
+Benjamin Franklin
+Joan of Arc
+Florence Nightingale
+William Shakespeare
+Christopher Columbus
+Marco Polo
+Amelia Earhart
+Charles Dickens
+Beethoven
+Mozart
+Vincent van Gogh
+Pablo Picasso
+Wright Brothers
+Sigmund Freud
+Thomas Edison
+Frida Kahlo
+Mother Teresa
+Malcolm X
+Rosa Parks
+Walt Disney
+Albert Schweitzer
+Niels Bohr
+Alan Turing
+Stephen Hawking
+Jane Austen
+Ada Lovelace
+Genghis Khan
+Sun Tzu
+Confucius
+Queen Victoria
+
+PLACES
+Supermarket
+Cinema
+Police Station
+Fire Station
+Hospital
+Library
+School
+University
+Playground
+Amusement Park
+Restaurant
+Cafe
+Bakery
+Butcher Shop
+Post Office
+Train Station
+Bus Stop
+Airport
+Shopping Mall
+Clothing Store
+Bookstore
+Pharmacy
+Barber Shop
+Hair Salon
+Gym
+Swimming Pool
+Beach
+Park
+Zoo
+Museum
+Aquarium
+Garage
+Car Wash
+Hotel
+Church
+Mosque
+Temple
+Bank
+Office
+Factory
+Construction Site
+Farm
+Barn
+Garden
+Kitchen
+Living Room
+Bedroom
+Bathroom
+Basement
+Attic
+Garage
+Playroom
+Classroom
+
+JOBS
+Teacher
+Doctor
+Nurse
+Firefighter
+Police Officer
+Chef
+Waiter
+Builder
+Electrician
+Plumber
+Mechanic
+Engineer
+Architect
+Lawyer
+Judge
+Farmer
+Dentist
+Scientist
+Pilot
+Flight Attendant
+Taxi Driver
+Bus Driver
+Train Conductor
+Actor
+Singer
+Musician
+Artist
+Photographer
+Journalist
+Writer
+Author
+Librarian
+Vet
+Zookeeper
+Hairdresser
+Fashion Designer
+Graphic Designer
+Software Developer
+IT Technician
+Game Developer
+Cashier
+Receptionist
+Manager
+Salesperson
+Bartender
+Cleaner
+Paramedic
+Soldier
+Security Guard
+Politician
+Athlete
+Coach
+
+HOUSEHOLD OBJECTS
+Table
+Chair
+Desk
+Bed
+Sofa
+Lamp
+Television
+Computer
+Phone
+Tablet
+Keyboard
+Mouse
+Book
+Notebook
+Pen
+Pencil
+Ruler
+Scissors
+Mirror
+Clock
+Plate
+Cup
+Bowl
+Spoon
+Fork
+Knife
+Towel
+Blanket
+Pillow
+Remote
+Camera
+Headphones
+Charger
+Bag
+Backpack
+Wallet
+Purse
+Umbrella
+Shoe
+Hat
+Glasses
+Toothbrush
+Comb
+Hairdryer
+Key
+Door
+Window
+Bottle
+Ball
+Toy
+Candle

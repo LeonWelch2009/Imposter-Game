@@ -1,222 +1,194 @@
-/* Reset */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Arial', sans-serif;
-}
-
-/* Body */
+/* === GENERAL STYLES === */
 body {
-    background: #f0f2f5;
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: "Poppins", sans-serif;
+    margin: 0;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
     padding: 20px;
-    color: #333;
 }
 
-/* App container */
 .app {
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
+    background-color: #1e1e1e;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    text-align: center;
 }
 
-/* Header */
-header {
+h1 {
+    color: #66b3ff;
+    margin-bottom: 12px;
+}
+
+/* === INPUT === */
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    background: #2a2a2a;
+    border: 1px solid #333;
+    color: #f0f0f0;
+    margin: 8px 0;
+}
+
+/* === PLAYER LIST === */
+ul#playerList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.player-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
-}
-
-header h1 {
-    font-size: 1.6em;
-    color: #333;
-}
-
-.header-buttons button {
-    margin-left: 5px;
-}
-
-/* Screens */
-.screen {
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-}
-
-/* Message Box */
-.message-box {
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-    border-radius: 12px;
-    padding: 12px;
-    margin-bottom: 15px;
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    color: #333;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    word-wrap: break-word;
-}
-
-.message-box .message {
-    color: #333;
-    font-weight: 500;
-    font-size: 1.1em;
-}
-
-/* Player input */
-.player-input {
-    display: flex;
-    gap: 5px;
-    margin-bottom: 15px;
-}
-
-.player-input input {
-    flex: 1;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    color: #333;
-    background-color: #fff;
-}
-
-.player-input button {
+    background: #2a2a2a;
     padding: 8px 12px;
     border-radius: 8px;
-    border: none;
-    background: #007bff;
-    color: white;
-    cursor: pointer;
+    margin-bottom: 6px;
 }
 
-.player-input button:hover {
-    background: #0056b3;
-}
-
-/* Player list */
-#playerList li {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 10px;
-    border-bottom: 1px solid #eee;
-    color: #333;
-}
-
-.remove-player-btn {
-    background: #ff4d4f;
-    color: white;
-    border: none;
+/* === REMOVE PLAYER BUTTON === */
+.remove-player {
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    text-align: center;
-    line-height: 16px;
+    border: none;
+    background: #ff4d4d;
+    color: white;
+    font-weight: bold;
     cursor: pointer;
-}
-
-/* Categories */
-.categories {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 15px;
-    max-height: 120px;
-    overflow-y: auto;
-    padding: 5px;
+    justify-content: center;
+    align-items: center;
 }
 
+.remove-player:hover {
+    background: #ff1a1a;
+    transform: scale(1.1);
+}
+
+/* === CATEGORY CHECKBOXES === */
 .category-checkbox {
     display: flex;
     align-items: center;
-    background: #f0f0f0;
-    padding: 6px 12px;
-    border-radius: 12px;
-    position: relative;
+    margin-bottom: 6px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    font-size: 14px;
 }
 
-.category-checkbox:hover {
-    background: #e0e0e0;
-}
-
-.category-checkbox input {
+.category-checkbox input[type="checkbox"] {
     appearance: none;
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #007bff;
-    border-radius: 4px;
-    margin-right: 8px;
-    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #555;
+    border-radius: 6px;
+    margin-right: 10px;
+    background: #2a2a2a;
     position: relative;
 }
 
-.category-checkbox input:checked {
+.category-checkbox input[type="checkbox"]:checked {
     background: #007bff;
     border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
 }
 
-.category-checkbox input:checked::after {
+.category-checkbox input[type="checkbox"]:checked::after {
     content: '✓';
     color: white;
-    font-size: 14px;
     position: absolute;
-    top: 0;
     left: 3px;
+    top: -1px;
+    font-size: 14px;
 }
 
-/* Buttons */
+/* === BUTTONS === */
+button {
+    width: 100%;
+    padding: 10px 14px;
+    margin: 6px 0;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
 button.primary {
     background: #007bff;
     color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    flex: 1;
-    margin: 5px 0;
 }
 
 button.primary:hover {
-    background: #0056b3;
+    background: #339dff;
 }
 
 button.accent {
-    background: #28a745;
+    background: #00b36b;
     color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    flex: 1;
-    margin: 5px 0;
 }
 
 button.accent:hover {
-    background: #1e7e34;
+    background: #00d47c;
 }
 
-/* Button row */
+button.secondary {
+    background: #444;
+    color: white;
+}
+
+button.secondary:hover {
+    background: #666;
+}
+
+/* === CARD === */
+.card {
+    background: #1e1e1e;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* === MESSAGES === */
+.message {
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+/* === BUTTON ROWS === */
 .btn-row {
     display: flex;
     justify-content: space-between;
     gap: 10px;
-    flex-wrap: wrap;
 }
 
-/* Responsive */
-@media (max-width: 450px) {
-    .app {
-        padding: 10px;
-    }
+/* === SCREENS === */
+.screen {
+    display: block;
+}
 
-    .btn-row {
-        flex-direction: column;
-    }
+/* === SCROLLABLE === */
+ul#playerList {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* === INPUT FOCUS === */
+input:focus {
+    outline: none;
+    border-color: #66b3ff;
+}
+
+/* === DARK MODE TEXT === */
+.category-checkbox label,
+.player-item,
+.message {
+    color: #e0e0e0;
 }

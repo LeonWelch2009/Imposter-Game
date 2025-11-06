@@ -3,30 +3,31 @@ import os
 
 app = Flask(__name__)
 
-DATA_FOLDER = "data"
+WORDS_FILE = "words.txt"
 
 def load_categories():
     categories = {}
-    for filename in os.listdir(DATA_FOLDER):
-        if filename.endswith(".txt"):
-            category_name = filename.replace(".txt", "").capitalize()
-            with open(os.path.join(DATA_FOLDER, filename), "r", encoding="utf-8") as f:
-                words = [line.strip() for line in f if line.strip()]
-            categories[category_name] = words
+    current_category = None
+    if os.path.exists(WORDS_FILE):
+        with open(WORDS_FILE, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                if line.isupper():  # category line
+                    current_category = line.capitalize()
+                    categories[current_category] = []
+                elif current_category:
+                    categories[current_category].append(line.capitalize())
     return categories
 
 @app.route("/")
-def home():
+def index():
     return render_template("index.html")
 
 @app.route("/categories")
 def get_categories():
     return jsonify(load_categories())
-
-@app.route("/audit")
-def audit():
-    cats = load_categories()
-    return "<br>".join([f"<b>{k}</b>: {len(v)} words" for k,v in cats.items()])
 
 if __name__ == "__main__":
     app.run(debug=True)
