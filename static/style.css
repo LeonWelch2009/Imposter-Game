@@ -159,10 +159,16 @@ button.secondary:hover {
 }
 
 /* === MESSAGES === */
+/* === MESSAGES === */
 .message {
     margin-bottom: 12px;
     font-size: 16px;
+    word-wrap: break-word;      /* Ensures long words wrap instead of overflowing */
+    overflow-wrap: break-word;   /* Older browser support */
+    max-width: 100%;             /* Constrain to container width */
+    box-sizing: border-box;      /* Include padding in width */
 }
+
 
 /* === BUTTON ROWS === */
 .btn-row {
