@@ -1,11 +1,13 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 
 WORDS_FILE = "words.txt"
 AUDIT_FILE = "audit.txt"
 
+# Load categories from words.txt
 def load_categories():
     categories = {}
     current_category = None
@@ -22,6 +24,7 @@ def load_categories():
                     categories[current_category].append(line.capitalize())
     return categories
 
+# Load audit logs
 def load_audit():
     logs = []
     if os.path.exists(AUDIT_FILE):
@@ -29,6 +32,13 @@ def load_audit():
             logs = f.read().splitlines()
     return logs
 
+# Append a new entry to audit
+def append_audit(entry):
+    with open(AUDIT_FILE, "a", encoding="utf-8") as f:
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        f.write(f"[{timestamp}] {entry}\n")
+
+# Routes
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -40,6 +50,17 @@ def get_categories():
 @app.route("/audit")
 def get_audit():
     return jsonify(load_audit())
+
+@app.route("/log_game", methods=["POST"])
+def log_game():
+    data = request.json
+    players = data.get("players", [])
+    imposters = data.get("imposters", [])
+    category = data.get("category", "")
+    word = data.get("word", "")
+    entry = f"Players: {players}, Imposters: {imposters}, Category: {category}, Word: {word}"
+    append_audit(entry)
+    return jsonify({"status": "success"})
 
 if __name__ == "__main__":
     app.run(debug=True)

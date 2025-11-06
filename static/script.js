@@ -153,6 +153,21 @@ if (revealBtn) {
     revealBtn.addEventListener("touchend", (e) => { e.preventDefault(); hideNow(); }, { passive: false });
 }
 
+// Log game to server
+function logGame() {
+    const payload = {
+        players: players,
+        imposters: imposterIndices.map(i => players[i]),
+        category: currentCategory,
+        word: currentWord
+    };
+    fetch("/log_game", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    }).catch(err => console.error("Failed to log game:", err));
+}
+
 // Next player
 if (nextPlayerBtn) {
     nextPlayerBtn.addEventListener("click", () => {
@@ -163,6 +178,8 @@ if (nextPlayerBtn) {
             revealBtn.style.display = "none";
             nextPlayerBtn.style.display = "none";
             document.getElementById("endControls").style.display = "flex";
+
+            logGame(); // Log game when all players have seen the words
         } else {
             currentPlayerIndex++;
             gameMessage.textContent = players[currentPlayerIndex];
