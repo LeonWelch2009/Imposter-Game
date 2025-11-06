@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imposter Word Game</title>
+    <title>🕵️ Imposter Word Game</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
@@ -37,12 +37,12 @@
         </div>
 
         <!-- Game Screen -->
-        <div id="gameScreen" class="card screen">
+        <div id="gameScreen" class="card screen" style="display:none;">
             <div class="message" id="gameMessage"></div>
 
             <div id="gameControls" class="btn-row">
-                <button class="accent" id="revealBtn">Reveal Word</button>
-                <button class="accent" id="nextPlayerBtn">Next Player</button>
+                <button class="accent" id="revealBtn" style="display:none;">Reveal Word</button>
+                <button class="accent" id="nextPlayerBtn" style="display:none;">Next Player</button>
             </div>
 
             <div id="endControls" class="btn-row" style="display:none;">
