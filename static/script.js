@@ -1,8 +1,6 @@
-// === Reverted working script.js (single imposter, category memory, hold-to-reveal) ===
-
 let players = [];
 let currentPlayerIndex = 0;
-let imposterIndex = -1;
+let imposterIndices = [];
 let currentCategory = "";
 let currentWord = "";
 let allPlayersSeen = false;
@@ -24,10 +22,10 @@ const categoriesContainer = document.getElementById("categories");
 const showCategoriesBtn = document.getElementById("showCategoriesBtn");
 const auditBtn = document.getElementById("auditBtn");
 
-// Start with categories hidden
+// Hide categories by default
 if (categoriesContainer) categoriesContainer.style.display = "none";
 
-// Fetch categories from Flask endpoint /categories
+// Fetch categories from Flask
 fetch("/categories")
     .then(res => res.json())
     .then(data => {
@@ -35,9 +33,7 @@ fetch("/categories")
         availableCategories = Object.keys(categories);
         renderCategoryCheckboxes();
     })
-    .catch(err => {
-        console.error("Failed to load categories:", err);
-    });
+    .catch(err => console.error("Failed to load categories:", err));
 
 // Toggle categories list
 if (showCategoriesBtn) {
@@ -53,19 +49,14 @@ function addPlayer() {
     if (!playerNameInput) return;
     let name = playerNameInput.value.trim();
     if (!name) return;
-    // Auto-capitalize properly
     name = name.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
     if (!players.includes(name)) {
         players.push(name);
         updatePlayerList();
         playerNameInput.value = "";
-    } else {
-        // optional feedback
-        console.log("Player already added:", name);
     }
 }
 
-// Update players UI
 function updatePlayerList() {
     if (!playerList) return;
     playerList.innerHTML = "";
@@ -73,91 +64,76 @@ function updatePlayerList() {
         const li = document.createElement("li");
         li.className = "player-item";
         li.innerHTML = `
-      <span class="player-name">${p}</span>
-      <button class="remove-player" type="button" title="Remove player">×</button>
-    `;
-        const btn = li.querySelector(".remove-player");
-        btn.addEventListener("click", () => {
-            removePlayer(idx);
-        });
+            <span class="player-name">${p}</span>
+            <button class="remove-player" type="button" title="Remove player">×</button>
+        `;
+        li.querySelector(".remove-player").addEventListener("click", () => removePlayer(idx));
         playerList.appendChild(li);
     });
 }
 
-// Remove player by index
 function removePlayer(index) {
     if (index < 0 || index >= players.length) return;
     players.splice(index, 1);
     updatePlayerList();
 }
 
-// Render category checkboxes and restore saved states from localStorage
+// Render category checkboxes and restore saved state
 function renderCategoryCheckboxes() {
     if (!categoriesContainer) return;
     categoriesContainer.innerHTML = "";
-    const keys = Object.keys(categories);
-    keys.forEach(cat => {
+    Object.keys(categories).forEach(cat => {
         const saved = localStorage.getItem(`cat_${cat}`);
         const checkedAttr = saved === null ? "checked" : (saved === "true" ? "checked" : "");
-        const wrapper = document.createElement("div");
-        wrapper.className = "category-checkbox";
-        wrapper.innerHTML = `<label><input type="checkbox" value="${cat}" ${checkedAttr}> ${cat}</label>`;
-        categoriesContainer.appendChild(wrapper);
+        const div = document.createElement("div");
+        div.className = "category-checkbox";
+        div.innerHTML = `<label><input type="checkbox" value="${cat}" ${checkedAttr}> ${cat}</label>`;
+        categoriesContainer.appendChild(div);
     });
-
-    // Wire change handlers to save state
-    const inputs = categoriesContainer.querySelectorAll("input[type='checkbox']");
-    inputs.forEach(inp => {
+    categoriesContainer.querySelectorAll("input[type='checkbox']").forEach(inp => {
         inp.addEventListener("change", () => {
             localStorage.setItem(`cat_${inp.value}`, inp.checked ? "true" : "false");
         });
     });
 }
 
-// Start the game
+// Start game
 if (startGameBtn) {
     startGameBtn.addEventListener("click", () => {
-        if (players.length < 3) {
-            alert("Minimum 3 players required!");
-            return;
-        }
+        if (players.length < 3) { alert("Minimum 3 players required!"); return; }
 
-        // Gather selected category names
         const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
-        if (!checked.length) {
-            alert("Select at least one category!");
-            return;
-        }
+        if (!checked.length) { alert("Select at least one category!"); return; }
         availableCategories = checked.slice();
 
-        // Select imposter and a category/word (but don't reveal yet)
-        imposterIndex = Math.floor(Math.random() * players.length);
+        // Determine imposters
+        imposterIndices = [];
+        const imposterCount = players.length >= 6 ? 2 : 1;
+        while (imposterIndices.length < imposterCount) {
+            const idx = Math.floor(Math.random() * players.length);
+            if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
+        }
+
         currentPlayerIndex = 0;
         currentCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
         const words = categories[currentCategory] || [];
         currentWord = words.length ? words[Math.floor(Math.random() * words.length)] : "";
 
-        // Switch UI
-        if (setupScreen) setupScreen.style.display = "none";
-        if (gameScreen) gameScreen.style.display = "block";
+        setupScreen.style.display = "none";
+        gameScreen.style.display = "block";
 
-        // Hide end controls and ensure reveal/next appear for gameplay
-        const endControls = document.getElementById("endControls");
-        if (endControls) endControls.style.display = "none";
+        document.getElementById("endControls").style.display = "none";
+        revealBtn.style.display = "inline-block";
+        nextPlayerBtn.style.display = "inline-block";
 
-        // Show reveal/next now that round started
-        if (revealBtn) revealBtn.style.display = "inline-block";
-        if (nextPlayerBtn) nextPlayerBtn.style.display = "inline-block";
-
-        // Initial player shown (name only)
-        if (gameMessage) gameMessage.textContent = `${players[currentPlayerIndex]}`;
+        gameMessage.textContent = players[currentPlayerIndex];
     });
 }
 
-// Reveal word only while hold (desktop + mobile)
+// Reveal word while holding
 function revealNow() {
     if (!gameMessage) return;
-    if (currentPlayerIndex === imposterIndex) {
+    if (imposterIndices.includes(currentPlayerIndex)) {
         gameMessage.textContent = `${players[currentPlayerIndex]} — IMPOSTER! Category: ${currentCategory}`;
     } else {
         gameMessage.textContent = `${players[currentPlayerIndex]} — ${currentWord}`;
@@ -165,21 +141,14 @@ function revealNow() {
 }
 function hideNow() {
     if (!gameMessage) return;
-    if (!allPlayersSeen) {
-        gameMessage.textContent = `${players[currentPlayerIndex]}`;
-    } else {
-        // If round finished, keep final message
-    }
+    if (!allPlayersSeen) gameMessage.textContent = players[currentPlayerIndex];
 }
 
-// Wire hold behavior (if button exists)
+// Wire hold behavior
 if (revealBtn) {
-    // Desktop
     revealBtn.addEventListener("mousedown", (e) => { e.preventDefault(); revealNow(); });
     revealBtn.addEventListener("mouseup", (e) => { e.preventDefault(); hideNow(); });
     revealBtn.addEventListener("mouseleave", (e) => { e.preventDefault(); hideNow(); });
-
-    // Touch (mobile)
     revealBtn.addEventListener("touchstart", (e) => { e.preventDefault(); revealNow(); }, { passive: false });
     revealBtn.addEventListener("touchend", (e) => { e.preventDefault(); hideNow(); }, { passive: false });
 }
@@ -190,66 +159,52 @@ if (nextPlayerBtn) {
         if (currentPlayerIndex >= players.length - 1) {
             allPlayersSeen = true;
             const starter = players[Math.floor(Math.random() * players.length)];
-            if (gameMessage) gameMessage.textContent = `${starter} starts the conversation!`;
-
-            // hide reveal/next, show end controls
-            if (revealBtn) revealBtn.style.display = "none";
-            if (nextPlayerBtn) nextPlayerBtn.style.display = "none";
-            const endControls = document.getElementById("endControls");
-            if (endControls) endControls.style.display = "flex";
+            gameMessage.textContent = `${starter} starts the conversation!`;
+            revealBtn.style.display = "none";
+            nextPlayerBtn.style.display = "none";
+            document.getElementById("endControls").style.display = "flex";
         } else {
             currentPlayerIndex++;
-            if (gameMessage) gameMessage.textContent = `${players[currentPlayerIndex]}`;
+            gameMessage.textContent = players[currentPlayerIndex];
         }
     });
 }
 
-// Reveal imposter (end)
-if (showImposterBtn) {
-    showImposterBtn.addEventListener("click", () => {
-        if (gameMessage) gameMessage.textContent = `The IMPOSTER is: ${players[imposterIndex]}`;
-    });
-}
+// Reveal imposters
+showImposterBtn.addEventListener("click", () => {
+    const names = imposterIndices.map(i => players[i]).join(", ");
+    gameMessage.textContent = `IMPOSTER(s): ${names}`;
+});
 
-// Restart game but keep players and category selections (main menu)
-if (restartBtn) {
-    restartBtn.addEventListener("click", () => {
-        if (gameScreen) gameScreen.style.display = "none";
-        if (setupScreen) setupScreen.style.display = "block";
+// Restart game
+restartBtn.addEventListener("click", () => {
+    gameScreen.style.display = "none";
+    setupScreen.style.display = "block";
 
-        // Reset state
-        currentPlayerIndex = 0;
-        imposterIndex = -1;
-        currentCategory = "";
-        currentWord = "";
-        allPlayersSeen = false;
+    currentPlayerIndex = 0;
+    imposterIndices = [];
+    currentCategory = "";
+    currentWord = "";
+    allPlayersSeen = false;
 
-        // Restore checkboxes from localStorage (they were saved on change)
-        renderCategoryCheckboxes();
-
-        if (gameMessage) gameMessage.textContent = "Add players and select categories to start";
-    });
-}
-
-// Audit button — shows current game info
-if (auditBtn) {
-    auditBtn.addEventListener("click", () => {
-        if (!currentWord) {
-            alert("No game running yet.");
-            return;
-        }
-        const info = `Category: ${currentCategory}\nWord: ${currentWord}\nImposter: ${players[imposterIndex]}`;
-        alert(info);
-    });
-}
-
-// Wire add player and Enter key
-if (addPlayerBtn) addPlayerBtn.addEventListener("click", addPlayer);
-if (playerNameInput) playerNameInput.addEventListener("keypress", (e) => { if (e.key === "Enter") addPlayer(); });
-
-// Initial render (if categories already loaded)
-function initAfterLoad() {
     renderCategoryCheckboxes();
-    updatePlayerList();
-}
-window.addEventListener("load", initAfterLoad);
+    gameMessage.textContent = "Add players and select categories to start";
+});
+
+// Audit — fetch audit.txt logs
+auditBtn.addEventListener("click", () => {
+    fetch("/audit")
+        .then(res => res.json())
+        .then(logs => {
+            if (!logs.length) { alert("No previous game logs."); return; }
+            alert("Previous Game Logs:\n" + logs.join("\n"));
+        })
+        .catch(err => alert("Failed to fetch audit logs."));
+});
+
+// Add player & Enter key
+addPlayerBtn.addEventListener("click", addPlayer);
+playerNameInput.addEventListener("keypress", e => { if (e.key === "Enter") addPlayer(); });
+
+// Initial render
+window.addEventListener("load", () => { renderCategoryCheckboxes(); updatePlayerList(); });
