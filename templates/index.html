@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imposter Word Game</title>
+    <title>Imposter Word Game 👀</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-    <div class="app">
 
+    <div class="app">
         <header>
             <h1>Imposter Word Game</h1>
             <div class="header-buttons">
@@ -22,41 +22,39 @@
         <!-- Setup Screen -->
         <div id="setupScreen" class="screen">
             <div class="message-box">
-                <div class="message" id="message">Add players and select categories to start</div>
+                <div class="message" id="setupMessage">Add players and select categories to start</div>
             </div>
 
             <div class="player-input">
                 <input type="text" id="playerName" placeholder="Enter player name">
-                <button id="addPlayerBtn" class="primary">Add Player</button>
+                <button class="primary" id="addPlayerBtn">Add</button>
             </div>
 
             <ul id="playerList"></ul>
-
-            <div class="categories" id="categories"></div>
+            <div id="categories" class="categories"></div>
 
             <div class="btn-row">
-                <button id="startGameBtn" class="primary">Start Game</button>
+                <button class="primary" id="startGameBtn">Start Game</button>
             </div>
         </div>
 
         <!-- Game Screen -->
         <div id="gameScreen" class="screen" style="display:none;">
             <div class="message-box">
-                <div class="message" id="message"></div>
+                <div class="message" id="gameMessage">Game starting soon...</div>
             </div>
 
-            <div id="gameControls" class="btn-row">
-                <button id="revealBtn" class="accent">Reveal Word</button>
-                <button id="nextPlayerBtn" class="accent">Next Player</button>
+            <div class="btn-row">
+                <button class="accent" id="revealBtn">Reveal Word</button>
+                <button class="accent" id="nextPlayerBtn">Next Player</button>
             </div>
 
             <div id="endControls" class="btn-row" style="display:none;">
-                <button id="showImposterBtn" class="primary">Reveal Imposter</button>
-                <button id="restartBtn" class="primary">New Game</button>
-                <button id="backMenuBtn" class="secondary">Main Menu</button>
+                <button class="primary" id="showImposterBtn">Reveal Imposter</button>
+                <button class="primary" id="restartBtn">New Game</button>
+                <button class="secondary" id="backMenuBtn">Main Menu</button>
             </div>
         </div>
-
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>

@@ -1,196 +1,266 @@
-// DOM elements
-const setupScreen = document.getElementById('setupScreen');
-const gameScreen = document.getElementById('gameScreen');
-const startGameBtn = document.getElementById('startGameBtn');
-const addPlayerBtn = document.getElementById('addPlayerBtn');
-const revealBtn = document.getElementById('revealBtn');
-const nextPlayerBtn = document.getElementById('nextPlayerBtn');
-const showImposterBtn = document.getElementById('showImposterBtn');
-const restartBtn = document.getElementById('restartBtn');
-const backMenuBtn = document.getElementById('backMenuBtn');
-const toggleCategoriesBtn = document.getElementById('toggleCategoriesBtn');
-const auditBtn = document.getElementById('auditBtn');
+// Defensive DOM lookups (fail gracefully if structure differs)
+const el = id => document.getElementById(id);
 
-const playerNameInput = document.getElementById('playerName');
-const playerList = document.getElementById('playerList');
-const categoriesContainer = document.getElementById('categories');
+// Screens & messages
+const setupScreen = el('setupScreen');
+const gameScreen = el('gameScreen');
+const setupMessage = el('setupMessage');
+const gameMessage = el('gameMessage');
 
-const setupMessage = document.getElementById('setupMessage');
-const gameMessage = document.getElementById('gameMessage');
+// Controls / inputs
+const startGameBtn = el('startGameBtn');
+const addPlayerBtn = el('addPlayerBtn');
+const playerNameInput = el('playerName');
+const playerList = el('playerList');
+const categoriesContainer = el('categories');
 
+const revealBtn = el('revealBtn');
+const nextPlayerBtn = el('nextPlayerBtn');
+const showImposterBtn = el('showImposterBtn');
+const restartBtn = el('restartBtn');
+const backMenuBtn = el('backMenuBtn');
+const toggleCategoriesBtn = el('toggleCategoriesBtn');
+const auditBtn = el('auditBtn');
+const endControls = el('endControls'); // container for end controls
+
+// Data
 let players = [];
 let categories = {
     Fruits: ['Apple', 'Banana', 'Orange', 'Grapes', 'Mango', 'Strawberry', 'Pineapple', 'Watermelon', 'Peach', 'Cherry'],
     Meals: ['Pizza', 'Burger', 'Pasta', 'Sushi', 'Taco', 'Salad', 'Steak', 'Curry', 'Sandwich', 'Omelette'],
-    Places: ['Supermarket', 'Cinema', 'Police Station', 'Hospital', 'School', 'Park', 'Bank', 'Library', 'Restaurant', 'Airport'],
-    Singers: ['Beyonce', 'Adele', 'Drake', 'Taylor Swift', 'Ed Sheeran', 'Ariana Grande', 'Justin Bieber', 'Rihanna', 'Bruno Mars', 'Shakira'],
-    Characters: ['Harry Potter', 'Sherlock Holmes', 'Elsa', 'Darth Vader', 'Spider-Man', 'Iron Man', 'Simba', 'Frodo', 'Homer Simpson', 'Mickey Mouse'],
-    Actors: ['Tom Hanks', 'Leonardo DiCaprio', 'Emma Watson', 'Will Smith', 'Robert Downey Jr', 'Jennifer Lawrence', 'Brad Pitt', 'Angelina Jolie', 'Johnny Depp', 'Scarlett Johansson'],
-    Historical: ['Albert Einstein', 'Napoleon', 'Cleopatra', 'Abraham Lincoln', 'Martin Luther King Jr', 'Winston Churchill', 'Julius Caesar', 'Marie Curie', 'Leonardo da Vinci', 'Galileo']
+    Places: ['Supermarket', 'Cinema', 'Police Station', 'Hospital', 'School', 'Park', 'Bank', 'Library', 'Restaurant', 'Airport']
 };
-let availableCategories = [];
+let selectedCategories = Object.keys(categories);
+
+// Game state
 let currentPlayerIndex = 0;
 let imposterIndex = -1;
 let currentCategory = '';
 let currentWord = '';
 let allPlayersSeen = false;
 
-// --- Utility Functions ---
-
-function capitalize(name) {
-    return name.charAt(0).toUpperCase() + name.slice(1);
+// --- Utility / UI helpers ---
+function safeSetText(node, text) {
+    if (!node) return;
+    node.textContent = text;
 }
 
-function createPlayerItem(name) {
-    const li = document.createElement('li');
-    li.textContent = name;
-
-    const removeBtn = document.createElement('button');
-    removeBtn.textContent = '×';
-    removeBtn.className = 'remove-player-btn';
-    removeBtn.onclick = () => {
-        players = players.filter(p => p !== name);
-        playerList.removeChild(li);
-        setupMessage.textContent = `${name} removed.`;
-    };
-
-    li.appendChild(removeBtn);
-    playerList.appendChild(li);
+function clearChildren(parent) {
+    if (!parent) return;
+    while (parent.firstChild) parent.removeChild(parent.firstChild);
 }
 
-function createCategoryCheckboxes() {
-    categoriesContainer.innerHTML = '';
-    availableCategories = [];
+// render players list from players[]
+function renderPlayerList() {
+    if (!playerList) return;
+    clearChildren(playerList);
+    players.forEach((name, idx) => {
+        const li = document.createElement('li');
+        li.className = 'player-item';
 
-    Object.keys(categories).forEach(cat => {
-        const div = document.createElement('div');
-        div.className = 'category-checkbox';
+        const span = document.createElement('span');
+        span.textContent = name;
+        span.style.flex = '1';
+
+        const btn = document.createElement('button');
+        btn.className = 'remove-player-btn';
+        btn.type = 'button';
+        btn.title = `Remove ${name}`;
+        btn.textContent = '×';
+        btn.onclick = () => {
+            players = players.filter(p => p !== name);
+            renderPlayerList();
+            safeSetText(setupMessage, `Removed player: ${name}`);
+            // If we removed player during a running game, adjust indexes safely
+            if (currentPlayerIndex >= players.length) currentPlayerIndex = Math.max(0, players.length - 1);
+            if (imposterIndex >= players.length) imposterIndex = -1;
+        };
+
+        li.appendChild(span);
+        li.appendChild(btn);
+        playerList.appendChild(li);
+    });
+}
+
+// render category checkboxes from categories object
+function renderCategoryCheckboxes() {
+    if (!categoriesContainer) return;
+    clearChildren(categoriesContainer);
+    Object.keys(categories).forEach((cat, idx) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'category-checkbox';
 
         const input = document.createElement('input');
         input.type = 'checkbox';
-        input.checked = true;
-
-        input.onchange = () => {
-            updateAvailableCategories();
-        };
+        input.checked = selectedCategories.includes(cat);
+        input.dataset.cat = cat;
+        input.onchange = updateSelectedCategories;
 
         const label = document.createElement('label');
         label.textContent = cat;
 
-        div.appendChild(input);
-        div.appendChild(label);
-        categoriesContainer.appendChild(div);
+        wrapper.appendChild(input);
+        wrapper.appendChild(label);
+        categoriesContainer.appendChild(wrapper);
     });
-
-    updateAvailableCategories();
+    updateSelectedCategories();
 }
 
-function updateAvailableCategories() {
-    availableCategories = [];
-    const checkboxes = categoriesContainer.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach((box, i) => {
-        if (box.checked) {
-            availableCategories.push(Object.keys(categories)[i]);
-        }
+// read checked categories into selectedCategories
+function updateSelectedCategories() {
+    if (!categoriesContainer) return;
+    const checks = categoriesContainer.querySelectorAll('input[type="checkbox"]');
+    selectedCategories = [];
+    checks.forEach((c) => {
+        if (c.checked && c.dataset && c.dataset.cat) selectedCategories.push(c.dataset.cat);
     });
-    setupMessage.textContent = `${availableCategories.length} categories selected.`;
+    safeSetText(setupMessage, `${selectedCategories.length} categories selected`);
 }
 
-// --- Event Handlers ---
+// pick random element from array
+function randItem(arr) {
+    if (!arr || arr.length === 0) return null;
+    return arr[Math.floor(Math.random() * arr.length)];
+}
 
-addPlayerBtn.onclick = () => {
-    let name = capitalize(playerNameInput.value.trim());
-    if (name && !players.includes(name)) {
-        players.push(name);
-        createPlayerItem(name);
+// --- Game functions ---
+function addPlayer() {
+    if (!playerNameInput) return;
+    const raw = playerNameInput.value.trim();
+    if (!raw) {
+        safeSetText(setupMessage, 'Please enter a name.');
+        return;
+    }
+    // Auto-capitalize each word
+    const formatted = raw.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+    if (players.includes(formatted)) {
+        safeSetText(setupMessage, `${formatted} already added.`);
         playerNameInput.value = '';
-        setupMessage.textContent = `Added player: ${name}`;
-    } else if (!name) {
-        setupMessage.textContent = 'Enter a name.';
-    } else {
-        setupMessage.textContent = `${name} already added!`;
+        return;
     }
-};
+    players.push(formatted);
+    renderPlayerList();
+    playerNameInput.value = '';
+    safeSetText(setupMessage, `Added player: ${formatted}`);
+}
 
-playerNameInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addPlayerBtn.click();
-});
-
-startGameBtn.onclick = () => {
+function startGame() {
     if (players.length < 3) {
-        setupMessage.textContent = 'Add at least 3 players to start.';
+        safeSetText(setupMessage, 'Need at least 3 players to start.');
+        return;
+    }
+    updateSelectedCategories();
+    if (!selectedCategories || selectedCategories.length === 0) {
+        safeSetText(setupMessage, 'Select at least one category.');
         return;
     }
 
-    if (availableCategories.length === 0) {
-        setupMessage.textContent = 'Select at least one category.';
-        return;
-    }
-
-    setupScreen.style.display = 'none';
-    gameScreen.style.display = 'block';
-
-    currentPlayerIndex = 0;
+    // choose imposter and word
     imposterIndex = Math.floor(Math.random() * players.length);
-
-    // Pick random category and word
-    currentCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
-    currentWord = categories[currentCategory][Math.floor(Math.random() * categories[currentCategory].length)];
-
+    currentPlayerIndex = 0;
     allPlayersSeen = false;
-    gameMessage.textContent = `${players[currentPlayerIndex]} press "Reveal Word"`;
-    revealBtn.disabled = false;
-    nextPlayerBtn.disabled = true;
-};
 
-revealBtn.onclick = () => {
+    currentCategory = randItem(selectedCategories);
+    const list = categories[currentCategory];
+    currentWord = randItem(list);
+
+    // show game screen
+    if (setupScreen) setupScreen.style.display = 'none';
+    if (gameScreen) gameScreen.style.display = 'block';
+
+    // reset control visibility/state
+    if (revealBtn) { revealBtn.style.display = ''; revealBtn.disabled = false; }
+    if (nextPlayerBtn) { nextPlayerBtn.style.display = ''; nextPlayerBtn.disabled = true; }
+    if (endControls) endControls.style.display = 'none';
+
+    safeSetText(gameMessage, `${players[currentPlayerIndex]} — press "Reveal Word"`);
+}
+
+function revealWord() {
+    if (currentPlayerIndex < 0 || currentPlayerIndex >= players.length) return;
+    const player = players[currentPlayerIndex];
     if (currentPlayerIndex === imposterIndex) {
-        gameMessage.textContent = `${players[currentPlayerIndex]} is the IMPOSTER! Category: ${currentCategory}`;
+        safeSetText(gameMessage, `${player} — IMPOSTER! Category: ${currentCategory}`);
     } else {
-        gameMessage.textContent = `${players[currentPlayerIndex]}: ${currentWord}`;
+        safeSetText(gameMessage, `${player}: ${currentWord}`);
     }
-    revealBtn.disabled = true;
-    nextPlayerBtn.disabled = false;
-};
+    if (revealBtn) revealBtn.disabled = true;
+    if (nextPlayerBtn) nextPlayerBtn.disabled = false;
+}
 
-nextPlayerBtn.onclick = () => {
-    if (currentPlayerIndex === players.length - 1) {
+function nextPlayer() {
+    currentPlayerIndex++;
+    if (currentPlayerIndex >= players.length) {
+        // all done
         allPlayersSeen = true;
-        gameMessage.textContent = `${players[Math.floor(Math.random() * players.length)]} starts the conversation!`;
-        revealBtn.style.display = 'none';
-        nextPlayerBtn.style.display = 'none';
-        document.getElementById('endControls').style.display = 'flex';
-    } else {
-        currentPlayerIndex++;
-        gameMessage.textContent = `${players[currentPlayerIndex]} press "Reveal Word"`;
-        revealBtn.disabled = false;
-        nextPlayerBtn.disabled = true;
+        const starter = randItem(players);
+        safeSetText(gameMessage, `${starter} starts the conversation!`);
+        if (endControls) endControls.style.display = 'flex';
+        if (revealBtn) revealBtn.style.display = 'none';
+        if (nextPlayerBtn) nextPlayerBtn.style.display = 'none';
+        return;
     }
-};
+    // continue
+    if (revealBtn) { revealBtn.disabled = false; revealBtn.style.display = ''; }
+    if (nextPlayerBtn) { nextPlayerBtn.disabled = true; nextPlayerBtn.style.display = ''; }
+    safeSetText(gameMessage, `${players[currentPlayerIndex]} — press "Reveal Word"`);
+}
 
-showImposterBtn.onclick = () => {
-    gameMessage.textContent = `The IMPOSTER is: ${players[imposterIndex]}`;
-};
+function revealImposter() {
+    if (imposterIndex < 0 || imposterIndex >= players.length) {
+        safeSetText(gameMessage, 'No imposter found.');
+        return;
+    }
+    safeSetText(gameMessage, `The IMPOSTER is: ${players[imposterIndex]}`);
+}
 
-restartBtn.onclick = () => {
-    gameScreen.style.display = 'none';
-    setupScreen.style.display = 'block';
-    gameMessage.textContent = '';
-    revealBtn.style.display = 'inline-block';
-    nextPlayerBtn.style.display = 'inline-block';
-    document.getElementById('endControls').style.display = 'none';
+function newGameKeepPlayers() {
+    // keep players, reset game state and show setup screen
     currentPlayerIndex = 0;
     imposterIndex = -1;
+    currentCategory = '';
+    currentWord = '';
     allPlayersSeen = false;
-};
 
-backMenuBtn.onclick = () => {
-    restartBtn.click();
-};
+    if (gameScreen) gameScreen.style.display = 'none';
+    if (setupScreen) setupScreen.style.display = 'block';
+    if (endControls) endControls.style.display = 'none';
+    if (revealBtn) { revealBtn.style.display = ''; revealBtn.disabled = false; }
+    if (nextPlayerBtn) { nextPlayerBtn.style.display = ''; nextPlayerBtn.disabled = true; }
+    safeSetText(setupMessage, 'Add players and select categories to start');
+    safeSetText(gameMessage, '');
+}
 
-toggleCategoriesBtn.onclick = () => {
-    categoriesContainer.style.display = categoriesContainer.style.display === 'none' ? 'flex' : 'none';
-};
+// toggle categories panel display
+function toggleCategories() {
+    if (!categoriesContainer) return;
+    categoriesContainer.style.display = (categoriesContainer.style.display === 'none') ? 'flex' : 'none';
+}
 
-// Initialize categories
-createCategoryCheckboxes();
+// audit handler (simple: open /audit route or alert)
+function showAudit() {
+    // if running under Flask, open the audit route; otherwise show an alert
+    const url = '/audit';
+    // attempt to open in new tab
+    try {
+        window.open(url, '_blank');
+    } catch (e) {
+        alert('Audit: (unable to open) — check server.');
+    }
+}
+
+// --- Event wiring (safe) ---
+if (addPlayerBtn) addPlayerBtn.addEventListener('click', addPlayer);
+if (playerNameInput) playerNameInput.addEventListener('keydown', e => { if (e.key === 'Enter') addPlayer(); });
+if (startGameBtn) startGameBtn.addEventListener('click', startGame);
+if (revealBtn) revealBtn.addEventListener('click', revealWord);
+if (nextPlayerBtn) nextPlayerBtn.addEventListener('click', nextPlayer);
+if (showImposterBtn) showImposterBtn.addEventListener('click', revealImposter);
+if (restartBtn) restartBtn.addEventListener('click', newGameKeepPlayers);
+if (backMenuBtn) backMenuBtn.addEventListener('click', newGameKeepPlayers);
+if (toggleCategoriesBtn) toggleCategoriesBtn.addEventListener('click', toggleCategories);
+if (auditBtn) auditBtn.addEventListener('click', showAudit);
+
+// initial render
+renderPlayerList();
+renderCategoryCheckboxes();
