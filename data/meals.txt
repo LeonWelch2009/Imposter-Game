@@ -1,0 +1,50 @@
+Spaghetti Bolognese
+Pizza Margherita
+Roast Chicken
+Fish and Chips
+Lasagna
+Hamburger
+Hot Dog
+Tacos
+Burrito
+Sushi
+Ramen
+Pad Thai
+Fried Rice
+Chicken Curry
+Shepherd’s Pie
+Steak and Fries
+Grilled Salmon
+Caesar Salad
+Mac and Cheese
+Omelette
+Pancakes
+Waffles
+Club Sandwich
+Beef Stew
+Chilli Con Carne
+Chicken Tikka Masala
+Butter Chicken
+Peking Duck
+Shakshuka
+Fajitas
+Pho
+Bibimbap
+Gnocchi
+Risotto
+Moussaka
+Kebabs
+Burrata Salad
+Clam Chowder
+Jambalaya
+Paella
+Falafel Wrap
+Souvlaki
+Enchiladas
+Pulled Pork
+Carbonara
+Casserole
+Meatloaf
+Chicken Alfredo
+Tempura
+Ratatouille

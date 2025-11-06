@@ -1,0 +1,50 @@
+Soccer
+Basketball
+Tennis
+Baseball
+Golf
+Swimming
+Running
+Cycling
+Boxing
+Wrestling
+Volleyball
+Cricket
+Rugby
+Hockey
+Badminton
+Table tennis
+Skiing
+Snowboarding
+Skateboarding
+Surfing
+Gymnastics
+Martial arts
+Archery
+Fencing
+Weightlifting
+Diving
+Sailing
+Rowing
+Horse racing
+Car racing
+Motocross
+Climbing
+Yoga
+Dance
+Cheerleading
+Bowling
+Fishing
+Hunting
+Hiking
+Skating
+Curling
+Bobsleigh
+Lacrosse
+Polo
+Squash
+Handball
+Water polo
+Triathlon
+Decathlon
+Pentathlon

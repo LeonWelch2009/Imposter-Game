@@ -1,0 +1,53 @@
+Teacher
+Doctor
+Nurse
+Firefighter
+Police Officer
+Chef
+Waiter
+Builder
+Electrician
+Plumber
+Mechanic
+Engineer
+Architect
+Lawyer
+Judge
+Farmer
+Dentist
+Scientist
+Pilot
+Flight Attendant
+Taxi Driver
+Bus Driver
+Train Conductor
+Actor
+Singer
+Musician
+Artist
+Photographer
+Journalist
+Writer
+Author
+Librarian
+Vet
+Zookeeper
+Hairdresser
+Fashion Designer
+Graphic Designer
+Software Developer
+IT Technician
+Game Developer
+Cashier
+Receptionist
+Manager
+Salesperson
+Bartender
+Cleaner
+Paramedic
+Soldier
+Security Guard
+Politician
+Athlete
+Coach
+

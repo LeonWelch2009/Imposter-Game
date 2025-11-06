@@ -1,0 +1,54 @@
+Supermarket
+Cinema
+Police Station
+Fire Station
+Hospital
+Library
+School
+University
+Playground
+Amusement Park
+Restaurant
+Cafe
+Bakery
+Butcher Shop
+Post Office
+Train Station
+Bus Stop
+Airport
+Shopping Mall
+Clothing Store
+Bookstore
+Pharmacy
+Barber Shop
+Hair Salon
+Gym
+Swimming Pool
+Beach
+Park
+Zoo
+Museum
+Aquarium
+Garage
+Car Wash
+Hotel
+Church
+Mosque
+Temple
+Bank
+Office
+Factory
+Construction Site
+Farm
+Barn
+Garden
+Kitchen
+Living Room
+Bedroom
+Bathroom
+Basement
+Attic
+Garage
+Playroom
+Classroom
+
