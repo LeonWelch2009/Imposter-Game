@@ -1,227 +1,194 @@
-/* ====== GENERAL ====== */
+/* === GENERAL STYLES === */
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #121212;
     color: #e0e0e0;
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
 }
 
 .app {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* ====== HEADER ====== */
-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-header h1 {
-    font-size: 28px;
-    color: #fff;
-}
-
-/* ====== CARD / SCREENS ====== */
-.card {
-    background-color: #1f1f1f;
-    padding: 20px;
+    width: 100%;
+    max-width: 420px;
+    background-color: #1e1e1e;
     border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-    margin-bottom: 20px;
-}
-
-/* Screens */
-.screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* Messages / game card */
-.message,
-#gameCard {
-    background: #2a2a2a;
-    color: #e0e0e0;
-    font-size: 22px;
-    padding: 40px 20px;
-    border-radius: 16px;
-    margin: 20px 0;
+    padding: 24px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     text-align: center;
-    min-height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.3s, background 0.3s;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-    cursor: default;
 }
 
-#gameCard.flipped {
-    background: #007bff;
-    color: #fff;
-    transform: rotateY(180deg);
+h1 {
+    color: #66b3ff;
+    margin-bottom: 12px;
 }
 
-/* ====== INPUTS ====== */
+/* === INPUT === */
 input[type="text"] {
+    width: 100%;
     padding: 10px;
     border-radius: 8px;
-    border: none;
-    width: 100%;
-    margin-bottom: 10px;
-    font-size: 16px;
-    background-color: #2a2a2a;
-    color: #fff;
+    background: #2a2a2a;
+    border: 1px solid #333;
+    color: #f0f0f0;
+    margin: 8px 0;
 }
 
-input[type="text"]::placeholder {
-    color: #aaa;
-}
-
-/* ====== BUTTONS ====== */
-button {
-    border: none;
-    border-radius: 12px;
-    padding: 10px 16px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-}
-
-button:hover {
-    transform: translateY(-2px);
-}
-
-button:active {
-    transform: translateY(0);
-}
-
-/* Primary & Accent Buttons */
-button.primary {
-    background-color: #007bff;
-    color: #fff;
-}
-
-button.primary:hover {
-    background-color: #0056b3;
-}
-
-button.accent {
-    background-color: #28a745;
-    color: #fff;
-}
-
-button.accent:hover {
-    background-color: #1e7e34;
-}
-
-/* Show Categories & Audit */
-button#showCategoriesBtn,
-button#auditBtn {
-    background-color: #6c757d;
-    margin: 5px;
-}
-
-button#showCategoriesBtn:hover,
-button#auditBtn:hover {
-    background-color: #5a6268;
-}
-
-/* ====== BUTTON ROWS ====== */
-.btn-row {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
-
-/* ====== PLAYER LIST ====== */
-#playerList {
+/* === PLAYER LIST === */
+ul#playerList {
     list-style: none;
     padding: 0;
-    margin: 10px 0;
-    width: 100%;
+    margin: 0;
+    max-height: 180px;
+    overflow-y: auto;
 }
 
-#playerList li {
-    background-color: #2a2a2a;
-    padding: 10px 14px;
-    border-radius: 12px;
-    margin-bottom: 8px;
+.player-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    background: #2a2a2a;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 6px;
 }
 
-/* Remove player button */
-button.remove-player {
-    background-color: #dc3545;
-    color: #fff;
-    width: 28px;
-    height: 28px;
+/* === REMOVE PLAYER BUTTON === */
+.remove-player {
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
+    border: none;
+    background: #ff4d4d;
+    color: white;
     font-weight: bold;
-    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.remove-player:hover {
+    background: #ff1a1a;
+    transform: scale(1.1);
+}
+
+/* === CATEGORY CHECKBOXES === */
+.category-checkbox {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 0;
-}
-
-button.remove-player:hover {
-    background-color: #c82333;
-}
-
-/* ====== CATEGORIES ====== */
-#categories {
-    margin: 10px 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-}
-
-.category-checkbox {
-    background-color: #2a2a2a;
-    padding: 6px 10px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    margin-bottom: 6px;
+    cursor: pointer;
     font-size: 14px;
 }
 
-.category-checkbox label {
+.category-checkbox input[type="checkbox"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #555;
+    border-radius: 6px;
+    margin-right: 10px;
+    background: #2a2a2a;
+    position: relative;
+}
+
+.category-checkbox input[type="checkbox"]:checked {
+    background: #007bff;
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
+}
+
+.category-checkbox input[type="checkbox"]:checked::after {
+    content: '✓';
+    color: white;
+    position: absolute;
+    left: 3px;
+    top: -1px;
+    font-size: 14px;
+}
+
+/* === BUTTONS === */
+button {
+    width: 100%;
+    padding: 10px 14px;
+    margin: 6px 0;
+    border-radius: 10px;
+    border: none;
     cursor: pointer;
+    transition: 0.25s;
+}
+
+button.primary {
+    background: #007bff;
+    color: white;
+}
+
+button.primary:hover {
+    background: #339dff;
+}
+
+button.accent {
+    background: #00b36b;
+    color: white;
+}
+
+button.accent:hover {
+    background: #00d47c;
+}
+
+button.secondary {
+    background: #444;
+    color: white;
+}
+
+button.secondary:hover {
+    background: #666;
+}
+
+/* === CARD === */
+.card {
+    background: #1e1e1e;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* === MESSAGES === */
+.message {
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+/* === BUTTON ROWS === */
+.btn-row {
     display: flex;
-    align-items: center;
-    gap: 6px;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* === SCREENS === */
+.screen {
+    display: block;
+}
+
+/* === SCROLLABLE === */
+ul#playerList {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* === INPUT FOCUS === */
+input:focus {
+    outline: none;
+    border-color: #66b3ff;
+}
+
+/* === DARK MODE TEXT === */
+.category-checkbox label,
+.player-item,
+.message {
     color: #e0e0e0;
-}
-
-.category-checkbox input {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-}
-
-/* ====== MEDIA ====== */
-@media (max-width: 500px) {
-    .app {
-        padding: 10px;
-    }
-
-    .message,
-    #gameCard {
-        padding: 30px 15px;
-        font-size: 18px;
-    }
-
-    input[type="text"],
-    button {
-        font-size: 14px;
-    }
 }
