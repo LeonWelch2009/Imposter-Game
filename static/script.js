@@ -20,6 +20,7 @@ const showImposterBtn = document.getElementById("showImposterBtn");
 const restartBtn = document.getElementById("restartBtn");
 const categoriesContainer = document.getElementById("categories");
 const showCategoriesBtn = document.getElementById("showCategoriesBtn");
+const auditBtn = document.getElementById("auditBtn");
 
 // Hide categories by default
 categoriesContainer.style.display = "none";
@@ -36,11 +37,8 @@ fetch("/categories")
 
 // Toggle category list
 showCategoriesBtn.onclick = () => {
-    if (categoriesContainer.style.display === "none") {
-        categoriesContainer.style.display = "block";
-    } else {
-        categoriesContainer.style.display = "none";
-    }
+    categoriesContainer.style.display =
+        categoriesContainer.style.display === "none" ? "block" : "none";
 };
 
 // Add player
@@ -70,18 +68,30 @@ function removePlayer(index) {
     updatePlayerList();
 }
 
-// Render category checkboxes
+// ===== CATEGORY CHECKBOXES =====
 function renderCategoryCheckboxes() {
     categoriesContainer.innerHTML = "";
     Object.keys(categories).forEach(cat => {
+        const checked = localStorage.getItem(`cat_${cat}`) === "true";
         const div = document.createElement("div");
         div.classList.add("category-checkbox");
-        div.innerHTML = `<label><input type="checkbox" value="${cat}" checked> ${cat}</label>`;
+        div.innerHTML = `
+      <label>
+        <input type="checkbox" value="${cat}" ${checked ? "checked" : ""}>
+        ${cat}
+      </label>`;
         categoriesContainer.appendChild(div);
+    });
+
+    // Save state when changed
+    document.querySelectorAll("#categories input[type='checkbox']").forEach(cb => {
+        cb.addEventListener("change", () => {
+            localStorage.setItem(`cat_${cb.value}`, cb.checked);
+        });
     });
 }
 
-// Start game
+// ===== START GAME =====
 startGameBtn.onclick = () => {
     if (players.length < 3) {
         alert("Minimum 3 players required!");
@@ -89,87 +99,109 @@ startGameBtn.onclick = () => {
     }
 
     // Get selected categories
-    availableCategories = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
+    availableCategories = Array.from(
+        document.querySelectorAll("#categories input:checked")
+    ).map(i => i.value);
+
     if (!availableCategories.length) {
         alert("Select at least one category!");
         return;
     }
 
-    // Hide main menu
-    setupScreen.style.display = "none";
+    // Save selected categories to memory
+    availableCategories.forEach(cat => localStorage.setItem(`cat_${cat}`, true));
 
-    // Initialize game state
+    // Hide setup, show game
+    setupScreen.style.display = "none";
+    gameScreen.style.display = "block";
+
+    // Initialize game
     currentPlayerIndex = 0;
     imposterIndex = Math.floor(Math.random() * players.length);
-    currentCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
+    currentCategory =
+        availableCategories[Math.floor(Math.random() * availableCategories.length)];
     const words = categories[currentCategory];
     currentWord = words[Math.floor(Math.random() * words.length)];
-
     allPlayersSeen = false;
 
-    // Show game screen
-    gameScreen.style.display = "block";
+    // Reset controls
     revealBtn.style.display = "inline-block";
     nextPlayerBtn.style.display = "inline-block";
-    showImposterBtn.parentElement.style.display = "none";
+    document.getElementById("endControls").style.display = "none";
 
-    // Show first player
     gameMessage.textContent = `Current Player: ${players[currentPlayerIndex]}`;
 };
 
-// Reveal word
-revealBtn.onclick = () => {
+// ===== REVEAL WORD ON HOLD =====
+function showWord() {
     if (currentPlayerIndex === imposterIndex) {
         gameMessage.textContent = `${players[currentPlayerIndex]} (Imposter) - Category: ${currentCategory}`;
     } else {
         gameMessage.textContent = `${players[currentPlayerIndex]} - Word: ${currentWord}`;
     }
-};
+}
 
-// Next player
+function hideWord() {
+    gameMessage.textContent = `Current Player: ${players[currentPlayerIndex]}`;
+}
+
+revealBtn.addEventListener("mousedown", showWord);
+revealBtn.addEventListener("mouseup", hideWord);
+revealBtn.addEventListener("mouseleave", hideWord);
+revealBtn.addEventListener("touchstart", e => {
+    e.preventDefault();
+    showWord();
+});
+revealBtn.addEventListener("touchend", e => {
+    e.preventDefault();
+    hideWord();
+});
+
+// ===== NEXT PLAYER =====
 nextPlayerBtn.onclick = () => {
     if (currentPlayerIndex === players.length - 1) {
         allPlayersSeen = true;
 
-        // Random player starts conversation
         const randomStarter = players[Math.floor(Math.random() * players.length)];
         gameMessage.textContent = `${randomStarter} starts the conversation!`;
 
         revealBtn.style.display = "none";
         nextPlayerBtn.style.display = "none";
-        showImposterBtn.parentElement.style.display = "flex";
+        document.getElementById("endControls").style.display = "flex";
     } else {
         currentPlayerIndex++;
         gameMessage.textContent = `Current Player: ${players[currentPlayerIndex]}`;
     }
 };
 
-// Reveal imposter
+// ===== REVEAL IMPOSTER =====
 showImposterBtn.onclick = () => {
     gameMessage.textContent = `The IMPOSTER is: ${players[imposterIndex]}`;
 };
 
-// Restart game
+// ===== RESTART =====
 restartBtn.onclick = () => {
     gameScreen.style.display = "none";
     setupScreen.style.display = "block";
+    gameMessage.textContent = "Add players and select categories to start";
 
-    revealBtn.style.display = "inline-block";
-    nextPlayerBtn.style.display = "inline-block";
-    showImposterBtn.parentElement.style.display = "none";
-
-    // Reset game state
     currentPlayerIndex = 0;
     imposterIndex = -1;
     currentCategory = "";
     currentWord = "";
     allPlayersSeen = false;
+};
 
-    // Reset category checkboxes
-    document.querySelectorAll("#categories input").forEach(cb => cb.checked = true);
-
-    gameMessage.textContent = "Add players and select categories to start";
+// ===== AUDIT BUTTON =====
+auditBtn.onclick = () => {
+    if (!currentWord) {
+        alert("No game running yet!");
+    } else {
+        alert(`Category: ${currentCategory}\nWord: ${currentWord}\nImposter: ${players[imposterIndex]}`);
+    }
 };
 
 addPlayerBtn.onclick = addPlayer;
-playerNameInput.addEventListener("keypress", (e) => { if (e.key === "Enter") addPlayer(); });
+playerNameInput.addEventListener("keypress", e => {
+    if (e.key === "Enter") addPlayer();
+});
