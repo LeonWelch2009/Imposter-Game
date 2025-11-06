@@ -159,7 +159,6 @@ button.secondary:hover {
 }
 
 /* === MESSAGES === */
-/* === MESSAGES === */
 .message {
     margin-bottom: 12px;
     font-size: 16px;
@@ -169,6 +168,17 @@ button.secondary:hover {
     box-sizing: border-box;      /* Include padding in width */
 }
 
+/* === INPUT === */
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    background: #2a2a2a;
+    border: 1px solid #333;
+    color: #f0f0f0;
+    margin: 8px 0;
+    box-sizing: border-box; /* <-- ensures input fits inside container */
+}
 
 /* === BUTTON ROWS === */
 .btn-row {
