@@ -149,18 +149,19 @@ nextPlayerBtn.addEventListener("click", () => {
 let isDragging = false;
 let startX = 0;
 
-swipeBtn.addEventListener("touchstart", e => {
+function handleSwipeStart(e) {
     isDragging = true;
-    startX = e.touches[0].clientX;
-});
+    startX = e.type.startsWith("touch") ? e.touches[0].clientX : e.clientX;
+}
 
-swipeBtn.addEventListener("touchmove", e => {
+function handleSwipeMove(e) {
     if (!isDragging) return;
-    const moveX = e.touches[0].clientX - startX;
+    const currentX = e.type.startsWith("touch") ? e.touches[0].clientX : e.clientX;
+    const moveX = currentX - startX;
     if (moveX > 0) swipeBtn.style.left = `${Math.min(moveX, 150)}px`;
-});
+}
 
-swipeBtn.addEventListener("touchend", e => {
+function handleSwipeEnd() {
     if (!isDragging) return;
     isDragging = false;
     if (parseInt(swipeBtn.style.left) > 100) {
@@ -170,7 +171,15 @@ swipeBtn.addEventListener("touchend", e => {
     } else {
         swipeBtn.style.left = "0px";
     }
-});
+}
+
+swipeBtn.addEventListener("mousedown", handleSwipeStart);
+document.addEventListener("mousemove", handleSwipeMove);
+document.addEventListener("mouseup", handleSwipeEnd);
+
+swipeBtn.addEventListener("touchstart", handleSwipeStart);
+swipeBtn.addEventListener("touchmove", handleSwipeMove);
+swipeBtn.addEventListener("touchend", handleSwipeEnd);
 
 // Restart
 restartBtn.addEventListener("click", () => {
