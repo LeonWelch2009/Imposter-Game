@@ -7,12 +7,10 @@ app = Flask(__name__)
 WORDS_FILE = "words.txt"
 AUDIT_FILE = "audit.txt"
 
-# === Load categories with hint detection ===
+# Load categories from words.txt
 def load_categories():
     categories = {}
     current_category = None
-    current_hint = False
-
     if os.path.exists(WORDS_FILE):
         with open(WORDS_FILE, "r", encoding="utf-8") as f:
             for line in f:
@@ -20,16 +18,13 @@ def load_categories():
                 if not line:
                     continue
                 if line.isupper():  # category line
-                    hint = line.endswith("H")
-                    clean_name = line.rstrip("H").strip().capitalize()
-                    categories[clean_name] = {"words": [], "hint": hint}
-                    current_category = clean_name
-                    current_hint = hint
+                    current_category = line.capitalize()
+                    categories[current_category] = []
                 elif current_category:
-                    categories[current_category]["words"].append(line.capitalize())
+                    categories[current_category].append(line.capitalize())
     return categories
 
-# === Audit handling ===
+# Load audit logs
 def load_audit():
     logs = []
     if os.path.exists(AUDIT_FILE):
@@ -37,12 +32,13 @@ def load_audit():
             logs = f.read().splitlines()
     return logs
 
+# Append a new entry to audit
 def append_audit(entry):
     with open(AUDIT_FILE, "a", encoding="utf-8") as f:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         f.write(f"[{timestamp}] {entry}\n")
 
-# === Routes ===
+# Routes
 @app.route("/")
 def index():
     return render_template("index.html")

@@ -1,73 +1,212 @@
+/* === GENERAL STYLES === */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: "Poppins", sans-serif;
     margin: 0;
+    display: flex;
+    justify-content: center;
     padding: 20px;
 }
 
+.app {
+    width: 100%;
+    max-width: 420px;
+    background-color: #1e1e1e;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
 h1 {
-    margin-bottom: 20px;
+    color: #66b3ff;
+    margin-bottom: 12px;
 }
 
-#categories-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 20px;
+/* === INPUT === */
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    background: #2a2a2a;
+    border: 1px solid #333;
+    color: #f0f0f0;
+    margin: 8px 0;
 }
 
-.category-checkbox {
-    margin: 5px 10px;
-}
-
-#player-setup {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-#player-list {
-    list-style-type: none;
+/* === PLAYER LIST === */
+ul#playerList {
+    list-style: none;
     padding: 0;
+    margin: 0;
+    max-height: 180px;
+    overflow-y: auto;
 }
 
-#player-list li {
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 5px 10px;
-    margin: 5px 0;
+.player-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #2a2a2a;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 6px;
 }
 
-button {
-    background-color: #4CAF50;
-    color: white;
+/* === REMOVE PLAYER BUTTON === */
+.remove-player {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
     border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
-    margin: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #45a049;
-}
-
-#game-container {
-    text-align: center;
-    margin-top: 20px;
-}
-
-#game-message {
-    margin: 20px;
-    font-size: 1.2em;
+    background: #ff4d4d;
+    color: white;
     font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s ease;
 }
 
-.hidden {
-    display: none;
+.remove-player:hover {
+    background: #ff1a1a;
+    transform: scale(1.1);
+}
+
+/* === CATEGORY CHECKBOXES === */
+.category-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.category-checkbox input[type="checkbox"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #555;
+    border-radius: 6px;
+    margin-right: 10px;
+    background: #2a2a2a;
+    position: relative;
+    transition: 0.25s ease;
+}
+
+.category-checkbox input[type="checkbox"]:checked {
+    background: #007bff;
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
+}
+
+.category-checkbox input[type="checkbox"]:checked::after {
+    content: '✓';
+    color: white;
+    position: absolute;
+    left: 3px;
+    top: -1px;
+    font-size: 14px;
+}
+
+/* === BUTTONS === */
+button {
+    width: 100%;
+    padding: 10px 14px;
+    margin: 6px 0;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+button.primary {
+    background: #007bff;
+    color: white;
+}
+
+button.primary:hover {
+    background: #339dff;
+}
+
+button.accent {
+    background: #00b36b;
+    color: white;
+}
+
+button.accent:hover {
+    background: #00d47c;
+}
+
+button.secondary {
+    background: #444;
+    color: white;
+}
+
+button.secondary:hover {
+    background: #666;
+}
+
+/* === CARD === */
+.card {
+    background: #1e1e1e;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* === MESSAGES === */
+.message {
+    margin-bottom: 12px;
+    font-size: 16px;
+    word-wrap: break-word;      
+    overflow-wrap: break-word;   
+    max-width: 100%;             
+    box-sizing: border-box;      
+}
+
+/* === INPUT === */
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    background: #2a2a2a;
+    border: 1px solid #333;
+    color: #f0f0f0;
+    margin: 8px 0;
+    box-sizing: border-box; 
+}
+
+/* === BUTTON ROWS === */
+.btn-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* === SCREENS === */
+.screen {
+    display: block;
+}
+
+/* === SCROLLABLE === */
+ul#playerList {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* === INPUT FOCUS === */
+input:focus {
+    outline: none;
+    border-color: #66b3ff;
+}
+
+/* === DARK MODE TEXT === */
+.category-checkbox label,
+.player-item,
+.message {
+    color: #e0e0e0;
 }
