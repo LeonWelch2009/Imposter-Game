@@ -2,61 +2,34 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🕵️ Imposter Word Game</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Imposter Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 
 <body>
-    <div class="app">
+    <div class="container">
+        <h1>Imposter Game</h1>
 
-        <header>
-            <h1>Imposter Word Game</h1>
-        </header>
+        <div class="settings">
+            <label>Number of Players:</label>
+            <input type="number" id="numPlayers" min="3" max="20" value="4">
 
-        <!-- Setup Screen -->
-        <div id="setupScreen" class="card screen active">
-            <div class="message" id="message">Add players and select categories to start</div>
+            <label>Number of Imposters:</label>
+            <input type="number" id="numImposters" min="1" max="5" value="1">
 
-            <input type="text" id="playerName" placeholder="Enter player name">
-            <button class="primary" id="addPlayerBtn">Add Player</button>
-
-            <ul id="playerList"></ul>
-
-            <div id="categories"></div>
-
-            <div class="btn-row">
-                <button class="secondary" id="showCategoriesBtn">Show/Hide Categories</button>
-                <button class="secondary" id="auditBtn">Audit</button>
-            </div>
-
-            <div class="btn-row">
-                <button class="primary" id="startGameBtn">Start Game</button>
-            </div>
+            <button id="loadCategories">Load Categories</button>
         </div>
 
-        <!-- Game Screen -->
-        <div id="gameScreen" class="card screen" style="display:none;">
-            <div class="message" id="gameMessage"></div>
+        <div id="categoryContainer" class="categories"></div>
 
-            <!-- Flip Card -->
-            <div class="flip-card" id="flipCard">
-                <div class="flip-card-inner">
-                    <div class="flip-card-front" id="cardFront">Player</div>
-                    <div class="flip-card-back" id="cardBack">Word</div>
-                </div>
-            </div>
-
-            <div id="gameControls" class="btn-row">
-                <button class="accent" id="nextPlayerBtn" style="display:none;">Next Player</button>
-            </div>
-
-            <div id="endControls" class="btn-row" style="display:none;">
-                <button class="primary" id="showImposterBtn">Reveal Imposter</button>
-                <button class="primary" id="restartBtn">New Game</button>
-            </div>
+        <div class="actions">
+            <button id="startGame">Start Game</button>
+            <button id="nextRound" style="display:none;">Next Round</button>
         </div>
+
+        <div id="cardsContainer" class="cards"></div>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>

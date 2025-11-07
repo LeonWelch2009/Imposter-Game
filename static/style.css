@@ -1,220 +1,121 @@
-/* === GENERAL STYLES === */
 body {
-    background-color: #121212;
-    color: #e0e0e0;
     font-family: "Poppins", sans-serif;
-    margin: 0;
+    background-color: #f8f5ef;
+    color: #2c2c2c;
     display: flex;
     justify-content: center;
-    padding: 20px;
+    padding: 40px;
 }
 
-.app {
+.container {
+    max-width: 800px;
     width: 100%;
-    max-width: 420px;
-    background-color: #1e1e1e;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    text-align: center;
+    background: #fffdf9;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-    color: #66b3ff;
-    margin-bottom: 12px;
+    text-align: center;
+    margin-bottom: 25px;
+    color: #3e3e3e;
 }
 
-/* === INPUT === */
-input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    background: #2a2a2a;
-    border: 1px solid #333;
-    color: #f0f0f0;
-    margin: 8px 0;
-    box-sizing: border-box;
-}
-
-/* === PLAYER LIST === */
-ul#playerList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    max-height: 180px;
-    overflow-y: auto;
-}
-
-.player-item {
+.settings {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
     align-items: center;
-    background: #2a2a2a;
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin-bottom: 6px;
+    justify-content: center;
+    margin-bottom: 20px;
 }
 
-/* === REMOVE PLAYER BUTTON === */
-.remove-player {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: none;
-    background: #ff4d4d;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.category-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.actions {
     display: flex;
     justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 20px;
+    justify-items: center;
+}
+
+.card {
+    width: 140px;
+    height: 200px;
+    perspective: 800px;
+    cursor: pointer;
+}
+
+.card-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+    transition: transform 0.4s;
+    transform-style: preserve-3d;
+    position: relative;
+}
+
+.card-front,
+.card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+    backface-visibility: hidden;
+    display: flex;
     align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1em;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+}
+
+.card-front {
+    background-color: #f0e6d2;
+    color: #4b3a2f;
+}
+
+.card-back {
+    background-color: #d7c49e;
+    color: #fff;
+    transform: rotateY(180deg);
+}
+
+.card.hold .card-inner {
+    transform: rotateY(180deg);
+}
+
+button {
+    background: #4b3a2f;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 1em;
+    cursor: pointer;
     transition: 0.2s ease;
 }
 
-.remove-player:hover {
-    background: #ff1a1a;
-    transform: scale(1.1);
-}
-
-/* === CATEGORY CHECKBOXES === */
-.category-checkbox {
-    display: flex;
-    align-items: center;
-    margin-bottom: 6px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.category-checkbox input[type="checkbox"] {
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 2px solid #555;
-    border-radius: 6px;
-    margin-right: 10px;
-    background: #2a2a2a;
-    position: relative;
-    transition: 0.25s ease;
-}
-
-.category-checkbox input[type="checkbox"]:checked {
-    background: #007bff;
-    border-color: #007bff;
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
-}
-
-.category-checkbox input[type="checkbox"]:checked::after {
-    content: '✓';
-    color: white;
-    position: absolute;
-    left: 3px;
-    top: -1px;
-    font-size: 14px;
-}
-
-/* === BUTTONS === */
-button {
-    width: 100%;
-    padding: 10px 14px;
-    margin: 6px 0;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    transition: 0.25s;
-}
-
-button.primary {
-    background: #007bff;
-    color: white;
-}
-
-button.primary:hover {
-    background: #339dff;
-}
-
-button.accent {
-    background: #00b36b;
-    color: white;
-}
-
-button.accent:hover {
-    background: #00d47c;
-}
-
-button.secondary {
-    background: #444;
-    color: white;
-}
-
-button.secondary:hover {
-    background: #666;
-}
-
-/* === CARD === */
-.card {
-    background: #1e1e1e;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-/* === FLIP CARD === */
-.flip-card {
-    background: transparent;
-    width: 100%;
-    height: 160px;
-    perspective: 1000px;
-    margin-bottom: 20px;
-}
-
-.flip-card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    transition: transform 0.8s;
-    transform-style: preserve-3d;
-}
-
-.flip-card.flipped .flip-card-inner {
-    transform: rotateY(180deg);
-}
-
-.flip-card-front,
-.flip-card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 12px;
-    background: #2a2a2a;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
-}
-
-.flip-card-front {
-    color: #66b3ff;
-}
-
-.flip-card-back {
-    transform: rotateY(180deg);
-    color: #ffffff;
-}
-
-/* === MISC === */
-.message {
-    margin-bottom: 12px;
-    font-size: 16px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-.btn-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
+button:hover {
+    background: #6a4e3b;
 }
