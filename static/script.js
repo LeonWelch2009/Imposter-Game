@@ -21,8 +21,8 @@ const flipper = document.getElementById("flipper");
 const cardFront = document.getElementById("cardFront");
 const cardBack = document.getElementById("cardBack");
 const nextPlayerBtn = document.getElementById("nextPlayerBtn");
+const swipeBtn = document.getElementById("swipeBtn");
 const imposterDisplay = document.getElementById("imposterDisplay");
-const revealImposterBtn = document.getElementById("revealImposterBtn");
 const restartBtn = document.getElementById("restartBtn");
 
 // Load categories
@@ -104,9 +104,8 @@ startGameBtn.addEventListener("click", () => {
     setupScreen.style.display = "none";
     gameScreen.style.display = "block";
     nextPlayerBtn.style.display = "inline-block";
-    revealImposterBtn.style.display = "none"; // hidden until end
+    swipeBtn.style.display = "block";
     imposterDisplay.textContent = "";
-    document.getElementById("endControls").style.display = "none"; // hide end controls
     updateCard();
 });
 
@@ -139,19 +138,38 @@ nextPlayerBtn.addEventListener("click", () => {
         allPlayersSeen = true;
         nextPlayerBtn.style.display = "none";
         flipContainer.style.display = "none";
-        document.getElementById("endControls").style.display = "flex"; // show end controls
-        revealImposterBtn.style.display = "inline-block"; // show button
+        document.getElementById("endControls").style.display = "flex";
     } else {
         currentPlayerIndex++;
         updateCard();
     }
 });
 
-// Reveal Imposter(s) button
-revealImposterBtn.addEventListener("click", () => {
-    const names = imposterIndices.map(i => players[i]).join(", ");
-    imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
-    revealImposterBtn.disabled = true; // prevent multiple clicks
+// Swipe button for imposter reveal
+let isDragging = false;
+let startX = 0;
+
+swipeBtn.addEventListener("touchstart", e => {
+    isDragging = true;
+    startX = e.touches[0].clientX;
+});
+
+swipeBtn.addEventListener("touchmove", e => {
+    if (!isDragging) return;
+    const moveX = e.touches[0].clientX - startX;
+    if (moveX > 0) swipeBtn.style.left = `${Math.min(moveX, 150)}px`;
+});
+
+swipeBtn.addEventListener("touchend", e => {
+    if (!isDragging) return;
+    isDragging = false;
+    if (parseInt(swipeBtn.style.left) > 100) {
+        const names = imposterIndices.map(i => players[i]).join(", ");
+        imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
+        swipeBtn.style.display = "none";
+    } else {
+        swipeBtn.style.left = "0px";
+    }
 });
 
 // Restart
@@ -159,12 +177,9 @@ restartBtn.addEventListener("click", () => {
     gameScreen.style.display = "none";
     setupScreen.style.display = "block";
     flipContainer.style.display = "block";
+    document.getElementById("endControls").style.display = "none";
     nextPlayerBtn.style.display = "inline-block";
-    revealImposterBtn.disabled = false;
-    revealImposterBtn.style.display = "none"; // hide button again
-    document.getElementById("endControls").style.display = "none"; // hide container
     currentPlayerIndex = 0;
     updatePlayerList();
     renderCategoryCheckboxes();
-    imposterDisplay.textContent = "";
 });
