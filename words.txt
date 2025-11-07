@@ -1,36 +1,36 @@
 FRIENDS
-leo morgan
-ed turner
-tristan caiger
-ethan smith
-maani saahand
-brandon fage
-ollie chalmer-smith
-bobby harrington
-kian jalil
-milo ford
-sonny goodvin
-james lotens
-toby kad
-jacob turvey
-ewan williams
+Leo Morgan
+Ed Turner
+Tristan Caiger
+Ethan Smith
+Maani Saahand
+Brandon Fage
+Ollie Chalmer-Smith
+Bobby Harrington
+Kian Jalil
+Milo Ford
+Sonny Goodvin
+James Lotens
+Toby Kad
+Jacob Turvey
+Ewan Williams
 
 THORLEY MANOR
-connor neo
-henry jaques
-james rose
-ethan smith
-riley wiggs
-zack fairclough
-noah beaufond
-dan goodeve
-jacob sear
-ed turner
-jacob turvey
-harry ashford
-mateus
-alfie hanks
-aiden yeoman
+Connor Neo
+Henry Jaques
+James Rose
+Ethan Smith
+Riley Wiggs
+Zack Fairclough
+Noah Beaufond
+Dan Goodeve
+Jacob Sear
+Ed Turner
+Jacob Turvey
+Harry Ashford
+Mateus
+Alfie Hanks
+Aiden Yeoman
 
 CLASH ROYALE
 Knight
@@ -651,3 +651,19 @@ Bottle
 Ball
 Toy
 Candle
+
+STORTFORD SPORTS
+Waitrose Car Park
+Cinema
+Rivermill
+Jackson Square
+College Fields
+Big Tescos
+Trinity Park
+Ollie's House
+Cricketfields
+Turve's House
+Leon's House
+Kian's House
+James' House
+Southern Country Park
