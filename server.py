@@ -1,6 +1,5 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, jsonify, request
 import os
-import random
 from datetime import datetime
 
 app = Flask(__name__)
@@ -8,67 +7,60 @@ app = Flask(__name__)
 WORDS_FILE = "words.txt"
 AUDIT_FILE = "audit.txt"
 
-
-# -------------------------------
 # Load categories from words.txt
-# -------------------------------
-def load_words():
+def load_categories():
     categories = {}
-    if not os.path.exists(WORDS_FILE):
-        return categories
-
     current_category = None
-    with open(WORDS_FILE, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue  # skip blank lines
-
-            # If line is all uppercase letters, treat as a category
-            if line.isupper():
-                current_category = line
-                categories[current_category] = []
-            elif current_category:
-                categories[current_category].append(line)
+    if os.path.exists(WORDS_FILE):
+        with open(WORDS_FILE, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                if line.isupper():  # category line
+                    current_category = line.capitalize()
+                    categories[current_category] = []
+                elif current_category:
+                    categories[current_category].append(line.capitalize())
     return categories
 
+# Load audit logs
+def load_audit():
+    logs = []
+    if os.path.exists(AUDIT_FILE):
+        with open(AUDIT_FILE, "r", encoding="utf-8") as f:
+            logs = f.read().splitlines()
+    return logs
 
-# -------------------------------
-# Log completed games to audit.txt
-# -------------------------------
-def log_audit(players, imposters, category, word):
+# Append a new entry to audit
+def append_audit(entry):
     with open(AUDIT_FILE, "a", encoding="utf-8") as f:
-        f.write(
-            f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] "
-            f"Players: {', '.join(players)} | Imposters: {', '.join(imposters)} | "
-            f"Category: {category} | Word: {word}\n"
-        )
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        f.write(f"[{timestamp}] {entry}\n")
 
-
-# -------------------------------
 # Routes
-# -------------------------------
 @app.route("/")
 def index():
     return render_template("index.html")
 
+@app.route("/categories")
+def get_categories():
+    return jsonify(load_categories())
 
-@app.route("/get_words")
-def get_words():
-    categories = load_words()
-    return jsonify(categories)
+@app.route("/audit")
+def get_audit():
+    return jsonify(load_audit())
 
-
-@app.route("/audit", methods=["POST"])
-def audit():
-    data = request.get_json()
+@app.route("/log_game", methods=["POST"])
+def log_game():
+    data = request.json
     players = data.get("players", [])
     imposters = data.get("imposters", [])
     category = data.get("category", "")
     word = data.get("word", "")
-    log_audit(players, imposters, category, word)
-    return jsonify({"status": "ok"})
-
+    entry = f"Players: {players}, Imposters: {imposters}, Category: {category}, Word: {word}"
+    append_audit(entry)
+    return jsonify({"status": "success"})
 
 if __name__ == "__main__":
     app.run(debug=True)
