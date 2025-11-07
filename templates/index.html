@@ -45,15 +45,16 @@
                 <button class="accent" id="nextPlayerBtn" style="display:none;">Next Player</button>
             </div>
 
-            <div id="endControls" class="btn-row" style="display:none; flex-direction: column; align-items: center;">
-                <div id="swipeBtnContainer">
-                    <div id="swipeBtn">Swipe to Reveal Imposter →</div>
-                </div>
-                <div id="imposterDisplay" style="margin-top: 20px; font-weight: bold; color: #ff4d4d;"></div>
+            <!-- End Controls -->
+            <div id="endControls" class="btn-row"
+                style="display:none; flex-direction: column; align-items: center; gap: 12px;">
+                <button class="accent" id="revealImposterBtn" style="display:none;">Reveal Imposter(s)</button>
+                <div id="imposterDisplay" style="font-weight: bold; color: #ff4d4d;"></div>
                 <button class="primary" id="restartBtn">New Game</button>
             </div>
         </div>
     </div>
+
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 
