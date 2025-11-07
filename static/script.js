@@ -134,7 +134,7 @@ if (startGameBtn) {
 function revealNow() {
     if (!gameMessage) return;
     if (imposterIndices.includes(currentPlayerIndex)) {
-        gameMessage.textContent = `${players[currentPlayerIndex]} — IMPOSTER! Category: ${currentCategory}`;
+        gameMessage.textContent = `${players[currentPlayerIndex]} — IMPOSTER → Hint: ${currentCategory}`;
     } else {
         gameMessage.textContent = `${players[currentPlayerIndex]} — ${currentWord}`;
     }
