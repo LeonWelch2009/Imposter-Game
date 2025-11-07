@@ -18,11 +18,14 @@ def load_categories():
                 if not line:
                     continue
                 if line.isupper():  # category line
-                    current_category = line.capitalize()
-                    categories[current_category] = []
+                    hint = line.endswith("H")
+                    clean_name = line.rstrip("H").strip().capitalize()
+                    categories[clean_name] = {"words": [], "hint": hint}
                 elif current_category:
-                    categories[current_category].append(line.capitalize())
+                    categories[current_category]["words"].append(line.capitalize())
+                current_category = clean_name if line.isupper() else current_category
     return categories
+
 
 # Load audit logs
 def load_audit():

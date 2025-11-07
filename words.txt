@@ -32,7 +32,7 @@ Mateus
 Alfie Hanks
 Aiden Yeoman
 
-CLASH ROYALE
+CLASH ROYALE H
 Knight
 Archers
 Goblins
@@ -71,7 +71,7 @@ Chest
 Clan
 Deck
 
-SPORTS
+SPORTS H
 Soccer
 Basketball
 Tennis
@@ -123,7 +123,7 @@ Triathlon
 Decathlon
 Pentathlon
 
-FRUITS
+FRUITS H
 Apple
 Banana
 Orange
@@ -175,7 +175,7 @@ Sapodilla
 Durian
 Breadfruit
 
-MEALS
+MEALS H
 Spaghetti Bolognese
 Pizza Margherita
 Roast Chicken
@@ -227,7 +227,7 @@ Chicken Alfredo
 Tempura
 Ratatouille
 
-CITIES
+CITIES H
 Paris
 London
 New York
@@ -279,7 +279,7 @@ Kyoto
 Jakarta
 Nairobi
 
-SINGERS
+SINGERS H
 Taylor Swift
 Ed Sheeran
 Adele
@@ -328,10 +328,9 @@ Camila Cabello
 Jason Derulo
 Ellie Goulding
 Meghan Trainor
-Halsey
 Alicia Keys
 
-CHARACTERS
+CHARACTERS H
 Harry Potter
 Hermione Granger
 Ron Weasley
@@ -385,7 +384,7 @@ Black Panther
 Deadpool
 Wolverine
 
-ACTOR
+ACTOR H
 Leonardo DiCaprio
 Brad Pitt
 Johnny Depp
@@ -437,7 +436,7 @@ Mark Ruffalo
 Chris Pratt
 Jason Momoa
 
-HISTORICAL FIGURE
+HISTORICAL FIGURE H
 Albert Einstein
 Isaac Newton
 Nikola Tesla
@@ -490,7 +489,7 @@ Sun Tzu
 Confucius
 Queen Victoria
 
-PLACES
+PLACES H
 Supermarket
 Cinema
 Police Station
@@ -545,7 +544,7 @@ Garage
 Playroom
 Classroom
 
-JOBS
+JOBS H
 Teacher
 Doctor
 Nurse
@@ -599,7 +598,7 @@ Politician
 Athlete
 Coach
 
-HOUSEHOLD OBJECTS
+HOUSEHOLD OBJECTS H
 Table
 Chair
 Desk
@@ -667,3 +666,5 @@ Leon's House
 Kian's House
 James' House
 Southern Country Park
+Grange Paddocks
+Thorley Sainsburys
