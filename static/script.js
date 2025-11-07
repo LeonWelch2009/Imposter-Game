@@ -22,10 +22,9 @@ const categoriesContainer = document.getElementById("categories");
 const showCategoriesBtn = document.getElementById("showCategoriesBtn");
 const auditBtn = document.getElementById("auditBtn");
 
-// Hide categories by default
 if (categoriesContainer) categoriesContainer.style.display = "none";
 
-// Fetch categories from Flask
+// Fetch categories
 fetch("/categories")
     .then(res => res.json())
     .then(data => {
@@ -35,7 +34,6 @@ fetch("/categories")
     })
     .catch(err => console.error("Failed to load categories:", err));
 
-// Toggle categories list
 if (showCategoriesBtn) {
     showCategoriesBtn.addEventListener("click", () => {
         if (!categoriesContainer) return;
@@ -46,7 +44,6 @@ if (showCategoriesBtn) {
 
 // Add player
 function addPlayer() {
-    if (!playerNameInput) return;
     let name = playerNameInput.value.trim();
     if (!name) return;
     name = name.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
@@ -58,7 +55,6 @@ function addPlayer() {
 }
 
 function updatePlayerList() {
-    if (!playerList) return;
     playerList.innerHTML = "";
     players.forEach((p, idx) => {
         const li = document.createElement("li");
@@ -73,16 +69,16 @@ function updatePlayerList() {
 }
 
 function removePlayer(index) {
-    if (index < 0 || index >= players.length) return;
     players.splice(index, 1);
     updatePlayerList();
 }
 
-// Render category checkboxes and restore saved state
+// Render categories (ignore hint flag visually)
 function renderCategoryCheckboxes() {
     if (!categoriesContainer) return;
     categoriesContainer.innerHTML = "";
-    Object.keys(categories).forEach(cat => {
+
+    Object.entries(categories).forEach(([cat, data]) => {
         const saved = localStorage.getItem(`cat_${cat}`);
         const checkedAttr = saved === null ? "checked" : (saved === "true" ? "checked" : "");
         const div = document.createElement("div");
@@ -90,6 +86,7 @@ function renderCategoryCheckboxes() {
         div.innerHTML = `<label><input type="checkbox" value="${cat}" ${checkedAttr}> ${cat}</label>`;
         categoriesContainer.appendChild(div);
     });
+
     categoriesContainer.querySelectorAll("input[type='checkbox']").forEach(inp => {
         inp.addEventListener("change", () => {
             localStorage.setItem(`cat_${inp.value}`, inp.checked ? "true" : "false");
@@ -98,62 +95,63 @@ function renderCategoryCheckboxes() {
 }
 
 // Start game
-if (startGameBtn) {
-    startGameBtn.addEventListener("click", () => {
-        if (players.length < 3) { alert("Minimum 3 players required!"); return; }
+startGameBtn.addEventListener("click", () => {
+    if (players.length < 3) { alert("Minimum 3 players required!"); return; }
 
-        const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
-        if (!checked.length) { alert("Select at least one category!"); return; }
-        availableCategories = checked.slice();
+    const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
+    if (!checked.length) { alert("Select at least one category!"); return; }
+    availableCategories = checked.slice();
 
-        // Determine imposters
-        imposterIndices = [];
-        const imposterCount = players.length >= 6 ? 2 : 1;
-        while (imposterIndices.length < imposterCount) {
-            const idx = Math.floor(Math.random() * players.length);
-            if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
-        }
+    imposterIndices = [];
+    const imposterCount = players.length >= 6 ? 2 : 1;
+    while (imposterIndices.length < imposterCount) {
+        const idx = Math.floor(Math.random() * players.length);
+        if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
+    }
 
-        currentPlayerIndex = 0;
-        currentCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
-        const words = categories[currentCategory] || [];
-        currentWord = words.length ? words[Math.floor(Math.random() * words.length)] : "";
+    currentPlayerIndex = 0;
+    currentCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
+    const catData = categories[currentCategory] || { words: [], hint: false };
+    const words = catData.words || [];
+    currentWord = words.length ? words[Math.floor(Math.random() * words.length)] : "";
 
-        setupScreen.style.display = "none";
-        gameScreen.style.display = "block";
+    setupScreen.style.display = "none";
+    gameScreen.style.display = "block";
 
-        document.getElementById("endControls").style.display = "none";
-        revealBtn.style.display = "inline-block";
-        nextPlayerBtn.style.display = "inline-block";
+    document.getElementById("endControls").style.display = "none";
+    revealBtn.style.display = "inline-block";
+    nextPlayerBtn.style.display = "inline-block";
 
-        gameMessage.textContent = players[currentPlayerIndex];
-    });
-}
+    gameMessage.textContent = players[currentPlayerIndex];
+});
 
-// Reveal word while holding
+// Reveal word logic with hint feature
 function revealNow() {
-    if (!gameMessage) return;
+    const catData = categories[currentCategory] || { hint: false };
+    const isHinted = catData.hint === true;
+
     if (imposterIndices.includes(currentPlayerIndex)) {
-        gameMessage.textContent = `${players[currentPlayerIndex]} — IMPOSTER! Category: ${currentCategory}`;
+        if (isHinted && currentWord) {
+            const firstLetter = currentWord.charAt(0).toUpperCase();
+            gameMessage.textContent = `${players[currentPlayerIndex]} — IMPOSTER! Hint: ${firstLetter}... (${currentCategory})`;
+        } else {
+            gameMessage.textContent = `${players[currentPlayerIndex]} — IMPOSTER! Category: ${currentCategory}`;
+        }
     } else {
         gameMessage.textContent = `${players[currentPlayerIndex]} — ${currentWord}`;
     }
 }
+
 function hideNow() {
-    if (!gameMessage) return;
     if (!allPlayersSeen) gameMessage.textContent = players[currentPlayerIndex];
 }
 
-// Wire hold behavior
-if (revealBtn) {
-    revealBtn.addEventListener("mousedown", (e) => { e.preventDefault(); revealNow(); });
-    revealBtn.addEventListener("mouseup", (e) => { e.preventDefault(); hideNow(); });
-    revealBtn.addEventListener("mouseleave", (e) => { e.preventDefault(); hideNow(); });
-    revealBtn.addEventListener("touchstart", (e) => { e.preventDefault(); revealNow(); }, { passive: false });
-    revealBtn.addEventListener("touchend", (e) => { e.preventDefault(); hideNow(); }, { passive: false });
-}
+revealBtn.addEventListener("mousedown", e => { e.preventDefault(); revealNow(); });
+revealBtn.addEventListener("mouseup", e => { e.preventDefault(); hideNow(); });
+revealBtn.addEventListener("mouseleave", e => { e.preventDefault(); hideNow(); });
+revealBtn.addEventListener("touchstart", e => { e.preventDefault(); revealNow(); }, { passive: false });
+revealBtn.addEventListener("touchend", e => { e.preventDefault(); hideNow(); }, { passive: false });
 
-// Log game to server
 function logGame() {
     const payload = {
         players: players,
@@ -169,23 +167,24 @@ function logGame() {
 }
 
 // Next player
-if (nextPlayerBtn) {
-    nextPlayerBtn.addEventListener("click", () => {
-        if (currentPlayerIndex >= players.length - 1) {
-            allPlayersSeen = true;
-            const starter = players[Math.floor(Math.random() * players.length)];
-            gameMessage.textContent = `${starter} starts the conversation!`;
-            revealBtn.style.display = "none";
-            nextPlayerBtn.style.display = "none";
-            document.getElementById("endControls").style.display = "flex";
+nextPlayerBtn.addEventListener("click", () => {
+    if (currentPlayerIndex >= players.length - 1) {
+        allPlayersSeen = true;
 
-            logGame(); // Log game when all players have seen the words
-        } else {
-            currentPlayerIndex++;
-            gameMessage.textContent = players[currentPlayerIndex];
-        }
-    });
-}
+        // Pick a random non-imposter starter
+        const nonImposters = players.filter((_, idx) => !imposterIndices.includes(idx));
+        const starter = nonImposters[Math.floor(Math.random() * nonImposters.length)];
+
+        gameMessage.textContent = `${starter} starts the conversation!`;
+        revealBtn.style.display = "none";
+        nextPlayerBtn.style.display = "none";
+        document.getElementById("endControls").style.display = "flex";
+        logGame();
+    } else {
+        currentPlayerIndex++;
+        gameMessage.textContent = players[currentPlayerIndex];
+    }
+});
 
 // Reveal imposters
 showImposterBtn.addEventListener("click", () => {
@@ -197,18 +196,16 @@ showImposterBtn.addEventListener("click", () => {
 restartBtn.addEventListener("click", () => {
     gameScreen.style.display = "none";
     setupScreen.style.display = "block";
-
     currentPlayerIndex = 0;
     imposterIndices = [];
     currentCategory = "";
     currentWord = "";
     allPlayersSeen = false;
-
     renderCategoryCheckboxes();
     gameMessage.textContent = "Add players and select categories to start";
 });
 
-// Audit — fetch audit.txt logs
+// Audit logs
 auditBtn.addEventListener("click", () => {
     fetch("/audit")
         .then(res => res.json())
@@ -219,9 +216,7 @@ auditBtn.addEventListener("click", () => {
         .catch(err => alert("Failed to fetch audit logs."));
 });
 
-// Add player & Enter key
 addPlayerBtn.addEventListener("click", addPlayer);
 playerNameInput.addEventListener("keypress", e => { if (e.key === "Enter") addPlayer(); });
 
-// Initial render
 window.addEventListener("load", () => { renderCategoryCheckboxes(); updatePlayerList(); });
