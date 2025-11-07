@@ -14,7 +14,6 @@ const startGameBtn = document.getElementById("startGameBtn");
 const setupScreen = document.getElementById("setupScreen");
 const gameScreen = document.getElementById("gameScreen");
 const gameMessage = document.getElementById("gameMessage");
-const revealBtn = document.getElementById("revealBtn");
 const nextPlayerBtn = document.getElementById("nextPlayerBtn");
 const showImposterBtn = document.getElementById("showImposterBtn");
 const restartBtn = document.getElementById("restartBtn");
@@ -22,7 +21,11 @@ const categoriesContainer = document.getElementById("categories");
 const showCategoriesBtn = document.getElementById("showCategoriesBtn");
 const auditBtn = document.getElementById("auditBtn");
 
-// Hide categories by default
+const flipCard = document.getElementById("flipCard");
+const cardFront = document.getElementById("cardFront");
+const cardBack = document.getElementById("cardBack");
+
+// Hide categories initially
 if (categoriesContainer) categoriesContainer.style.display = "none";
 
 // Fetch categories from Flask
@@ -35,30 +38,28 @@ fetch("/categories")
     })
     .catch(err => console.error("Failed to load categories:", err));
 
-// Toggle categories list
-if (showCategoriesBtn) {
-    showCategoriesBtn.addEventListener("click", () => {
-        if (!categoriesContainer) return;
-        categoriesContainer.style.display =
-            categoriesContainer.style.display === "none" ? "block" : "none";
-    });
-}
+// Toggle category visibility
+showCategoriesBtn?.addEventListener("click", () => {
+    categoriesContainer.style.display =
+        categoriesContainer.style.display === "none" ? "block" : "none";
+});
 
 // Add player
 function addPlayer() {
-    if (!playerNameInput) return;
-    let name = playerNameInput.value.trim();
+    const name = playerNameInput.value.trim();
     if (!name) return;
-    name = name.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(" ");
-    if (!players.includes(name)) {
-        players.push(name);
+    const formatted = name
+        .split(/\s+/)
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(" ");
+    if (!players.includes(formatted)) {
+        players.push(formatted);
         updatePlayerList();
         playerNameInput.value = "";
     }
 }
 
 function updatePlayerList() {
-    if (!playerList) return;
     playerList.innerHTML = "";
     players.forEach((p, idx) => {
         const li = document.createElement("li");
@@ -73,14 +74,11 @@ function updatePlayerList() {
 }
 
 function removePlayer(index) {
-    if (index < 0 || index >= players.length) return;
     players.splice(index, 1);
     updatePlayerList();
 }
 
-// Render category checkboxes and restore saved state
 function renderCategoryCheckboxes() {
-    if (!categoriesContainer) return;
     categoriesContainer.innerHTML = "";
     Object.keys(categories).forEach(cat => {
         const saved = localStorage.getItem(`cat_${cat}`);
@@ -98,60 +96,106 @@ function renderCategoryCheckboxes() {
 }
 
 // Start game
-if (startGameBtn) {
-    startGameBtn.addEventListener("click", () => {
-        if (players.length < 3) { alert("Minimum 3 players required!"); return; }
-
-        const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
-        if (!checked.length) { alert("Select at least one category!"); return; }
-        availableCategories = checked.slice();
-
-        // Determine imposters
-        imposterIndices = [];
-        const imposterCount = players.length >= 6 ? 2 : 1;
-        while (imposterIndices.length < imposterCount) {
-            const idx = Math.floor(Math.random() * players.length);
-            if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
-        }
-
-        currentPlayerIndex = 0;
-        currentCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
-        const words = categories[currentCategory] || [];
-        currentWord = words.length ? words[Math.floor(Math.random() * words.length)] : "";
-
-        setupScreen.style.display = "none";
-        gameScreen.style.display = "block";
-
-        document.getElementById("endControls").style.display = "none";
-        revealBtn.style.display = "inline-block";
-        nextPlayerBtn.style.display = "inline-block";
-
-        gameMessage.textContent = players[currentPlayerIndex];
-    });
-}
-
-// Reveal word while holding
-function revealNow() {
-    if (!gameMessage) return;
-    if (imposterIndices.includes(currentPlayerIndex)) {
-        gameMessage.textContent = `${players[currentPlayerIndex]} — IMPOSTER → Hint: ${currentCategory}`;
-    } else {
-        gameMessage.textContent = `${players[currentPlayerIndex]} — ${currentWord}`;
+startGameBtn.addEventListener("click", () => {
+    if (players.length < 3) {
+        alert("Minimum 3 players required!");
+        return;
     }
-}
-function hideNow() {
-    if (!gameMessage) return;
-    if (!allPlayersSeen) gameMessage.textContent = players[currentPlayerIndex];
+
+    const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
+    if (!checked.length) {
+        alert("Select at least one category!");
+        return;
+    }
+    availableCategories = checked.slice();
+
+    // Determine imposters
+    imposterIndices = [];
+    const imposterCount = players.length >= 6 ? 2 : 1;
+    while (imposterIndices.length < imposterCount) {
+        const idx = Math.floor(Math.random() * players.length);
+        if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
+    }
+
+    currentPlayerIndex = 0;
+    currentCategory = availableCategories[Math.floor(Math.random() * availableCategories.length)];
+    const words = categories[currentCategory] || [];
+    currentWord = words.length ? words[Math.floor(Math.random() * words.length)] : "";
+
+    setupScreen.style.display = "none";
+    gameScreen.style.display = "block";
+    flipCard.style.display = "block";
+    nextPlayerBtn.style.display = "block";
+    document.getElementById("endControls").style.display = "none";
+
+    showCardForCurrentPlayer();
+});
+
+// Flip card behavior
+function showCardForCurrentPlayer() {
+    flipCard.classList.remove("flipped");
+    const playerName = players[currentPlayerIndex];
+    cardFront.textContent = playerName;
+    if (imposterIndices.includes(currentPlayerIndex)) {
+        cardBack.textContent = `IMPOSTER\n(Hint: ${currentCategory})`;
+    } else {
+        cardBack.textContent = currentWord;
+    }
+    gameMessage.textContent = `${playerName}, tap your card to reveal.`;
 }
 
-// Wire hold behavior
-if (revealBtn) {
-    revealBtn.addEventListener("mousedown", (e) => { e.preventDefault(); revealNow(); });
-    revealBtn.addEventListener("mouseup", (e) => { e.preventDefault(); hideNow(); });
-    revealBtn.addEventListener("mouseleave", (e) => { e.preventDefault(); hideNow(); });
-    revealBtn.addEventListener("touchstart", (e) => { e.preventDefault(); revealNow(); }, { passive: false });
-    revealBtn.addEventListener("touchend", (e) => { e.preventDefault(); hideNow(); }, { passive: false });
-}
+flipCard.addEventListener("click", () => {
+    flipCard.classList.toggle("flipped");
+});
+
+// Next player
+nextPlayerBtn.addEventListener("click", () => {
+    if (currentPlayerIndex >= players.length - 1) {
+        allPlayersSeen = true;
+        flipCard.style.display = "none";
+        nextPlayerBtn.style.display = "none";
+        const starter = players[Math.floor(Math.random() * players.length)];
+        gameMessage.textContent = `${starter} starts the conversation!`;
+        document.getElementById("endControls").style.display = "flex";
+        logGame();
+    } else {
+        currentPlayerIndex++;
+        showCardForCurrentPlayer();
+    }
+});
+
+// Reveal imposters
+showImposterBtn.addEventListener("click", () => {
+    const names = imposterIndices.map(i => players[i]).join(", ");
+    gameMessage.textContent = `IMPOSTER(s): ${names}`;
+});
+
+// Restart game
+restartBtn.addEventListener("click", () => {
+    gameScreen.style.display = "none";
+    setupScreen.style.display = "block";
+    currentPlayerIndex = 0;
+    imposterIndices = [];
+    currentCategory = "";
+    currentWord = "";
+    allPlayersSeen = false;
+    renderCategoryCheckboxes();
+    gameMessage.textContent = "Add players and select categories to start";
+});
+
+// Audit logs
+auditBtn.addEventListener("click", () => {
+    fetch("/audit")
+        .then(res => res.json())
+        .then(logs => {
+            if (!logs.length) {
+                alert("No previous game logs.");
+                return;
+            }
+            alert("Previous Game Logs:\n" + logs.join("\n"));
+        })
+        .catch(() => alert("Failed to fetch audit logs."));
+});
 
 // Log game to server
 function logGame() {
@@ -168,60 +212,11 @@ function logGame() {
     }).catch(err => console.error("Failed to log game:", err));
 }
 
-// Next player
-if (nextPlayerBtn) {
-    nextPlayerBtn.addEventListener("click", () => {
-        if (currentPlayerIndex >= players.length - 1) {
-            allPlayersSeen = true;
-            const starter = players[Math.floor(Math.random() * players.length)];
-            gameMessage.textContent = `${starter} starts the conversation!`;
-            revealBtn.style.display = "none";
-            nextPlayerBtn.style.display = "none";
-            document.getElementById("endControls").style.display = "flex";
-
-            logGame(); // Log game when all players have seen the words
-        } else {
-            currentPlayerIndex++;
-            gameMessage.textContent = players[currentPlayerIndex];
-        }
-    });
-}
-
-// Reveal imposters
-showImposterBtn.addEventListener("click", () => {
-    const names = imposterIndices.map(i => players[i]).join(", ");
-    gameMessage.textContent = `IMPOSTER(s): ${names}`;
-});
-
-// Restart game
-restartBtn.addEventListener("click", () => {
-    gameScreen.style.display = "none";
-    setupScreen.style.display = "block";
-
-    currentPlayerIndex = 0;
-    imposterIndices = [];
-    currentCategory = "";
-    currentWord = "";
-    allPlayersSeen = false;
-
-    renderCategoryCheckboxes();
-    gameMessage.textContent = "Add players and select categories to start";
-});
-
-// Audit — fetch audit.txt logs
-auditBtn.addEventListener("click", () => {
-    fetch("/audit")
-        .then(res => res.json())
-        .then(logs => {
-            if (!logs.length) { alert("No previous game logs."); return; }
-            alert("Previous Game Logs:\n" + logs.join("\n"));
-        })
-        .catch(err => alert("Failed to fetch audit logs."));
-});
-
-// Add player & Enter key
+// Add player events
 addPlayerBtn.addEventListener("click", addPlayer);
 playerNameInput.addEventListener("keypress", e => { if (e.key === "Enter") addPlayer(); });
 
-// Initial render
-window.addEventListener("load", () => { renderCategoryCheckboxes(); updatePlayerList(); });
+window.addEventListener("load", () => {
+    renderCategoryCheckboxes();
+    updatePlayerList();
+});
