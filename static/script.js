@@ -104,8 +104,9 @@ startGameBtn.addEventListener("click", () => {
     setupScreen.style.display = "none";
     gameScreen.style.display = "block";
     nextPlayerBtn.style.display = "inline-block";
-    revealImposterBtn.style.display = "inline-block";
+    revealImposterBtn.style.display = "none"; // hidden until end
     imposterDisplay.textContent = "";
+    document.getElementById("endControls").style.display = "none"; // hide end controls
     updateCard();
 });
 
@@ -138,7 +139,8 @@ nextPlayerBtn.addEventListener("click", () => {
         allPlayersSeen = true;
         nextPlayerBtn.style.display = "none";
         flipContainer.style.display = "none";
-        revealImposterBtn.style.display = "inline-block";
+        document.getElementById("endControls").style.display = "flex"; // show end controls
+        revealImposterBtn.style.display = "inline-block"; // show button
     } else {
         currentPlayerIndex++;
         updateCard();
@@ -159,7 +161,8 @@ restartBtn.addEventListener("click", () => {
     flipContainer.style.display = "block";
     nextPlayerBtn.style.display = "inline-block";
     revealImposterBtn.disabled = false;
-    revealImposterBtn.style.display = "none";
+    revealImposterBtn.style.display = "none"; // hide button again
+    document.getElementById("endControls").style.display = "none"; // hide container
     currentPlayerIndex = 0;
     updatePlayerList();
     renderCategoryCheckboxes();
