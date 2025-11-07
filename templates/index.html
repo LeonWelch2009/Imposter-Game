@@ -45,8 +45,11 @@
                 <button class="accent" id="nextPlayerBtn" style="display:none;">Next Player</button>
             </div>
 
-            <div id="endControls" class="btn-row" style="display:none;">
-                <button class="primary" id="showImposterBtn">Reveal Imposter</button>
+            <div id="endControls" class="btn-row" style="display:none; flex-direction: column; align-items: center;">
+                <div id="swipeBtnContainer">
+                    <div id="swipeBtn">Swipe to Reveal Imposter →</div>
+                </div>
+                <div id="imposterDisplay" style="margin-top: 20px; font-weight: bold; color: #ff4d4d;"></div>
                 <button class="primary" id="restartBtn">New Game</button>
             </div>
         </div>

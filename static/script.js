@@ -21,7 +21,8 @@ const flipper = document.getElementById("flipper");
 const cardFront = document.getElementById("cardFront");
 const cardBack = document.getElementById("cardBack");
 const nextPlayerBtn = document.getElementById("nextPlayerBtn");
-const showImposterBtn = document.getElementById("showImposterBtn");
+const swipeBtn = document.getElementById("swipeBtn");
+const imposterDisplay = document.getElementById("imposterDisplay");
 const restartBtn = document.getElementById("restartBtn");
 
 // Load categories
@@ -74,10 +75,7 @@ function updatePlayerList() {
     players.forEach((p, idx) => {
         const li = document.createElement("li");
         li.className = "player-item";
-        li.innerHTML = `
-            <span>${p}</span>
-            <button class="remove-player">×</button>
-        `;
+        li.innerHTML = `<span>${p}</span><button class="remove-player">×</button>`;
         li.querySelector("button").addEventListener("click", () => {
             players.splice(idx, 1);
             updatePlayerList();
@@ -106,6 +104,8 @@ startGameBtn.addEventListener("click", () => {
     setupScreen.style.display = "none";
     gameScreen.style.display = "block";
     nextPlayerBtn.style.display = "inline-block";
+    swipeBtn.style.display = "block";
+    imposterDisplay.textContent = "";
     updateCard();
 });
 
@@ -145,10 +145,31 @@ nextPlayerBtn.addEventListener("click", () => {
     }
 });
 
-// Reveal imposters
-showImposterBtn.addEventListener("click", () => {
-    const names = imposterIndices.map(i => players[i]).join(", ");
-    alert(`IMPOSTER(s): ${names}`);
+// Swipe button for imposter reveal
+let isDragging = false;
+let startX = 0;
+
+swipeBtn.addEventListener("touchstart", e => {
+    isDragging = true;
+    startX = e.touches[0].clientX;
+});
+
+swipeBtn.addEventListener("touchmove", e => {
+    if (!isDragging) return;
+    const moveX = e.touches[0].clientX - startX;
+    if (moveX > 0) swipeBtn.style.left = `${Math.min(moveX, 150)}px`;
+});
+
+swipeBtn.addEventListener("touchend", e => {
+    if (!isDragging) return;
+    isDragging = false;
+    if (parseInt(swipeBtn.style.left) > 100) {
+        const names = imposterIndices.map(i => players[i]).join(", ");
+        imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
+        swipeBtn.style.display = "none";
+    } else {
+        swipeBtn.style.left = "0px";
+    }
 });
 
 // Restart
