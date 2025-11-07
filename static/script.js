@@ -14,18 +14,17 @@ const startGameBtn = document.getElementById("startGameBtn");
 const setupScreen = document.getElementById("setupScreen");
 const gameScreen = document.getElementById("gameScreen");
 const gameMessage = document.getElementById("gameMessage");
-const revealBtn = document.getElementById("revealBtn");
 const nextPlayerBtn = document.getElementById("nextPlayerBtn");
 const showImposterBtn = document.getElementById("showImposterBtn");
 const restartBtn = document.getElementById("restartBtn");
 const categoriesContainer = document.getElementById("categories");
 const showCategoriesBtn = document.getElementById("showCategoriesBtn");
 const auditBtn = document.getElementById("auditBtn");
+const playerCard = document.getElementById("playerCard");
+const cardBack = document.getElementById("cardBack");
 
-// Hide categories by default
 if (categoriesContainer) categoriesContainer.style.display = "none";
 
-// Fetch categories from Flask
 fetch("/categories")
     .then(res => res.json())
     .then(data => {
@@ -35,7 +34,6 @@ fetch("/categories")
     })
     .catch(err => console.error("Failed to load categories:", err));
 
-// Toggle categories list
 if (showCategoriesBtn) {
     showCategoriesBtn.addEventListener("click", () => {
         if (!categoriesContainer) return;
@@ -44,7 +42,6 @@ if (showCategoriesBtn) {
     });
 }
 
-// Add player
 function addPlayer() {
     if (!playerNameInput) return;
     let name = playerNameInput.value.trim();
@@ -78,7 +75,6 @@ function removePlayer(index) {
     updatePlayerList();
 }
 
-// Render category checkboxes and restore saved state
 function renderCategoryCheckboxes() {
     if (!categoriesContainer) return;
     categoriesContainer.innerHTML = "";
@@ -97,7 +93,6 @@ function renderCategoryCheckboxes() {
     });
 }
 
-// Start game
 if (startGameBtn) {
     startGameBtn.addEventListener("click", () => {
         if (players.length < 3) { alert("Minimum 3 players required!"); return; }
@@ -123,37 +118,89 @@ if (startGameBtn) {
         gameScreen.style.display = "block";
 
         document.getElementById("endControls").style.display = "none";
-        revealBtn.style.display = "inline-block";
-        nextPlayerBtn.style.display = "inline-block";
+        playerCard.style.display = "block";
+        cardBack.textContent = "";
+        playerCard.classList.remove("flipped");
 
         gameMessage.textContent = players[currentPlayerIndex];
+        nextPlayerBtn.style.display = "none";
     });
 }
 
-// Reveal word while holding
-function revealNow() {
-    if (!gameMessage) return;
-    if (imposterIndices.includes(currentPlayerIndex)) {
-        gameMessage.textContent = `${players[currentPlayerIndex]} — IMPOSTER! Category: ${currentCategory}`;
-    } else {
-        gameMessage.textContent = `${players[currentPlayerIndex]} — ${currentWord}`;
-    }
-}
-function hideNow() {
-    if (!gameMessage) return;
-    if (!allPlayersSeen) gameMessage.textContent = players[currentPlayerIndex];
-}
-
-// Wire hold behavior
-if (revealBtn) {
-    revealBtn.addEventListener("mousedown", (e) => { e.preventDefault(); revealNow(); });
-    revealBtn.addEventListener("mouseup", (e) => { e.preventDefault(); hideNow(); });
-    revealBtn.addEventListener("mouseleave", (e) => { e.preventDefault(); hideNow(); });
-    revealBtn.addEventListener("touchstart", (e) => { e.preventDefault(); revealNow(); }, { passive: false });
-    revealBtn.addEventListener("touchend", (e) => { e.preventDefault(); hideNow(); }, { passive: false });
+// Card reveal
+if (playerCard) {
+    playerCard.addEventListener("click", () => {
+        if (!playerCard.classList.contains("flipped")) {
+            if (imposterIndices.includes(currentPlayerIndex)) {
+                cardBack.textContent = `${players[currentPlayerIndex]} — IMPOSTER! Category: ${currentCategory}`;
+            } else {
+                cardBack.textContent = `${players[currentPlayerIndex]} — ${currentWord}`;
+            }
+            playerCard.classList.add("flipped");
+            nextPlayerBtn.style.display = "inline-block";
+        }
+    });
 }
 
-// Log game to server
+// Next player
+if (nextPlayerBtn) {
+    nextPlayerBtn.addEventListener("click", () => {
+        if (currentPlayerIndex >= players.length - 1) {
+            allPlayersSeen = true;
+            // Pick starter who isn't an imposter
+            const nonImposters = players.filter((_, idx) => !imposterIndices.includes(idx));
+            const starter = nonImposters[Math.floor(Math.random() * nonImposters.length)];
+            gameMessage.textContent = `${starter} starts the conversation!`;
+            playerCard.style.display = "none";
+            nextPlayerBtn.style.display = "none";
+            document.getElementById("endControls").style.display = "flex";
+            logGame();
+        } else {
+            currentPlayerIndex++;
+            gameMessage.textContent = players[currentPlayerIndex];
+            playerCard.classList.remove("flipped");
+            cardBack.textContent = "";
+            nextPlayerBtn.style.display = "none";
+        }
+    });
+}
+
+showImposterBtn.addEventListener("click", () => {
+    const names = imposterIndices.map(i => players[i]).join(", ");
+    gameMessage.textContent = `IMPOSTER(s): ${names}`;
+});
+
+restartBtn.addEventListener("click", () => {
+    gameScreen.style.display = "none";
+    setupScreen.style.display = "block";
+
+    currentPlayerIndex = 0;
+    imposterIndices = [];
+    currentCategory = "";
+    currentWord = "";
+    allPlayersSeen = false;
+
+    renderCategoryCheckboxes();
+    updatePlayerList();
+    gameMessage.textContent = "Add players and select categories to start";
+});
+
+auditBtn.addEventListener("click", () => {
+    fetch("/audit")
+        .then(res => res.json())
+        .then(logs => {
+            if (!logs.length) { alert("No previous game logs."); return; }
+            alert("Previous Game Logs:\n" + logs.join("\n"));
+        })
+        .catch(err => alert("Failed to fetch audit logs."));
+});
+
+addPlayerBtn.addEventListener("click", addPlayer);
+playerNameInput.addEventListener("keypress", e => { if (e.key === "Enter") addPlayer(); });
+
+window.addEventListener("load", () => { renderCategoryCheckboxes(); updatePlayerList(); });
+
+// Log game
 function logGame() {
     const payload = {
         players: players,
@@ -167,61 +214,3 @@ function logGame() {
         body: JSON.stringify(payload)
     }).catch(err => console.error("Failed to log game:", err));
 }
-
-// Next player
-if (nextPlayerBtn) {
-    nextPlayerBtn.addEventListener("click", () => {
-        if (currentPlayerIndex >= players.length - 1) {
-            allPlayersSeen = true;
-            const starter = players[Math.floor(Math.random() * players.length)];
-            gameMessage.textContent = `${starter} starts the conversation!`;
-            revealBtn.style.display = "none";
-            nextPlayerBtn.style.display = "none";
-            document.getElementById("endControls").style.display = "flex";
-
-            logGame(); // Log game when all players have seen the words
-        } else {
-            currentPlayerIndex++;
-            gameMessage.textContent = players[currentPlayerIndex];
-        }
-    });
-}
-
-// Reveal imposters
-showImposterBtn.addEventListener("click", () => {
-    const names = imposterIndices.map(i => players[i]).join(", ");
-    gameMessage.textContent = `IMPOSTER(s): ${names}`;
-});
-
-// Restart game
-restartBtn.addEventListener("click", () => {
-    gameScreen.style.display = "none";
-    setupScreen.style.display = "block";
-
-    currentPlayerIndex = 0;
-    imposterIndices = [];
-    currentCategory = "";
-    currentWord = "";
-    allPlayersSeen = false;
-
-    renderCategoryCheckboxes();
-    gameMessage.textContent = "Add players and select categories to start";
-});
-
-// Audit — fetch audit.txt logs
-auditBtn.addEventListener("click", () => {
-    fetch("/audit")
-        .then(res => res.json())
-        .then(logs => {
-            if (!logs.length) { alert("No previous game logs."); return; }
-            alert("Previous Game Logs:\n" + logs.join("\n"));
-        })
-        .catch(err => alert("Failed to fetch audit logs."));
-});
-
-// Add player & Enter key
-addPlayerBtn.addEventListener("click", addPlayer);
-playerNameInput.addEventListener("keypress", e => { if (e.key === "Enter") addPlayer(); });
-
-// Initial render
-window.addEventListener("load", () => { renderCategoryCheckboxes(); updatePlayerList(); });

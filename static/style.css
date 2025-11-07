@@ -33,6 +33,7 @@ input[type="text"] {
     border: 1px solid #333;
     color: #f0f0f0;
     margin: 8px 0;
+    box-sizing: border-box;
 }
 
 /* === PLAYER LIST === */
@@ -40,7 +41,7 @@ ul#playerList {
     list-style: none;
     padding: 0;
     margin: 0;
-    max-height: 180px;
+    max-height: 200px;
     overflow-y: auto;
 }
 
@@ -122,32 +123,14 @@ button {
     transition: 0.25s;
 }
 
-button.primary {
-    background: #007bff;
-    color: white;
-}
+button.primary { background: #007bff; color: white; }
+button.primary:hover { background: #339dff; }
 
-button.primary:hover {
-    background: #339dff;
-}
+button.accent { background: #00b36b; color: white; }
+button.accent:hover { background: #00d47c; }
 
-button.accent {
-    background: #00b36b;
-    color: white;
-}
-
-button.accent:hover {
-    background: #00d47c;
-}
-
-button.secondary {
-    background: #444;
-    color: white;
-}
-
-button.secondary:hover {
-    background: #666;
-}
+button.secondary { background: #444; color: white; }
+button.secondary:hover { background: #666; }
 
 /* === CARD === */
 .card {
@@ -162,22 +145,10 @@ button.secondary:hover {
 .message {
     margin-bottom: 12px;
     font-size: 16px;
-    word-wrap: break-word;      
-    overflow-wrap: break-word;   
-    max-width: 100%;             
-    box-sizing: border-box;      
-}
-
-/* === INPUT === */
-input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    background: #2a2a2a;
-    border: 1px solid #333;
-    color: #f0f0f0;
-    margin: 8px 0;
-    box-sizing: border-box; 
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 /* === BUTTON ROWS === */
@@ -188,25 +159,46 @@ input[type="text"] {
 }
 
 /* === SCREENS === */
-.screen {
-    display: block;
-}
-
-/* === SCROLLABLE === */
-ul#playerList {
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-/* === INPUT FOCUS === */
-input:focus {
-    outline: none;
-    border-color: #66b3ff;
-}
+.screen { display: block; }
 
 /* === DARK MODE TEXT === */
 .category-checkbox label,
 .player-item,
-.message {
-    color: #e0e0e0;
+.message { color: #e0e0e0; }
+
+/* === CARD REVEAL === */
+.card-reveal {
+    perspective: 1000px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.card-reveal .card-front,
+.card-reveal .card-back {
+    width: 100%;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    backface-visibility: hidden;
+    transition: transform 0.6s;
+    font-size: 18px;
+}
+
+.card-reveal .card-front {
+    background: #444;
+    color: white;
+}
+
+.card-reveal .card-back {
+    background: #007bff;
+    color: white;
+    transform: rotateY(180deg);
+}
+
+.card-reveal.flipped .card-front {
+    transform: rotateY(180deg);
+}
+
+.card-reveal.flipped .card-back {
+    transform: rotateY(0deg);
 }
