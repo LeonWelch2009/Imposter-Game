@@ -25,50 +25,61 @@ const swipeBtn = document.getElementById("swipeBtn");
 const imposterDisplay = document.getElementById("imposterDisplay");
 const restartBtn = document.getElementById("restartBtn");
 
-// Load categories
+// === Load Categories from Server ===
 fetch("/categories")
-  .then((res) => res.json())
-  .then((data) => {
+  .then(res => res.json())
+  .then(data => {
     categories = data || {};
     renderCategoryCheckboxes();
   })
-  .catch((err) => console.error("Failed to load categories:", err));
+  .catch(err => console.error("Failed to load categories:", err));
 
+// === Render Category Checkboxes ===
 function renderCategoryCheckboxes() {
   if (!categoriesContainer) return;
   categoriesContainer.innerHTML = "";
-  Object.keys(categories).forEach((cat) => {
+
+  Object.keys(categories).forEach(cat => {
     const saved = localStorage.getItem(`cat_${cat}`);
     const checkedAttr = saved === "true" || saved === null ? "checked" : "";
     const div = document.createElement("div");
     div.className = "category-checkbox";
-    div.innerHTML = `<input type="checkbox" value="${cat}" ${checkedAttr}> <label>${cat}</label>`;
+    div.innerHTML = `
+      <input type="checkbox" value="${cat}" ${checkedAttr}>
+      <label>${cat}</label>
+    `;
     categoriesContainer.appendChild(div);
   });
-  categoriesContainer.querySelectorAll("input[type='checkbox']").forEach((inp) => {
+
+  categoriesContainer.querySelectorAll("input[type='checkbox']").forEach(inp => {
     inp.addEventListener("change", () => {
       localStorage.setItem(`cat_${inp.value}`, inp.checked ? "true" : "false");
     });
   });
 }
 
+// === Show/Hide Categories Button ===
 showCategoriesBtn.addEventListener("click", () => {
+  if (!categoriesContainer) return;
   categoriesContainer.style.display =
     categoriesContainer.style.display === "none" ? "block" : "none";
 });
 
+// === Add Player ===
 addPlayerBtn.addEventListener("click", addPlayer);
-playerNameInput.addEventListener("keypress", (e) => {
+playerNameInput.addEventListener("keypress", e => {
   if (e.key === "Enter") addPlayer();
 });
 
 function addPlayer() {
   const name = playerNameInput.value.trim();
   if (!name) return;
+
   const formatted = name
     .split(/\s+/)
-    .map((w) => w[0].toUpperCase() + w.slice(1).toLowerCase())
+    .map(w => w[0].toUpperCase() + w.slice(1).toLowerCase())
     .join(" ");
+
   if (!players.includes(formatted)) {
     players.push(formatted);
     playerNameInput.value = "";
@@ -81,7 +92,10 @@ function updatePlayerList() {
   players.forEach((p, idx) => {
     const li = document.createElement("li");
     li.className = "player-item";
-    li.innerHTML = `<span>${p}</span><button class="remove-player">×</button>`;
+    li.innerHTML = `
+      <span>${p}</span>
+      <button class="remove-player">×</button>
+    `;
     li.querySelector("button").addEventListener("click", () => {
       players.splice(idx, 1);
       updatePlayerList();
@@ -90,13 +104,12 @@ function updatePlayerList() {
   });
 }
 
-// Start Game
+// === Start Game ===
 startGameBtn.addEventListener("click", () => {
   if (players.length < 3) return alert("Minimum 3 players required!");
-  const checked = Array.from(
-    document.querySelectorAll("#categories input:checked")
-  ).map((i) => i.value);
+  const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
   if (!checked.length) return alert("Select at least one category!");
+
   availableCategories = checked.slice();
   localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
 
@@ -109,6 +122,7 @@ startGameBtn.addEventListener("click", () => {
 
   currentPlayerIndex = 0;
   pickWord();
+
   setupScreen.style.display = "none";
   gameScreen.style.display = "block";
   nextPlayerBtn.style.display = "inline-block";
@@ -117,14 +131,15 @@ startGameBtn.addEventListener("click", () => {
   updateCard();
 });
 
+// === Pick a Random Word ===
 function pickWord() {
-  const catList =
-    JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
+  const catList = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
   currentCategory = catList[Math.floor(Math.random() * catList.length)];
   const words = categories[currentCategory] || [];
   currentWord = words[Math.floor(Math.random() * words.length)] || "";
 }
 
+// === Update Card ===
 function updateCard() {
   allPlayersSeen = false;
   flipper.classList.remove("flipped");
@@ -134,20 +149,20 @@ function updateCard() {
     : currentWord;
 }
 
-// Hold to reveal
+// === Hold to Reveal Card ===
 flipper.addEventListener("mousedown", () => flipper.classList.add("flipped"));
 flipper.addEventListener("mouseup", () => flipper.classList.remove("flipped"));
 flipper.addEventListener("mouseleave", () => flipper.classList.remove("flipped"));
-flipper.addEventListener("touchstart", (e) => {
+flipper.addEventListener("touchstart", e => {
   e.preventDefault();
   flipper.classList.add("flipped");
 });
-flipper.addEventListener("touchend", (e) => {
+flipper.addEventListener("touchend", e => {
   e.preventDefault();
   flipper.classList.remove("flipped");
 });
 
-// Next player
+// === Next Player ===
 nextPlayerBtn.addEventListener("click", () => {
   if (currentPlayerIndex >= players.length - 1) {
     allPlayersSeen = true;
@@ -160,23 +175,26 @@ nextPlayerBtn.addEventListener("click", () => {
   }
 });
 
-// Swipe button for imposter reveal
+// === Swipe Button to Reveal Imposter ===
 let isDragging = false;
 let startX = 0;
-swipeBtn.addEventListener("touchstart", (e) => {
+
+swipeBtn.addEventListener("touchstart", e => {
   isDragging = true;
   startX = e.touches[0].clientX;
 });
-swipeBtn.addEventListener("touchmove", (e) => {
+
+swipeBtn.addEventListener("touchmove", e => {
   if (!isDragging) return;
   const moveX = e.touches[0].clientX - startX;
   if (moveX > 0) swipeBtn.style.left = `${Math.min(moveX, 150)}px`;
 });
-swipeBtn.addEventListener("touchend", (e) => {
+
+swipeBtn.addEventListener("touchend", e => {
   if (!isDragging) return;
   isDragging = false;
   if (parseInt(swipeBtn.style.left) > 100) {
-    const names = imposterIndices.map((i) => players[i]).join(", ");
+    const names = imposterIndices.map(i => players[i]).join(", ");
     imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
     swipeBtn.style.display = "none";
   } else {
@@ -184,7 +202,7 @@ swipeBtn.addEventListener("touchend", (e) => {
   }
 });
 
-// Restart
+// === Restart Game ===
 restartBtn.addEventListener("click", () => {
   gameScreen.style.display = "none";
   setupScreen.style.display = "block";
