@@ -1,66 +1,36 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, jsonify, render_template
 import os
-from datetime import datetime
 
 app = Flask(__name__)
 
 WORDS_FILE = "words.txt"
-AUDIT_FILE = "audit.txt"
 
-# Load categories from words.txt
 def load_categories():
     categories = {}
-    current_category = None
-    if os.path.exists(WORDS_FILE):
-        with open(WORDS_FILE, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                if line.isupper():  # category line
-                    current_category = line.capitalize()
-                    categories[current_category] = []
-                elif current_category:
-                    categories[current_category].append(line.capitalize())
+    if not os.path.exists(WORDS_FILE):
+        return categories
+
+    with open(WORDS_FILE, "r", encoding="utf-8") as f:
+        current_category = None
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            if line.endswith(":"):  # new category
+                current_category = line[:-1].strip()
+                categories[current_category] = []
+            elif current_category:
+                categories[current_category].append(line)
     return categories
 
-# Load audit logs
-def load_audit():
-    logs = []
-    if os.path.exists(AUDIT_FILE):
-        with open(AUDIT_FILE, "r", encoding="utf-8") as f:
-            logs = f.read().splitlines()
-    return logs
-
-# Append a new entry to audit
-def append_audit(entry):
-    with open(AUDIT_FILE, "a", encoding="utf-8") as f:
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        f.write(f"[{timestamp}] {entry}\n")
-
-# Routes
 @app.route("/")
 def index():
     return render_template("index.html")
 
 @app.route("/categories")
 def get_categories():
-    return jsonify(load_categories())
-
-@app.route("/audit")
-def get_audit():
-    return jsonify(load_audit())
-
-@app.route("/log_game", methods=["POST"])
-def log_game():
-    data = request.json
-    players = data.get("players", [])
-    imposters = data.get("imposters", [])
-    category = data.get("category", "")
-    word = data.get("word", "")
-    entry = f"Players: {players}, Imposters: {imposters}, Category: {category}, Word: {word}"
-    append_audit(entry)
-    return jsonify({"status": "success"})
+    categories = load_categories()
+    return jsonify(categories)
 
 if __name__ == "__main__":
     app.run(debug=True)
