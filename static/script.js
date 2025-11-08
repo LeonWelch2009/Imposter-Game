@@ -20,8 +20,8 @@ const flipper = document.getElementById("flipper");
 const cardFront = document.getElementById("cardFront");
 const cardBack = document.getElementById("cardBack");
 const nextPlayerBtn = document.getElementById("nextPlayerBtn");
-const imposterDisplay = document.getElementById("imposterDisplay");
 const revealImposterBtn = document.getElementById("revealImposterBtn");
+const imposterDisplay = document.getElementById("imposterDisplay");
 const restartBtn = document.getElementById("restartBtn");
 
 // === Load categories from server ===
@@ -58,13 +58,10 @@ function renderCategoryCheckboxes() {
 }
 
 // === Show / Hide categories button ===
-if (showCategoriesBtn && categoriesContainer) {
-  showCategoriesBtn.addEventListener("click", () => {
-    const computed = window.getComputedStyle(categoriesContainer);
-    const isHidden = computed.display === "none";
-    categoriesContainer.style.display = isHidden ? "block" : "none";
-  });
-}
+showCategoriesBtn.addEventListener("click", () => {
+  const isHidden = window.getComputedStyle(categoriesContainer).display === "none";
+  categoriesContainer.style.display = isHidden ? "block" : "none";
+});
 
 // === Add player ===
 addPlayerBtn.addEventListener("click", addPlayer);
@@ -128,8 +125,8 @@ startGameBtn.addEventListener("click", () => {
   setupScreen.style.display = "none";
   gameScreen.style.display = "block";
   nextPlayerBtn.style.display = "inline-block";
-  imposterDisplay.textContent = "";
   revealImposterBtn.style.display = "none";
+  imposterDisplay.textContent = "";
   updateCard();
 });
 
@@ -154,19 +151,12 @@ function updateCard() {
 flipper.addEventListener("mousedown", () => flipper.classList.add("flipped"));
 flipper.addEventListener("mouseup", () => flipper.classList.remove("flipped"));
 flipper.addEventListener("mouseleave", () => flipper.classList.remove("flipped"));
-flipper.addEventListener("touchstart", e => {
-  e.preventDefault();
-  flipper.classList.add("flipped");
-});
-flipper.addEventListener("touchend", e => {
-  e.preventDefault();
-  flipper.classList.remove("flipped");
-});
+flipper.addEventListener("touchstart", e => { e.preventDefault(); flipper.classList.add("flipped"); });
+flipper.addEventListener("touchend", e => { e.preventDefault(); flipper.classList.remove("flipped"); });
 
 // === Next player ===
 nextPlayerBtn.addEventListener("click", () => {
   if (currentPlayerIndex >= players.length - 1) {
-    // Everyone has seen their card
     nextPlayerBtn.style.display = "none";
     flipContainer.style.display = "none";
     revealImposterBtn.style.display = "inline-block";
@@ -181,7 +171,6 @@ revealImposterBtn.addEventListener("click", () => {
   const names = imposterIndices.map(i => players[i]).join(", ");
   imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
   revealImposterBtn.style.display = "none";
-  restartBtn.style.display = "inline-block";
 });
 
 // === Restart game ===
@@ -190,7 +179,6 @@ restartBtn.addEventListener("click", () => {
   setupScreen.style.display = "block";
   flipContainer.style.display = "block";
   nextPlayerBtn.style.display = "inline-block";
-  restartBtn.style.display = "none";
   revealImposterBtn.style.display = "none";
   imposterDisplay.textContent = "";
   currentPlayerIndex = 0;
