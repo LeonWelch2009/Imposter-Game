@@ -42,13 +42,14 @@ document.addEventListener("DOMContentLoaded", () => {
             const checkedAttr = saved === "true" || saved === null ? "checked" : "";
             const div = document.createElement("div");
             div.className = "category-checkbox";
+            // Format category nicely (capitalize first letter of each word)
+            const formattedCat = cat.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
             div.innerHTML = `
                 <input type="checkbox" value="${cat}" ${checkedAttr}>
-                <label>${cat}</label>
+                <label>${formattedCat}</label>
             `;
             categoriesContainer.appendChild(div);
         });
-        // Add change listeners
         categoriesContainer.querySelectorAll("input[type='checkbox']").forEach(inp => {
             inp.addEventListener("change", () => {
                 localStorage.setItem(`cat_${inp.value}`, inp.checked ? "true" : "false");
@@ -117,6 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
         nextPlayerBtn.style.display = "inline-block";
         revealImposterBtn.style.display = "none";
         imposterDisplay.textContent = "";
+        flipContainer.style.display = "block";
         updateCard();
     });
 
@@ -127,12 +129,21 @@ document.addEventListener("DOMContentLoaded", () => {
         currentWord = words[Math.floor(Math.random() * words.length)] || "";
     }
 
-    function updateCard() {
-        flipper.classList.remove("flipped");
+    function updateCard(direction = null) {
         cardFront.textContent = players[currentPlayerIndex];
         cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
             ? `IMPOSTER\n(Hint: ${currentCategory})`
             : currentWord;
+
+        if (direction) {
+            const offset = direction === "left" ? "-100%" : "100%";
+            flipContainer.style.transition = "none";
+            flipContainer.style.transform = `translateX(${offset})`;
+            requestAnimationFrame(() => {
+                flipContainer.style.transition = "transform 0.4s ease";
+                flipContainer.style.transform = "translateX(0)";
+            });
+        }
     }
 
     // Flip card on hold
@@ -142,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
     flipper.addEventListener("touchstart", e => { e.preventDefault(); flipper.classList.add("flipped"); });
     flipper.addEventListener("touchend", e => { e.preventDefault(); flipper.classList.remove("flipped"); });
 
-    // Next player
+    // Next player with swipe animation
     nextPlayerBtn.addEventListener("click", () => {
         if (currentPlayerIndex >= players.length - 1) {
             nextPlayerBtn.style.display = "none";
@@ -150,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
             revealImposterBtn.style.display = "inline-block";
         } else {
             currentPlayerIndex++;
-            updateCard();
+            updateCard("right");
         }
     });
 
@@ -159,6 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const names = imposterIndices.map(i => players[i]).join(", ");
         imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
         revealImposterBtn.style.display = "none";
+        restartBtn.style.display = "inline-block";
     });
 
     // Restart game
@@ -168,6 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
         flipContainer.style.display = "block";
         nextPlayerBtn.style.display = "inline-block";
         revealImposterBtn.style.display = "none";
+        restartBtn.style.display = "none";
         imposterDisplay.textContent = "";
         currentPlayerIndex = 0;
         updatePlayerList();
