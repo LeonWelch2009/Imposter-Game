@@ -1,25 +1,21 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, send_from_directory
 import os
 
 app = Flask(__name__)
 
-WORDS_FILE = "words.txt"
-
+# Load categories from words.txt
 def load_categories():
     categories = {}
-    if not os.path.exists(WORDS_FILE):
+    if not os.path.exists("words.txt"):
         return categories
-
-    with open(WORDS_FILE, "r", encoding="utf-8") as f:
+    with open("words.txt", "r", encoding="utf-8") as f:
         current_category = None
         for line in f:
             line = line.strip()
-            if not line:
-                continue
-            if line.endswith(":"):  # new category
-                current_category = line[:-1].strip()
+            if line.isupper():
+                current_category = line
                 categories[current_category] = []
-            elif current_category:
+            elif line and current_category:
                 categories[current_category].append(line)
     return categories
 
@@ -29,8 +25,12 @@ def index():
 
 @app.route("/categories")
 def get_categories():
-    categories = load_categories()
-    return jsonify(categories)
+    return jsonify(load_categories())
+
+# Serve static files (JS/CSS)
+@app.route("/static/<path:path>")
+def send_static(path):
+    return send_from_directory("static", path)
 
 if __name__ == "__main__":
     app.run(debug=True)
