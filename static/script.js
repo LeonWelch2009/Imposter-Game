@@ -3,11 +3,10 @@ let currentPlayerIndex = 0;
 let imposterIndices = [];
 let currentCategory = "";
 let currentWord = "";
-let allPlayersSeen = false;
 let categories = {};
 let availableCategories = [];
 
-// DOM Elements
+// DOM elements
 const playerNameInput = document.getElementById("playerName");
 const addPlayerBtn = document.getElementById("addPlayerBtn");
 const playerList = document.getElementById("playerList");
@@ -21,11 +20,11 @@ const flipper = document.getElementById("flipper");
 const cardFront = document.getElementById("cardFront");
 const cardBack = document.getElementById("cardBack");
 const nextPlayerBtn = document.getElementById("nextPlayerBtn");
-const swipeBtn = document.getElementById("swipeBtn");
 const imposterDisplay = document.getElementById("imposterDisplay");
+const revealImposterBtn = document.getElementById("revealImposterBtn");
 const restartBtn = document.getElementById("restartBtn");
 
-// === Load Categories from Server ===
+// === Load categories from server ===
 fetch("/categories")
   .then(res => res.json())
   .then(data => {
@@ -34,7 +33,7 @@ fetch("/categories")
   })
   .catch(err => console.error("Failed to load categories:", err));
 
-// === Render Category Checkboxes ===
+// === Render category checkboxes ===
 function renderCategoryCheckboxes() {
   if (!categoriesContainer) return;
   categoriesContainer.innerHTML = "";
@@ -58,14 +57,16 @@ function renderCategoryCheckboxes() {
   });
 }
 
-// === Show/Hide Categories Button ===
-showCategoriesBtn.addEventListener("click", () => {
-  if (!categoriesContainer) return;
-  categoriesContainer.style.display =
-    categoriesContainer.style.display === "none" ? "block" : "none";
-});
+// === Show / Hide categories button ===
+if (showCategoriesBtn && categoriesContainer) {
+  showCategoriesBtn.addEventListener("click", () => {
+    const computed = window.getComputedStyle(categoriesContainer);
+    const isHidden = computed.display === "none";
+    categoriesContainer.style.display = isHidden ? "block" : "none";
+  });
+}
 
-// === Add Player ===
+// === Add player ===
 addPlayerBtn.addEventListener("click", addPlayer);
 playerNameInput.addEventListener("keypress", e => {
   if (e.key === "Enter") addPlayer();
@@ -104,9 +105,10 @@ function updatePlayerList() {
   });
 }
 
-// === Start Game ===
+// === Start game ===
 startGameBtn.addEventListener("click", () => {
   if (players.length < 3) return alert("Minimum 3 players required!");
+
   const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
   if (!checked.length) return alert("Select at least one category!");
 
@@ -126,12 +128,12 @@ startGameBtn.addEventListener("click", () => {
   setupScreen.style.display = "none";
   gameScreen.style.display = "block";
   nextPlayerBtn.style.display = "inline-block";
-  swipeBtn.style.display = "block";
   imposterDisplay.textContent = "";
+  revealImposterBtn.style.display = "none";
   updateCard();
 });
 
-// === Pick a Random Word ===
+// === Pick a random word ===
 function pickWord() {
   const catList = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
   currentCategory = catList[Math.floor(Math.random() * catList.length)];
@@ -139,9 +141,8 @@ function pickWord() {
   currentWord = words[Math.floor(Math.random() * words.length)] || "";
 }
 
-// === Update Card ===
+// === Update card ===
 function updateCard() {
-  allPlayersSeen = false;
   flipper.classList.remove("flipped");
   cardFront.textContent = players[currentPlayerIndex];
   cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
@@ -149,7 +150,7 @@ function updateCard() {
     : currentWord;
 }
 
-// === Hold to Reveal Card ===
+// === Flip card on hold ===
 flipper.addEventListener("mousedown", () => flipper.classList.add("flipped"));
 flipper.addEventListener("mouseup", () => flipper.classList.remove("flipped"));
 flipper.addEventListener("mouseleave", () => flipper.classList.remove("flipped"));
@@ -162,53 +163,36 @@ flipper.addEventListener("touchend", e => {
   flipper.classList.remove("flipped");
 });
 
-// === Next Player ===
+// === Next player ===
 nextPlayerBtn.addEventListener("click", () => {
   if (currentPlayerIndex >= players.length - 1) {
-    allPlayersSeen = true;
+    // Everyone has seen their card
     nextPlayerBtn.style.display = "none";
     flipContainer.style.display = "none";
-    document.getElementById("endControls").style.display = "flex";
+    revealImposterBtn.style.display = "inline-block";
   } else {
     currentPlayerIndex++;
     updateCard();
   }
 });
 
-// === Swipe Button to Reveal Imposter ===
-let isDragging = false;
-let startX = 0;
-
-swipeBtn.addEventListener("touchstart", e => {
-  isDragging = true;
-  startX = e.touches[0].clientX;
+// === Reveal imposter(s) ===
+revealImposterBtn.addEventListener("click", () => {
+  const names = imposterIndices.map(i => players[i]).join(", ");
+  imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
+  revealImposterBtn.style.display = "none";
+  restartBtn.style.display = "inline-block";
 });
 
-swipeBtn.addEventListener("touchmove", e => {
-  if (!isDragging) return;
-  const moveX = e.touches[0].clientX - startX;
-  if (moveX > 0) swipeBtn.style.left = `${Math.min(moveX, 150)}px`;
-});
-
-swipeBtn.addEventListener("touchend", e => {
-  if (!isDragging) return;
-  isDragging = false;
-  if (parseInt(swipeBtn.style.left) > 100) {
-    const names = imposterIndices.map(i => players[i]).join(", ");
-    imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
-    swipeBtn.style.display = "none";
-  } else {
-    swipeBtn.style.left = "0px";
-  }
-});
-
-// === Restart Game ===
+// === Restart game ===
 restartBtn.addEventListener("click", () => {
   gameScreen.style.display = "none";
   setupScreen.style.display = "block";
   flipContainer.style.display = "block";
-  document.getElementById("endControls").style.display = "none";
   nextPlayerBtn.style.display = "inline-block";
+  restartBtn.style.display = "none";
+  revealImposterBtn.style.display = "none";
+  imposterDisplay.textContent = "";
   currentPlayerIndex = 0;
   updatePlayerList();
   renderCategoryCheckboxes();
