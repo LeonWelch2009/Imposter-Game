@@ -1,244 +1,276 @@
-/* ===== GENERAL LAYOUT ===== */
+/* === GENERAL STYLES === */
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #f7ede2, #f5cac3);
-  color: #333;
+  background-color: #121212;
+  color: #e0e0e0;
+  font-family: "Poppins", sans-serif;
+  margin: 0;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 20px;
+  touch-action: manipulation; /* prevent zoom on double-tap */
 }
 
 .app {
-  width: 90%;
-  max-width: 500px;
+  max-width: 400px;
+  width: 100%;
+}
+
+header {
   text-align: center;
+  margin-bottom: 20px;
 }
 
-header h1 {
-  font-size: 2.2rem;
-  margin-bottom: 1rem;
-  color: #444;
-}
-
-/* ===== CARD STYLE ===== */
 .card {
-  background: #fff;
+  background-color: #1f1f1f;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  padding: 2rem;
-  transition: all 0.3s ease;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  transition: 0.3s ease;
 }
 
-.card h2 {
-  margin-top: 0;
-  color: #222;
-}
-
-/* ===== INPUT + BUTTONS ===== */
+/* === INPUT & BUTTONS === */
 input[type="text"] {
-  width: 70%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 2px solid #ccc;
+  width: 100%;
+  padding: 10px 14px;
   border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.3s;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  background: #2a2a2a;
+  color: #fff;
+  margin-bottom: 10px;
+  transition: 0.3s ease;
 }
 
 input[type="text"]:focus {
-  border-color: #ff8fa3;
-  outline: none;
+  background: #333;
+  box-shadow: 0 0 0 2px #3a86ff;
 }
 
 button {
-  padding: 10px 18px;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  font-family: inherit;
 }
 
 button.primary {
-  background: #84a59d;
-  color: white;
+  background-color: #3a86ff;
+  color: #fff;
 }
 
 button.primary:hover {
-  background: #6b8b83;
+  background-color: #256ef5;
 }
 
 button.secondary {
-  background: #f28482;
-  color: white;
+  background-color: #444;
+  color: #fff;
 }
 
 button.secondary:hover {
-  background: #d46c6a;
+  background-color: #555;
 }
 
 button.accent {
-  background: #ffb5a7;
+  background-color: #00c853;
   color: white;
 }
 
 button.accent:hover {
-  background: #f28a7a;
+  background-color: #00a74b;
 }
 
-button.remove-player {
-  background: none;
-  border: none;
-  color: #d9534f;
-  font-weight: bold;
-  font-size: 1.2rem;
-  cursor: pointer;
-  margin-left: 8px;
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 15px;
 }
 
-button.remove-player:hover {
-  color: #c0392b;
+.message {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 10px;
+  opacity: 0.85;
 }
 
-/* ===== PLAYER LIST ===== */
+/* === PLAYER LIST === */
 #playerList {
-  list-style: none;
-  padding: 0;
-  margin-top: 1rem;
+  max-height: 180px;
+  overflow-y: auto;
+  margin-bottom: 15px;
 }
 
 .player-item {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  background: #fdf6f0;
-  padding: 6px 10px;
-  margin: 5px 0;
+  background: #2c2c2c;
+  margin-bottom: 6px;
+  padding: 8px 10px;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-/* ===== CATEGORY CHECKBOXES ===== */
+.player-item span {
+  font-size: 15px;
+}
+
+.player-item button.remove-player {
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.player-item button.remove-player:hover {
+  transform: scale(1.2);
+  color: #ff1a1a;
+}
+
+/* === CATEGORY CHECKBOXES === */
 .category-checkbox {
-  margin: 6px 0;
-  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #333;
+  font-size: 14px;
 }
 
 .category-checkbox input {
-  margin-right: 8px;
+  transform: scale(1.2);
 }
 
-.btn-row {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: space-between;
+/* === GAME SCREEN === */
+#gameScreen {
+  position: relative;
+  text-align: center;
 }
 
-/* ===== FLIP CARD ANIMATION ===== */
+/* Exit Button (top-right corner) */
+.exit-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  color: #ff4d4d;
+  font-size: 26px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.exit-btn:hover {
+  color: #ff1a1a;
+  transform: scale(1.2);
+}
+
+/* === FLIP CARD === */
 .flip-container {
   perspective: 1000px;
   width: 100%;
-  height: 160px;
-  margin-top: 1.5rem;
-  cursor: pointer;
+  height: 180px;
+  margin: 20px 0;
   position: relative;
 }
 
 .flipper {
-  transition: 0.6s;
-  transform-style: preserve-3d;
   position: relative;
   width: 100%;
   height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+  cursor: pointer;
 }
 
 .flipper.flipped {
   transform: rotateY(180deg);
 }
 
-.front, .back {
-  backface-visibility: hidden;
+.front,
+.back {
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-radius: 12px;
+  backface-visibility: hidden;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 1.3rem;
-  padding: 20px;
-  transition: background 0.3s;
-}
-
-.front {
-  background: #ffe5d9;
+  justify-content: center;
+  background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+  box-shadow:
+    inset 0 0 8px rgba(255, 255, 255, 0.05),
+    0 6px 10px rgba(0, 0, 0, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.4);
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  user-select: none;
+  padding: 10px;
+  text-align: center;
+  transform-style: preserve-3d;
 }
 
 .back {
-  background: #bde0fe;
   transform: rotateY(180deg);
+  white-space: pre-line; /* allows \n formatting */
 }
 
-/* ===== EXIT BUTTON ===== */
-.exit-btn {
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  background: #ff6b6b;
-  border: none;
-  color: white;
-  font-size: 1.5rem;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background 0.3s;
-  z-index: 10;
+/* === REVEAL + END CONTROLS === */
+#endControls button {
+  width: 100%;
+  margin-top: 10px;
 }
 
-.exit-btn:hover {
-  background: #e63946;
+#imposterDisplay {
+  margin-top: 15px;
+  font-weight: 600;
+  font-size: 18px;
+  color: #ff4d4d;
 }
 
-/* ===== END CONTROLS ===== */
-#endControls {
-  margin-top: 1.5rem;
+/* === SCROLLBAR (optional) === */
+#playerList::-webkit-scrollbar {
+  width: 6px;
+}
+#playerList::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 3px;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 480px) {
+/* === RESPONSIVE === */
+@media (max-width: 500px) {
+  body {
+    padding: 10px;
+  }
+
   .card {
-    padding: 1.2rem;
-  }
-
-  header h1 {
-    font-size: 1.7rem;
-  }
-
-  input[type="text"] {
-    width: 100%;
+    padding: 15px;
   }
 
   button {
     width: 100%;
-    margin-top: 10px;
-  }
-
-  .btn-row {
-    flex-direction: column;
-    gap: 0.5rem;
   }
 
   .flip-container {
-    height: 130px;
+    height: 150px;
   }
 
-  .front, .back {
-    font-size: 1.1rem;
+  .front,
+  .back {
+    font-size: 16px;
   }
 }
