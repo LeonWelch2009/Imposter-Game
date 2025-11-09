@@ -1,207 +1,157 @@
-document.addEventListener("DOMContentLoaded", () => {
-  let players = [];
-  let currentPlayerIndex = 0;
-  let imposterIndices = [];
-  let currentCategory = "";
-  let currentWord = "";
-  let categories = {};
-  let availableCategories = [];
-  let imposterHint = null;
-  let starterAnnounced = false;
+let players = [];
+let currentIndex = 0;
+let imposterIndex = null;
+let wordsData = {};
+let selectedCategories = [];
+let chosenCategory = null;
+let startingPlayer = null;
 
-  // Elements
-  const playerNameInput = document.getElementById("playerName");
-  const addPlayerBtn = document.getElementById("addPlayerBtn");
-  const playerList = document.getElementById("playerList");
-  const startGameBtn = document.getElementById("startGameBtn");
-  const setupScreen = document.getElementById("setupScreen");
-  const gameScreen = document.getElementById("gameScreen");
-  const showCategoriesBtn = document.getElementById("showCategoriesBtn");
-  const categoriesContainer = document.getElementById("categories");
-  const flipContainer = document.getElementById("flipContainer");
-  const flipper = document.getElementById("flipper");
-  const cardFront = document.getElementById("cardFront");
-  const cardBack = document.getElementById("cardBack");
-  const nextPlayerBtn = document.getElementById("nextPlayerBtn");
-  const revealImposterBtn = document.getElementById("revealImposterBtn");
-  const imposterDisplay = document.getElementById("imposterDisplay");
-  const restartBtn = document.getElementById("restartBtn");
-  const exitBtn = document.getElementById("exitBtn");
+async function loadWords() {
+  const response = await fetch("/words.txt");
+  const text = await response.text();
+  const lines = text.split("\n").map(line => line.trim()).filter(line => line.length > 0);
 
-  // === Load categories ===
-  fetch("/categories")
-    .then(res => res.json())
-    .then(data => {
-      categories = data || {};
-      renderCategoryCheckboxes();
-    })
-    .catch(err => console.error("Failed to load categories:", err));
+  let currentCategory = null;
+  let currentLetter = null;
 
-  function renderCategoryCheckboxes() {
-    categoriesContainer.innerHTML = "";
-    Object.keys(categories).forEach(cat => {
-      const checkedAttr = "checked";
-      const div = document.createElement("div");
-      div.className = "category-checkbox";
-      const formattedCat = cat.replace(" H", "").replace("h", "");
-      div.innerHTML = `
-        <input type="checkbox" value="${cat}" ${checkedAttr}>
-        <label>${formattedCat}</label>
-      `;
-      categoriesContainer.appendChild(div);
-    });
-  }
-
-  showCategoriesBtn.addEventListener("click", () => {
-    const isHidden = window.getComputedStyle(categoriesContainer).display === "none";
-    categoriesContainer.style.display = isHidden ? "block" : "none";
-  });
-
-  // === Add player ===
-  addPlayerBtn.addEventListener("click", addPlayer);
-  playerNameInput.addEventListener("keypress", e => {
-    if (e.key === "Enter") addPlayer();
-  });
-
-  function addPlayer() {
-    const name = playerNameInput.value.trim();
-    if (!name) return;
-    const formatted = name
-      .split(/\s+/)
-      .map(w => w[0].toUpperCase() + w.slice(1).toLowerCase())
-      .join(" ");
-    if (!players.includes(formatted)) {
-      players.push(formatted);
-      playerNameInput.value = "";
-      updatePlayerList();
+  for (const line of lines) {
+    const match = line.match(/^([A-Z\s]+)\s+([a-z])$/);
+    if (match) {
+      currentCategory = match[1].trim();
+      currentLetter = match[2].toLowerCase();
+      wordsData[currentCategory] = { letter: currentLetter, words: [] };
+    } else if (currentCategory) {
+      wordsData[currentCategory].words.push(line);
     }
   }
 
-  function updatePlayerList() {
-    playerList.innerHTML = "";
-    players.forEach((p, idx) => {
-      const li = document.createElement("li");
-      li.className = "player-item";
-      li.innerHTML = `<span>${p}</span><button class="remove-player">×</button>`;
-      li.querySelector("button").addEventListener("click", () => {
-        players.splice(idx, 1);
-        updatePlayerList();
-      });
-      playerList.appendChild(li);
-    });
+  renderCategories();
+}
+
+function renderCategories() {
+  const container = document.getElementById("categoryList");
+  container.innerHTML = "";
+  for (const category in wordsData) {
+    const div = document.createElement("div");
+    div.classList.add("category-checkbox");
+    div.innerHTML = `
+      <input type="checkbox" id="${category}" value="${category}">
+      <label for="${category}">${category}</label>
+    `;
+    container.appendChild(div);
+  }
+}
+
+function addPlayer() {
+  const input = document.getElementById("playerName");
+  const name = input.value.trim();
+  if (name === "") return;
+  players.push(name);
+  input.value = "";
+  renderPlayerList();
+}
+
+function removePlayer(index) {
+  players.splice(index, 1);
+  renderPlayerList();
+}
+
+function renderPlayerList() {
+  const list = document.getElementById("playerList");
+  list.innerHTML = players.map((player, i) => `
+    <div class="player-item">
+      <span>${player}</span>
+      <button class="remove-player" onclick="removePlayer(${i})">×</button>
+    </div>
+  `).join("");
+}
+
+function startGame() {
+  selectedCategories = Array.from(document.querySelectorAll("#categoryList input:checked")).map(cb => cb.value);
+  if (selectedCategories.length === 0 || players.length < 3) {
+    alert("Select at least one category and add at least 3 players.");
+    return;
   }
 
-  // === Start game ===
-  startGameBtn.addEventListener("click", () => {
-    if (players.length < 3) return alert("Minimum 3 players required!");
-    const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
-    if (!checked.length) return alert("Select at least one category!");
+  chosenCategory = selectedCategories[Math.floor(Math.random() * selectedCategories.length)];
+  const { letter, words } = wordsData[chosenCategory];
+  imposterIndex = Math.floor(Math.random() * players.length);
+  startingPlayer = players[Math.floor(Math.random() * players.length)];
 
-    availableCategories = checked.slice();
-    imposterIndices = [];
-    const imposterCount = players.length >= 6 ? 2 : 1;
-    while (imposterIndices.length < imposterCount) {
-      const idx = Math.floor(Math.random() * players.length);
-      if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
-    }
+  document.getElementById("categoryDisplay").innerText = `${chosenCategory} (starts with '${letter.toUpperCase()}')`;
+  document.getElementById("setupScreen").style.display = "none";
+  document.getElementById("gameScreen").style.display = "block";
 
-    pickWord();
+  currentIndex = 0;
+  document.getElementById("playerWord").innerText = "";
+  document.getElementById("playerNameDisplay").innerText = players[currentIndex];
+  document.getElementById("endControls").style.display = "none";
+  setFlipper(false);
+}
 
-    setupScreen.style.display = "none";
-    gameScreen.style.display = "block";
-    nextPlayerBtn.style.display = "none";
-    revealImposterBtn.style.display = "none";
-    imposterDisplay.textContent = "";
-    flipContainer.style.display = "block";
-    updateCard();
-  });
+function flipCard() {
+  const flipper = document.querySelector(".flipper");
 
-  function pickWord() {
-    const chosen = availableCategories[Math.floor(Math.random() * availableCategories.length)];
-    const hintMode = /\bh\b/i.test(chosen);
-    currentCategory = chosen.replace(/\bh\b/i, "").trim();
-    const words = categories[chosen] || [];
-    currentWord = words[Math.floor(Math.random() * words.length)] || "";
-    imposterHint = hintMode && currentWord ? currentWord[0].toUpperCase() : null;
-  }
-
-  function updateCard() {
-    nextPlayerBtn.style.display = "none";
-    cardFront.textContent = players[currentPlayerIndex];
-    cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
-      ? imposterHint
-        ? `IMPOSTER\n(Hint: ${currentCategory}, starts with '${imposterHint}')`
-        : `IMPOSTER\n(Hint: ${currentCategory})`
-      : currentWord;
-  }
-
-  // === Card flipping ===
-  function showNextButton() {
-    nextPlayerBtn.style.display = "inline-block";
-  }
-
-  flipper.addEventListener("mousedown", () => {
+  // Flip forward
+  if (!flipper.classList.contains("flipped")) {
     flipper.classList.add("flipped");
-    showNextButton();
-  });
-  flipper.addEventListener("mouseup", () => flipper.classList.remove("flipped"));
-  flipper.addEventListener("mouseleave", () => flipper.classList.remove("flipped"));
-  flipper.addEventListener("touchstart", e => {
-    e.preventDefault();
-    flipper.classList.add("flipped");
-    showNextButton();
-  });
-  flipper.addEventListener("touchend", e => {
-    e.preventDefault();
+    showWord();
+  } else {
+    // Flip back and move to next player
     flipper.classList.remove("flipped");
-  });
-
-  // === Next player ===
-  nextPlayerBtn.addEventListener("click", () => {
-    if (currentPlayerIndex >= players.length - 1) {
-      flipContainer.style.display = "none";
-      nextPlayerBtn.style.display = "none";
-      revealImposterBtn.style.display = "inline-block";
-
-      // announce who starts only now
-      if (!starterAnnounced) {
-        const starterIndex = Math.floor(Math.random() * players.length);
-        setTimeout(() => {
-          alert(`${players[starterIndex]} starts the discussion!`);
-        }, 300);
-        starterAnnounced = true;
-      }
-    } else {
-      currentPlayerIndex++;
-      updateCard();
-    }
-  });
-
-  // === Reveal imposter(s) ===
-  revealImposterBtn.addEventListener("click", () => {
-    const names = imposterIndices.map(i => players[i]).join(", ");
-    imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
-    revealImposterBtn.style.display = "none";
-    restartBtn.style.display = "inline-block";
-  });
-
-  // === Restart game ===
-  restartBtn.addEventListener("click", resetToMainMenu);
-  exitBtn.addEventListener("click", () => {
-    if (confirm("Return to main menu? Progress will be lost.")) resetToMainMenu();
-  });
-
-  function resetToMainMenu() {
-    gameScreen.style.display = "none";
-    setupScreen.style.display = "block";
-    flipContainer.style.display = "block";
-    nextPlayerBtn.style.display = "none";
-    revealImposterBtn.style.display = "none";
-    restartBtn.style.display = "none";
-    imposterDisplay.textContent = "";
-    currentPlayerIndex = 0;
-    starterAnnounced = false;
-    updatePlayerList();
-    renderCategoryCheckboxes();
+    setTimeout(nextPlayer, 600);
   }
-});
+}
+
+function showWord() {
+  const wordDisplay = document.getElementById("playerWord");
+  if (currentIndex === imposterIndex) {
+    wordDisplay.innerText = "You are the IMPOSTER!";
+  } else {
+    const { words } = wordsData[chosenCategory];
+    const chosenWord = words[Math.floor(Math.random() * words.length)];
+    wordDisplay.innerText = chosenWord;
+  }
+}
+
+function nextPlayer() {
+  currentIndex++;
+  if (currentIndex < players.length) {
+    document.getElementById("playerNameDisplay").innerText = players[currentIndex];
+    document.getElementById("playerWord").innerText = "";
+    setFlipper(false);
+  } else {
+    endRevealPhase();
+  }
+}
+
+function endRevealPhase() {
+  document.getElementById("playerNameDisplay").innerText = "All players are ready!";
+  document.getElementById("playerWord").innerText = `🎲 ${startingPlayer} starts the game!`;
+  document.getElementById("endControls").style.display = "block";
+  setFlipper(false);
+}
+
+function setFlipper(flipped) {
+  const flipper = document.querySelector(".flipper");
+  flipper.classList.toggle("flipped", flipped);
+}
+
+function restartGame() {
+  players = [];
+  currentIndex = 0;
+  imposterIndex = null;
+  selectedCategories = [];
+  chosenCategory = null;
+  document.getElementById("gameScreen").style.display = "none";
+  document.getElementById("setupScreen").style.display = "block";
+  renderPlayerList();
+}
+
+function exitGame() {
+  if (confirm("Exit the game and go back to setup?")) {
+    restartGame();
+  }
+}
+
+window.onload = loadWords;
