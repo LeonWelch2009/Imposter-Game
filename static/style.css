@@ -1,8 +1,4 @@
 /* === GENERAL STYLES === */
-* {
-  box-sizing: border-box;
-}
-
 body {
   background-color: #121212;
   color: #e0e0e0;
@@ -10,196 +6,168 @@ body {
   margin: 0;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
   padding: 20px;
-  touch-action: manipulation; /* prevent zoom on double-tap */
+  touch-action: manipulation; /* prevent zoom on double tap */
 }
 
 .app {
-  max-width: 400px;
   width: 100%;
-}
-
-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.card {
-  background-color: #1f1f1f;
+  max-width: 420px;
+  background-color: #1e1e1e;
   border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-  transition: 0.3s ease;
+  padding: 24px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  text-align: center;
 }
 
-/* === INPUT & BUTTONS === */
+h1 {
+  color: #66b3ff;
+  margin-bottom: 12px;
+}
+
+/* === INPUT === */
 input[type="text"] {
   width: 100%;
-  padding: 10px 14px;
+  padding: 10px;
   border-radius: 8px;
-  border: none;
-  outline: none;
-  font-size: 15px;
   background: #2a2a2a;
-  color: #fff;
-  margin-bottom: 10px;
-  transition: 0.3s ease;
-}
-
-input[type="text"]:focus {
-  background: #333;
-  box-shadow: 0 0 0 2px #3a86ff;
-}
-
-button {
-  cursor: pointer;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 16px;
-  font-size: 15px;
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
-
-button.primary {
-  background-color: #3a86ff;
-  color: #fff;
-}
-
-button.primary:hover {
-  background-color: #256ef5;
-}
-
-button.secondary {
-  background-color: #444;
-  color: #fff;
-}
-
-button.secondary:hover {
-  background-color: #555;
-}
-
-button.accent {
-  background-color: #00c853;
-  color: white;
-}
-
-button.accent:hover {
-  background-color: #00a74b;
-}
-
-.btn-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 15px;
-}
-
-.message {
-  text-align: center;
-  font-size: 14px;
-  margin-bottom: 10px;
-  opacity: 0.85;
+  border: 1px solid #333;
+  color: #f0f0f0;
+  margin: 8px 0;
+  box-sizing: border-box;
+  font-size: 16px; /* prevents mobile zoom */
 }
 
 /* === PLAYER LIST === */
-#playerList {
+ul#playerList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
   max-height: 180px;
   overflow-y: auto;
-  margin-bottom: 15px;
 }
 
 .player-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #2c2c2c;
-  margin-bottom: 6px;
-  padding: 8px 10px;
+  background: #2a2a2a;
+  padding: 8px 12px;
   border-radius: 8px;
+  margin-bottom: 6px;
 }
 
-.player-item span {
-  font-size: 15px;
-}
-
-.player-item button.remove-player {
-  background: none;
+/* === REMOVE PLAYER BUTTON === */
+.remove-player {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
   border: none;
-  color: #ff4d4d;
-  font-size: 20px;
+  background: #ff4d4d;
+  color: white;
+  font-weight: bold;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s ease;
 }
-
-.player-item button.remove-player:hover {
-  transform: scale(1.2);
-  color: #ff1a1a;
+.remove-player:hover {
+  background: #ff1a1a;
+  transform: scale(1.1);
 }
 
 /* === CATEGORY CHECKBOXES === */
 .category-checkbox {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px solid #333;
+  gap: 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.category-checkbox input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #555;
+  border-radius: 6px;
+  background: #2a2a2a;
+  position: relative;
+  transition: 0.25s ease;
+}
+.category-checkbox input[type="checkbox"]:checked {
+  background: #007bff;
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
+}
+.category-checkbox input[type="checkbox"]:checked::after {
+  content: "✓";
+  color: white;
+  position: absolute;
+  left: 3px;
+  top: -1px;
   font-size: 14px;
 }
 
-.category-checkbox input {
-  transform: scale(1.2);
-}
-
-/* === GAME SCREEN === */
-#gameScreen {
-  position: relative;
-  text-align: center;
-}
-
-/* Exit Button (top-right corner) */
-.exit-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: transparent;
-  color: #ff4d4d;
-  font-size: 26px;
+/* === BUTTONS === */
+button {
+  width: 100%;
+  padding: 10px 14px;
+  margin: 6px 0;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: 0.25s;
+}
+button.primary {
+  background: #007bff;
+  color: white;
+}
+button.primary:hover {
+  background: #339dff;
+}
+button.accent {
+  background: #00b36b;
+  color: white;
+}
+button.accent:hover {
+  background: #00d47c;
+}
+button.secondary {
+  background: #444;
+  color: white;
+}
+button.secondary:hover {
+  background: #666;
 }
 
-.exit-btn:hover {
-  color: #ff1a1a;
-  transform: scale(1.2);
+/* === CARD === */
+.card {
+  background: #1e1e1e;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-/* === FLIP CARD === */
+/* === FLIP CARD (3D effect applied here) === */
 .flip-container {
-  perspective: 1000px;
-  width: 100%;
-  height: 180px;
-  margin: 20px 0;
+  perspective: 1200px;
+  margin: 20px auto;
+  width: 250px;
+  height: 160px;
   position: relative;
 }
-
 .flipper {
-  position: relative;
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 0.6s ease;
+  transition: transform 0.6s cubic-bezier(.2,.8,.2,1), box-shadow 0.2s ease;
+  position: relative;
   cursor: pointer;
+  will-change: transform;
 }
-
-.flipper.flipped {
-  transform: rotateY(180deg);
-}
-
 .front,
 .back {
   position: absolute;
@@ -210,67 +178,147 @@ button.accent:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
-  box-shadow:
-    inset 0 0 8px rgba(255, 255, 255, 0.05),
-    0 6px 10px rgba(0, 0, 0, 0.6),
-    0 2px 4px rgba(0, 0, 0, 0.4);
   color: white;
   font-size: 18px;
-  font-weight: 500;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
   user-select: none;
-  padding: 10px;
-  text-align: center;
   transform-style: preserve-3d;
 }
 
+/* front look — slightly raised, subtle gradient */
+.front {
+  background: linear-gradient(135deg, #282828, #1a1a1a);
+  box-shadow:
+    inset 0 2px 6px rgba(255,255,255,0.03),
+    0 12px 30px rgba(0,0,0,0.6),
+    0 4px 8px rgba(0,0,0,0.4);
+  transform: translateZ(2px);
+}
+
+/* back look — flipped with depth */
 .back {
+  transform: rotateY(180deg) translateZ(1px);
+  background: linear-gradient(135deg, #0f0f0f, #262626);
+  box-shadow:
+    inset 0 -2px 6px rgba(0,0,0,0.4),
+    0 12px 30px rgba(0,0,0,0.6);
+  white-space: pre-line;
+}
+
+/* flipped state rotates the card */
+.flipped {
   transform: rotateY(180deg);
-  white-space: pre-line; /* allows \n formatting */
 }
 
-/* === REVEAL + END CONTROLS === */
-#endControls button {
+/* === SWIPE BUTTON (unused but preserved) === */
+#swipeBtnContainer {
   width: 100%;
-  margin-top: 10px;
+  max-width: 300px;
+  background: #444;
+  border-radius: 50px;
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+  touch-action: pan-x;
+}
+#swipeBtn {
+  width: 150px;
+  background: #007bff;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 50px;
+  text-align: center;
+  cursor: pointer;
+  position: absolute;
+  left: 0;
+  transition: left 0.2s ease;
 }
 
-#imposterDisplay {
-  margin-top: 15px;
-  font-weight: 600;
-  font-size: 18px;
-  color: #ff4d4d;
+/* === OTHER === */
+.message {
+  margin-bottom: 12px;
+  font-size: 16px;
 }
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+input:focus {
+  outline: none;
+  border-color: #66b3ff;
+}
+
+/* === SWIPE ANIMATIONS (kept) === */
+.flip-container {
+    perspective: 1000px;
+    margin: 20px auto;
+    width: 250px;
+    height: 160px;
+    overflow: hidden;
+    position: relative;
+}
+
+.flipper {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s ease;
+    cursor: pointer;
+    opacity: 1;
+}
+
+.flip-container.swipe-left .flipper {
+    transform: translateX(-120%) rotateY(0deg);
+    opacity: 0;
+}
+.flip-container.swipe-right .flipper {
+    transform: translateX(120%) rotateY(0deg);
+    opacity: 0;
+}
+.flip-container.reset .flipper {
+    transform: translateX(0) rotateY(0deg);
+    opacity: 1;
+}
+.front,
+.back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2a2a2a;
+    color: white;
+    font-size: 18px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    user-select: none;
+}
+.back {
+    transform: rotateY(180deg);
+}
+.flipped {
+    transform: rotateY(180deg);
+}
+
+/* === REVEAL & END CONTROLS === */
+#endControls button { width: 100%; margin-top: 10px; }
+#imposterDisplay { margin-top: 15px; font-weight: 600; font-size: 18px; color: #ff4d4d; }
 
 /* === SCROLLBAR (optional) === */
-#playerList::-webkit-scrollbar {
-  width: 6px;
-}
-#playerList::-webkit-scrollbar-thumb {
-  background-color: #555;
-  border-radius: 3px;
-}
+#playerList::-webkit-scrollbar { width: 6px; }
+#playerList::-webkit-scrollbar-thumb { background-color: #555; border-radius: 3px; }
 
 /* === RESPONSIVE === */
 @media (max-width: 500px) {
-  body {
-    padding: 10px;
-  }
-
-  .card {
-    padding: 15px;
-  }
-
-  button {
-    width: 100%;
-  }
-
-  .flip-container {
-    height: 150px;
-  }
-
-  .front,
-  .back {
-    font-size: 16px;
-  }
+  body { padding: 10px; }
+  .card { padding: 15px; }
+  button { width: 100%; }
+  .flip-container { height: 150px; }
+  .front, .back { font-size: 16px; }
 }

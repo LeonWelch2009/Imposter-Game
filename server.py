@@ -9,18 +9,17 @@ def load_categories():
     categories = {}
     if not os.path.exists("words.txt"):
         return categories
-    current_category = None
     with open("words.txt", "r", encoding="utf-8") as f:
-        for raw in f:
-            line = raw.strip()
+        current_category = None
+        for line in f:
+            line = line.strip()
             if not line:
                 continue
-            # Category header lines like "FRUIT" or "FRUIT h"
-            # Accept uppercase words and optional trailing "h" marker (case-insensitive)
+            # Accept uppercase headers like "FRUIT" or "FRUIT h" (h or H)
             if re.match(r'^[A-Z\s]+(?:\s+[hH])?$', line):
                 current_category = line
                 categories[current_category] = []
-            elif current_category:
+            elif line and current_category:
                 categories[current_category].append(line)
     return categories
 

@@ -1,56 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Imposter Game</title>
-  <link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <!-- prevent double-tap zoom on mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+    <title>Imposter Word Game</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
-  <div class="app">
-    <header>
-      <h1>🕵️ Imposter Game</h1>
-    </header>
+    <div class="app">
+        <header>
+            <h1>Imposter Word Game</h1>
+        </header>
 
-    <!-- === SETUP SCREEN === -->
-    <div id="setupScreen" class="card">
-      <h2>Add Players</h2>
-      <input type="text" id="playerName" placeholder="Enter name">
-      <button class="primary" onclick="addPlayer()">Add</button>
+        <!-- Setup Screen -->
+        <div id="setupScreen" class="card screen active">
+            <div class="message" id="message">Add players and select categories to start</div>
 
-      <ul id="playerList"></ul>
+            <input type="text" id="playerName" placeholder="Enter player name">
+            <button class="primary" id="addPlayerBtn">Add Player</button>
 
-      <h2>Categories</h2>
-      <div id="categoryList"></div>
+            <ul id="playerList"></ul>
 
-      <div class="btn-row">
-        <button class="secondary" onclick="restartGame()">Clear</button>
-        <button class="accent" onclick="startGame()">Start Game</button>
-      </div>
-    </div>
+            <div id="categories" style="display:none;"></div>
 
-    <!-- === GAME SCREEN === -->
-    <div id="gameScreen" class="card" style="display:none;">
-      <button class="exit-btn" onclick="exitGame()">×</button>
-      <h2 id="categoryDisplay"></h2>
-
-      <div class="flip-container" onclick="flipCard()">
-        <div class="flipper">
-          <div class="front">
-            <p id="playerNameDisplay"></p>
-          </div>
-          <div class="back">
-            <p id="playerWord"></p>
-          </div>
+            <div class="btn-row">
+                <button class="secondary" id="showCategoriesBtn">Show/Hide Categories</button>
+                <button class="primary" id="startGameBtn">Start Game</button>
+            </div>
         </div>
-      </div>
 
-      <div id="endControls" style="display:none;">
-        <button class="primary" onclick="restartGame()">Restart</button>
-      </div>
+        <!-- Game Screen -->
+        <div id="gameScreen" class="card screen" style="display:none; position: relative;">
+            <!-- Exit button -->
+            <button id="exitBtn" class="exit-btn" title="Back to menu">×</button>
+
+            <div class="flip-container" id="flipContainer">
+                <div class="flipper" id="flipper">
+                    <div class="front" id="cardFront">Player</div>
+                    <div class="back" id="cardBack">Word</div>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="accent" id="nextPlayerBtn" style="display:none;">Next Player</button>
+            </div>
+
+            <div id="endControls" class="btn-row" style="display:flex; flex-direction: column; align-items: center; margin-top: 20px;">
+                <button class="primary" id="revealImposterBtn" style="display:none;">Reveal Imposter(s)</button>
+                <div id="imposterDisplay" style="margin-top: 20px; font-weight: bold; color: #ff4d4d;"></div>
+                <button class="primary" id="restartBtn" style="display:none; margin-top: 12px;">New Game</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script src="/static/script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>
