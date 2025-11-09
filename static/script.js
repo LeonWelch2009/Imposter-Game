@@ -7,8 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let categories = {};
   let availableCategories = [];
   let imposterHint = null;
+  let starterAnnounced = false;
 
-  // DOM elements
+  // Elements
   const playerNameInput = document.getElementById("playerName");
   const addPlayerBtn = document.getElementById("addPlayerBtn");
   const playerList = document.getElementById("playerList");
@@ -39,29 +40,16 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderCategoryCheckboxes() {
     categoriesContainer.innerHTML = "";
     Object.keys(categories).forEach(cat => {
-      const displayName = cat.replace(/h$/, ""); // remove hint marker for menu
-      const saved = localStorage.getItem(`cat_${cat}`);
-      const checkedAttr = saved === "true" || saved === null ? "checked" : "";
+      const checkedAttr = "checked";
       const div = document.createElement("div");
       div.className = "category-checkbox";
-      const formattedCat = displayName
-        .toLowerCase()
-        .split(" ")
-        .map(w => w[0].toUpperCase() + w.slice(1))
-        .join(" ");
+      const formattedCat = cat.replace(" H", "").replace("h", "");
       div.innerHTML = `
         <input type="checkbox" value="${cat}" ${checkedAttr}>
         <label>${formattedCat}</label>
       `;
       categoriesContainer.appendChild(div);
     });
-    categoriesContainer
-      .querySelectorAll("input[type='checkbox']")
-      .forEach(inp => {
-        inp.addEventListener("change", () => {
-          localStorage.setItem(`cat_${inp.value}`, inp.checked ? "true" : "false");
-        });
-      });
   }
 
   showCategoriesBtn.addEventListener("click", () => {
@@ -110,20 +98,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!checked.length) return alert("Select at least one category!");
 
     availableCategories = checked.slice();
-    localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
-
     imposterIndices = [];
     const imposterCount = players.length >= 6 ? 2 : 1;
     while (imposterIndices.length < imposterCount) {
       const idx = Math.floor(Math.random() * players.length);
       if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
-    }
-
-    // Troll round (1 in ~18 chance)
-    const trollChance = Math.random();
-    if (trollChance < 1 / 18) {
-      imposterIndices = [...Array(players.length).keys()];
-      alert("😈 Troll Round! Everyone is the imposter!");
     }
 
     pickWord();
@@ -135,25 +114,18 @@ document.addEventListener("DOMContentLoaded", () => {
     imposterDisplay.textContent = "";
     flipContainer.style.display = "block";
     updateCard();
-
-    // Choose random starter
-    const starterIndex = Math.floor(Math.random() * players.length);
-    alert(`${players[starterIndex]} starts the discussion!`);
   });
 
   function pickWord() {
-    const catList = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
-    let chosen = catList[Math.floor(Math.random() * catList.length)];
-    const hintMode = chosen.endsWith("h");
-
-    currentCategory = chosen.replace(/h$/, "");
+    const chosen = availableCategories[Math.floor(Math.random() * availableCategories.length)];
+    const hintMode = /\bh\b/i.test(chosen);
+    currentCategory = chosen.replace(/\bh\b/i, "").trim();
     const words = categories[chosen] || [];
     currentWord = words[Math.floor(Math.random() * words.length)] || "";
-
-    imposterHint = hintMode && currentWord.length > 0 ? currentWord[0].toUpperCase() : null;
+    imposterHint = hintMode && currentWord ? currentWord[0].toUpperCase() : null;
   }
 
-  function updateCard(direction = null) {
+  function updateCard() {
     nextPlayerBtn.style.display = "none";
     cardFront.textContent = players[currentPlayerIndex];
     cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
@@ -161,16 +133,6 @@ document.addEventListener("DOMContentLoaded", () => {
         ? `IMPOSTER\n(Hint: ${currentCategory}, starts with '${imposterHint}')`
         : `IMPOSTER\n(Hint: ${currentCategory})`
       : currentWord;
-
-    if (direction) {
-      const offset = direction === "left" ? "-100%" : "100%";
-      flipContainer.style.transition = "none";
-      flipContainer.style.transform = `translateX(${offset})`;
-      requestAnimationFrame(() => {
-        flipContainer.style.transition = "transform 0.4s ease";
-        flipContainer.style.transform = "translateX(0)";
-      });
-    }
   }
 
   // === Card flipping ===
@@ -197,12 +159,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // === Next player ===
   nextPlayerBtn.addEventListener("click", () => {
     if (currentPlayerIndex >= players.length - 1) {
-      nextPlayerBtn.style.display = "none";
       flipContainer.style.display = "none";
+      nextPlayerBtn.style.display = "none";
       revealImposterBtn.style.display = "inline-block";
+
+      // announce who starts only now
+      if (!starterAnnounced) {
+        const starterIndex = Math.floor(Math.random() * players.length);
+        setTimeout(() => {
+          alert(`${players[starterIndex]} starts the discussion!`);
+        }, 300);
+        starterAnnounced = true;
+      }
     } else {
       currentPlayerIndex++;
-      updateCard("right");
+      updateCard();
     }
   });
 
@@ -215,11 +186,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // === Restart game ===
-  restartBtn.addEventListener("click", () => resetToMainMenu());
+  restartBtn.addEventListener("click", resetToMainMenu);
   exitBtn.addEventListener("click", () => {
-    if (confirm("Return to main menu? Progress will be lost.")) {
-      resetToMainMenu();
-    }
+    if (confirm("Return to main menu? Progress will be lost.")) resetToMainMenu();
   });
 
   function resetToMainMenu() {
@@ -231,6 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
     restartBtn.style.display = "none";
     imposterDisplay.textContent = "";
     currentPlayerIndex = 0;
+    starterAnnounced = false;
     updatePlayerList();
     renderCategoryCheckboxes();
   }

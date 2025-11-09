@@ -3,7 +3,6 @@ import os
 
 app = Flask(__name__)
 
-# Load categories from words.txt
 def load_categories():
     categories = {}
     if not os.path.exists("words.txt"):
@@ -12,10 +11,13 @@ def load_categories():
         current_category = None
         for line in f:
             line = line.strip()
+            if not line:
+                continue
+            # Category header (uppercase lines)
             if line.isupper():
                 current_category = line
                 categories[current_category] = []
-            elif line and current_category:
+            elif current_category:
                 categories[current_category].append(line)
     return categories
 
@@ -27,7 +29,6 @@ def index():
 def get_categories():
     return jsonify(load_categories())
 
-# Serve static files (JS/CSS)
 @app.route("/static/<path:path>")
 def send_static(path):
     return send_from_directory("static", path)
