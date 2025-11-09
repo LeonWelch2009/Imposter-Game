@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
     let players = [];
     let currentPlayerIndex = 0;
@@ -6,9 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentWord = "";
     let categories = {};
     let availableCategories = [];
-    let starterIndex = null;
-    let trollRound = false;
 
+    // DOM elements
     const playerNameInput = document.getElementById("playerName");
     const addPlayerBtn = document.getElementById("addPlayerBtn");
     const playerList = document.getElementById("playerList");
@@ -25,107 +25,166 @@ document.addEventListener("DOMContentLoaded", () => {
     const revealImposterBtn = document.getElementById("revealImposterBtn");
     const imposterDisplay = document.getElementById("imposterDisplay");
     const restartBtn = document.getElementById("restartBtn");
-    const starterDisplay = document.getElementById("starterDisplay");
-    const exitBtn = document.getElementById("exitBtn");
 
-    document.addEventListener('touchstart', e => { if(e.touches.length>1)e.preventDefault(); }, {passive:false});
+    // === Load categories from server ===
+    fetch("/categories")
+      .then(res => res.json())
+      .then(data => {
+        categories = data || {};
+        renderCategoryCheckboxes();
+      })
+      .catch(err => console.error("Failed to load categories:", err));
 
-    fetch("/categories").then(res => res.json()).then(data => { categories = data || {}; renderCategoryCheckboxes(); });
-
+    // === Render category checkboxes ===
     function renderCategoryCheckboxes() {
         categoriesContainer.innerHTML = "";
         Object.keys(categories).forEach(cat => {
             const saved = localStorage.getItem(`cat_${cat}`);
             const checkedAttr = saved === "true" || saved === null ? "checked" : "";
-            const displayName = cat.replace(/ h$/, "");
-            const formatted = displayName.toLowerCase().split(" ").map(w=>w[0].toUpperCase()+w.slice(1)).join(" ");
             const div = document.createElement("div");
-            div.className="category-checkbox";
-            div.innerHTML=`<input type="checkbox" value="${cat}" ${checkedAttr}><label>${formatted}</label>`;
+            div.className = "category-checkbox";
+            // Format category nicely (capitalize first letter of each word)
+            const formattedCat = cat.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
+            div.innerHTML = `
+                <input type="checkbox" value="${cat}" ${checkedAttr}>
+                <label>${formattedCat}</label>
+            `;
             categoriesContainer.appendChild(div);
         });
         categoriesContainer.querySelectorAll("input[type='checkbox']").forEach(inp => {
-            inp.addEventListener("change", () => localStorage.setItem(`cat_${inp.value}`, inp.checked?"true":"false"));
+            inp.addEventListener("change", () => {
+                localStorage.setItem(`cat_${inp.value}`, inp.checked ? "true" : "false");
+            });
         });
     }
 
-    showCategoriesBtn.addEventListener("click",()=>categoriesContainer.style.display=categoriesContainer.style.display==="block"?"none":"block");
+    // === Show / Hide categories button ===
+    showCategoriesBtn.addEventListener("click", () => {
+        const isHidden = window.getComputedStyle(categoriesContainer).display === "none";
+        categoriesContainer.style.display = isHidden ? "block" : "none";
+    });
+
+    // === Add player ===
     addPlayerBtn.addEventListener("click", addPlayer);
-    playerNameInput.addEventListener("keypress", e => { if(e.key==="Enter") addPlayer(); });
+    playerNameInput.addEventListener("keypress", e => { if (e.key === "Enter") addPlayer(); });
 
     function addPlayer() {
         const name = playerNameInput.value.trim();
-        if(!name) return;
-        const formatted = name.split(/\s+/).map(w=>w[0].toUpperCase()+w.slice(1).toLowerCase()).join(" ");
-        if(!players.includes(formatted)){ players.push(formatted); playerNameInput.value=""; updatePlayerList(); }
+        if (!name) return;
+
+        const formatted = name.split(/\s+/).map(w => w[0].toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+        if (!players.includes(formatted)) {
+            players.push(formatted);
+            playerNameInput.value = "";
+            updatePlayerList();
+        }
     }
 
     function updatePlayerList() {
-        playerList.innerHTML="";
-        players.forEach((p, idx)=>{
-            const li=document.createElement("li");
-            li.className="player-item";
-            li.innerHTML=`<span>${p}</span><button class="remove-player">×</button>`;
-            li.querySelector("button").addEventListener("click", ()=>{ players.splice(idx,1); updatePlayerList(); });
+        playerList.innerHTML = "";
+        players.forEach((p, idx) => {
+            const li = document.createElement("li");
+            li.className = "player-item";
+            li.innerHTML = `<span>${p}</span><button class="remove-player">×</button>`;
+            li.querySelector("button").addEventListener("click", () => {
+                players.splice(idx, 1);
+                updatePlayerList();
+            });
             playerList.appendChild(li);
         });
     }
 
-    startGameBtn.addEventListener("click", ()=>{
-        if(players.length<3)return alert("Minimum 3 players required!");
-        availableCategories=Array.from(document.querySelectorAll("#categories input:checked")).map(i=>i.value);
-        if(!availableCategories.length)return alert("Select at least one category!");
-        trollRound=Math.random()<1/17;
-        imposterIndices=[];
-        if(trollRound){ imposterIndices=players.map((_,i)=>i); }
-        else{ const count = players.length>=6?2:1; while(imposterIndices.length<count){ const idx=Math.floor(Math.random()*players.length); if(!imposterIndices.includes(idx)) imposterIndices.push(idx); } }
-        starterIndex=Math.floor(Math.random()*players.length);
-        currentPlayerIndex=0;
-        showPlayerCard();
-        setupScreen.style.display="none";
-        gameScreen.style.display="block";
-        flipContainer.style.display="block";
-        nextPlayerBtn.style.display="none";
-        revealImposterBtn.style.display="none";
-        imposterDisplay.textContent="";
-        starterDisplay.textContent="";
+    // === Start game ===
+    startGameBtn.addEventListener("click", () => {
+        if (players.length < 3) return alert("Minimum 3 players required!");
+
+        const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
+        if (!checked.length) return alert("Select at least one category!");
+
+        availableCategories = checked.slice();
+        localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
+
+        imposterIndices = [];
+        const imposterCount = players.length >= 6 ? 2 : 1;
+        while (imposterIndices.length < imposterCount) {
+            const idx = Math.floor(Math.random() * players.length);
+            if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
+        }
+
+        currentPlayerIndex = 0;
+        pickWord();
+
+        setupScreen.style.display = "none";
+        gameScreen.style.display = "block";
+        nextPlayerBtn.style.display = "inline-block";
+        revealImposterBtn.style.display = "none";
+        imposterDisplay.textContent = "";
+        flipContainer.style.display = "block";
+        updateCard();
     });
 
-    function showPlayerCard(){
-        const catChoice = availableCategories[Math.floor(Math.random()*availableCategories.length)];
-        const words = categories[catChoice] || [];
-        const word = words[Math.floor(Math.random()*words.length)] || "";
-        currentCategory=catChoice.replace(/ h$/,"");
-        cardFront.textContent=players[currentPlayerIndex];
-        if(imposterIndices.includes(currentPlayerIndex)){
-            currentWord=/ h$/.test(catChoice)?word[0]+"…":`IMPOSTER\n(Hint: ${currentCategory})`;
-            cardBack.textContent=currentWord;
-        }else{ cardBack.textContent=word; }
-        flipper.classList.remove("flipped");
-        nextPlayerBtn.style.display="none";
+    function pickWord() {
+        const catList = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
+        currentCategory = catList[Math.floor(Math.random() * catList.length)];
+        const words = categories[currentCategory] || [];
+        currentWord = words[Math.floor(Math.random() * words.length)] || "";
     }
 
-    flipper.addEventListener("click", ()=>{
-        flipper.classList.toggle("flipped");
-        nextPlayerBtn.style.display="inline-block";
+    function updateCard(direction = null) {
+        cardFront.textContent = players[currentPlayerIndex];
+        cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
+            ? `IMPOSTER\n(Hint: ${currentCategory})`
+            : currentWord;
+
+        if (direction) {
+            const offset = direction === "left" ? "-100%" : "100%";
+            flipContainer.style.transition = "none";
+            flipContainer.style.transform = `translateX(${offset})`;
+            requestAnimationFrame(() => {
+                flipContainer.style.transition = "transform 0.4s ease";
+                flipContainer.style.transform = "translateX(0)";
+            });
+        }
+    }
+
+    // Flip card on hold
+    flipper.addEventListener("mousedown", () => flipper.classList.add("flipped"));
+    flipper.addEventListener("mouseup", () => flipper.classList.remove("flipped"));
+    flipper.addEventListener("mouseleave", () => flipper.classList.remove("flipped"));
+    flipper.addEventListener("touchstart", e => { e.preventDefault(); flipper.classList.add("flipped"); });
+    flipper.addEventListener("touchend", e => { e.preventDefault(); flipper.classList.remove("flipped"); });
+
+    // Next player with swipe animation
+    nextPlayerBtn.addEventListener("click", () => {
+        if (currentPlayerIndex >= players.length - 1) {
+            nextPlayerBtn.style.display = "none";
+            flipContainer.style.display = "none";
+            revealImposterBtn.style.display = "inline-block";
+        } else {
+            currentPlayerIndex++;
+            updateCard("right");
+        }
     });
 
-    nextPlayerBtn.addEventListener("click", ()=>{
-        currentPlayerIndex++;
-        if(currentPlayerIndex>=players.length){
-            flipContainer.style.display="none";
-            revealImposterBtn.style.display="inline-block";
-            starterDisplay.textContent=`${players[starterIndex]} starts the game!`;
-        }else showPlayerCard();
+    // Reveal imposter
+    revealImposterBtn.addEventListener("click", () => {
+        const names = imposterIndices.map(i => players[i]).join(", ");
+        imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
+        revealImposterBtn.style.display = "none";
+        restartBtn.style.display = "inline-block";
     });
 
-    revealImposterBtn.addEventListener("click", ()=>{
-        const names=imposterIndices.map(i=>players[i]).join(", ");
-        imposterDisplay.textContent=`IMPOSTER(s): ${names}`;
-        revealImposterBtn.style.display="none";
-        restartBtn.style.display="inline-block";
+    // Restart game
+    restartBtn.addEventListener("click", () => {
+        gameScreen.style.display = "none";
+        setupScreen.style.display = "block";
+        flipContainer.style.display = "block";
+        nextPlayerBtn.style.display = "inline-block";
+        revealImposterBtn.style.display = "none";
+        restartBtn.style.display = "none";
+        imposterDisplay.textContent = "";
+        currentPlayerIndex = 0;
+        updatePlayerList();
+        renderCategoryCheckboxes();
     });
-
-    restartBtn.addEventListener("click", ()=>location.reload());
-    exitBtn.addEventListener("click", ()=>{ if(confirm("Return to main menu? Progress will be lost.")) location.reload(); });
 });

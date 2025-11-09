@@ -34,3 +34,5 @@ def send_static(path):
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
