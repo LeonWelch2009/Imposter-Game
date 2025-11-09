@@ -2,10 +2,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let players = [];
     let currentPlayerIndex = 0;
     let imposterIndices = [];
-    let trollRound = false;
+    let currentCategory = "";
+    let currentWord = "";
     let categories = {};
     let availableCategories = [];
     let starterIndex = null;
+    let trollRound = false;
 
     // DOM elements
     const playerNameInput = document.getElementById("playerName");
@@ -24,13 +26,29 @@ document.addEventListener("DOMContentLoaded", () => {
     const revealImposterBtn = document.getElementById("revealImposterBtn");
     const imposterDisplay = document.getElementById("imposterDisplay");
     const restartBtn = document.getElementById("restartBtn");
-    const starterDisplay = document.getElementById("starterDisplay");
-    const exitBtn = document.getElementById("exitBtn");
+    const starterDisplay = document.createElement("div");
+    const exitBtn = document.createElement("button");
+
+    // Add starter display and exit button
+    starterDisplay.id = "starterDisplay";
+    starterDisplay.style.marginBottom = "10px";
+    starterDisplay.style.fontWeight = "bold";
+    gameScreen.insertBefore(starterDisplay, flipContainer);
+
+    exitBtn.id = "exitBtn";
+    exitBtn.textContent = "×";
+    exitBtn.style.position = "absolute";
+    exitBtn.style.top = "10px";
+    exitBtn.style.right = "10px";
+    exitBtn.style.fontSize = "20px";
+    exitBtn.style.background = "transparent";
+    exitBtn.style.border = "none";
+    exitBtn.style.color = "#f0f0f0";
+    exitBtn.style.cursor = "pointer";
+    gameScreen.appendChild(exitBtn);
 
     // Prevent mobile double-tap zoom
-    document.addEventListener('touchstart', function(event) {
-        if (event.touches.length > 1) event.preventDefault();
-    }, { passive: false });
+    document.addEventListener('touchstart', e => { if (e.touches.length > 1) e.preventDefault(); }, {passive:false});
 
     // Load categories
     fetch("/categories")
@@ -45,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
         Object.keys(categories).forEach(cat => {
             const saved = localStorage.getItem(`cat_${cat}`);
             const checkedAttr = saved === "true" || saved === null ? "checked" : "";
-            const displayName = cat.replace(/ h$/, "");
+            const displayName = cat.replace(/ h$/, ""); // remove 'h' for display
             const formattedCat = displayName.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
             const div = document.createElement("div");
             div.className = "category-checkbox";
@@ -87,7 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // === Start Game ===
     startGameBtn.addEventListener("click", () => {
         if (players.length < 3) return alert("Minimum 3 players required!");
         const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
@@ -95,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
         availableCategories = checked.slice();
         localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
 
-        // Decide troll round (~1 in 17 chance)
+        // Troll round ~1 in 17 chance
         trollRound = Math.random() < 1/17;
         imposterIndices = [];
         if (trollRound) {
@@ -116,6 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         setupScreen.style.display = "none";
         gameScreen.style.display = "block";
+        flipContainer.style.display = "block";
         nextPlayerBtn.style.display = "none";
         revealImposterBtn.style.display = "none";
         imposterDisplay.textContent = "";
@@ -127,14 +145,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const catChoice = catList[Math.floor(Math.random() * catList.length)];
         const words = categories[catChoice] || [];
         const word = words[Math.floor(Math.random() * words.length)] || "";
-
         currentCategory = catChoice.replace(/ h$/, "");
 
         cardFront.textContent = players[currentPlayerIndex];
 
-        // Show hint for imposter if category has 'h'
+        // Show first-letter hint if imposter and category has h
         if (imposterIndices.includes(currentPlayerIndex) && / h$/.test(catChoice)) {
-            cardBack.textContent = word[0] + "…";
+            currentWord = word[0] + "…";
+            cardBack.textContent = currentWord;
         } else if (imposterIndices.includes(currentPlayerIndex)) {
             cardBack.textContent = `IMPOSTER\n(Hint: ${currentCategory})`;
         } else {
@@ -145,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
         nextPlayerBtn.style.display = "none";
     }
 
-    // Flip card
+    // Flip card triggers next player button
     flipper.addEventListener("mousedown", () => nextPlayerBtn.style.display = "inline-block");
     flipper.addEventListener("touchstart", () => nextPlayerBtn.style.display = "inline-block");
 
