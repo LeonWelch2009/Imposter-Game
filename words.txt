@@ -32,7 +32,7 @@ Mateus
 Alfie Hanks
 Aiden Yeoman
 
-CLASH ROYALE
+CLASH ROYALE h
 Knight
 Archers
 Goblins
@@ -71,7 +71,7 @@ Chest
 Clan
 Deck
 
-SPORTS
+SPORTS h
 Soccer
 Basketball
 Tennis
@@ -123,7 +123,7 @@ Triathlon
 Decathlon
 Pentathlon
 
-FRUITS
+FRUITS h
 Apple
 Banana
 Orange
@@ -175,7 +175,7 @@ Sapodilla
 Durian
 Breadfruit
 
-MEALS
+MEALS h
 Spaghetti Bolognese
 Pizza Margherita
 Roast Chicken
@@ -227,7 +227,7 @@ Chicken Alfredo
 Tempura
 Ratatouille
 
-CITIES
+CITIES h
 Paris
 London
 New York
@@ -279,7 +279,7 @@ Kyoto
 Jakarta
 Nairobi
 
-SINGERS
+SINGERS h
 Taylor Swift
 Ed Sheeran
 Adele
@@ -327,10 +327,8 @@ Zayn Malik
 Camila Cabello
 Jason Derulo
 Ellie Goulding
-Meghan Trainor
-Alicia Keys
 
-CHARACTERS
+CHARACTERS h
 Harry Potter
 Hermione Granger
 Ron Weasley
@@ -363,7 +361,6 @@ Willy Wonka
 Simba
 Mufasa
 Elsa
-Anna
 Olaf
 Woody
 Buzz Lightyear
@@ -384,7 +381,7 @@ Black Panther
 Deadpool
 Wolverine
 
-ACTOR
+ACTOR h
 Leonardo DiCaprio
 Brad Pitt
 Johnny Depp
@@ -436,7 +433,7 @@ Mark Ruffalo
 Chris Pratt
 Jason Momoa
 
-HISTORICAL FIGURE
+HISTORICAL FIGURE h
 Albert Einstein
 Isaac Newton
 Nikola Tesla
@@ -459,7 +456,6 @@ Nelson Mandela
 Abraham Lincoln
 George Washington
 Benjamin Franklin
-Joan of Arc
 Florence Nightingale
 William Shakespeare
 Christopher Columbus
@@ -473,13 +469,10 @@ Pablo Picasso
 Wright Brothers
 Sigmund Freud
 Thomas Edison
-Frida Kahlo
 Mother Teresa
 Malcolm X
 Rosa Parks
 Walt Disney
-Albert Schweitzer
-Niels Bohr
 Alan Turing
 Stephen Hawking
 Jane Austen
@@ -489,7 +482,7 @@ Sun Tzu
 Confucius
 Queen Victoria
 
-PLACES
+PLACES h
 Supermarket
 Cinema
 Police Station
@@ -544,7 +537,7 @@ Garage
 Playroom
 Classroom
 
-JOBS
+JOBS h
 Teacher
 Doctor
 Nurse
@@ -598,7 +591,7 @@ Politician
 Athlete
 Coach
 
-HOUSEHOLD OBJECTS
+HOUSEHOLD OBJECTS h
 Table
 Chair
 Desk
@@ -651,7 +644,7 @@ Ball
 Toy
 Candle
 
-STORTFORD SPORTS
+STORTFORD SPORTS h
 Waitrose Car Park
 Cinema
 Rivermill

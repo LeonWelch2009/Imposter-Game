@@ -1,4 +1,8 @@
-/* === GENERAL STYLES === */
+/* === GLOBAL STYLES === */
+* {
+  box-sizing: border-box;
+}
+
 body {
   background-color: #121212;
   color: #e0e0e0;
@@ -6,165 +10,216 @@ body {
   margin: 0;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
   padding: 20px;
+  touch-action: manipulation; /* prevent zoom on double tap */
 }
 
-.app {
-  width: 100%;
-  max-width: 420px;
-  background-color: #1e1e1e;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  text-align: center;
+h1, h2, h3 {
+  font-weight: 600;
+  margin: 0 0 10px 0;
 }
 
-h1 {
-  color: #66b3ff;
-  margin-bottom: 12px;
-}
-
-/* === INPUT === */
-input[type="text"] {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  background: #2a2a2a;
-  border: 1px solid #333;
-  color: #f0f0f0;
-  margin: 8px 0;
-  box-sizing: border-box;
-  font-size: 16px; /* prevents mobile zoom */
-}
-
-/* === PLAYER LIST === */
-ul#playerList {
+ul {
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+button, input {
+  font-family: inherit;
+  touch-action: manipulation;
+}
+
+/* === LAYOUT === */
+.app {
+  max-width: 400px;
+  width: 100%;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.card {
+  background-color: #1f1f1f;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  transition: 0.3s ease;
+}
+
+.screen.active {
+  display: block;
+}
+
+/* === INPUT & BUTTONS === */
+input[type="text"] {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  background: #2a2a2a;
+  color: #fff;
+  margin-bottom: 10px;
+  transition: 0.3s ease;
+}
+
+input[type="text"]:focus {
+  background: #333;
+  box-shadow: 0 0 0 2px #3a86ff;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+button.primary {
+  background-color: #3a86ff;
+  color: #fff;
+}
+
+button.primary:hover {
+  background-color: #256ef5;
+}
+
+button.secondary {
+  background-color: #444;
+  color: #fff;
+}
+
+button.secondary:hover {
+  background-color: #555;
+}
+
+button.accent {
+  background-color: #00c853;
+  color: white;
+}
+
+button.accent:hover {
+  background-color: #00a74b;
+}
+
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.message {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 10px;
+  opacity: 0.85;
+}
+
+/* === PLAYER LIST === */
+#playerList {
   max-height: 180px;
   overflow-y: auto;
+  margin-bottom: 15px;
 }
 
 .player-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #2a2a2a;
-  padding: 8px 12px;
-  border-radius: 8px;
+  background: #2c2c2c;
   margin-bottom: 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
 }
 
-/* === REMOVE PLAYER BUTTON === */
-.remove-player {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: none;
-  background: #ff4d4d;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: 0.2s ease;
+.player-item span {
+  font-size: 15px;
 }
-.remove-player:hover {
-  background: #ff1a1a;
-  transform: scale(1.1);
+
+.player-item button.remove-player {
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.player-item button.remove-player:hover {
+  transform: scale(1.2);
+  color: #ff1a1a;
 }
 
 /* === CATEGORY CHECKBOXES === */
 .category-checkbox {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 6px;
-  cursor: pointer;
-  font-size: 14px;
-}
-.category-checkbox input[type="checkbox"] {
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border: 2px solid #555;
-  border-radius: 6px;
-  background: #2a2a2a;
-  position: relative;
-  transition: 0.25s ease;
-}
-.category-checkbox input[type="checkbox"]:checked {
-  background: #007bff;
-  border-color: #007bff;
-  box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
-}
-.category-checkbox input[type="checkbox"]:checked::after {
-  content: "✓";
-  color: white;
-  position: absolute;
-  left: 3px;
-  top: -1px;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #333;
   font-size: 14px;
 }
 
-/* === BUTTONS === */
-button {
-  width: 100%;
-  padding: 10px 14px;
-  margin: 6px 0;
-  border-radius: 10px;
+.category-checkbox input {
+  transform: scale(1.2);
+}
+
+/* === GAME SCREEN === */
+#gameScreen {
+  position: relative;
+  text-align: center;
+}
+
+/* Exit Button (top-right corner) */
+.exit-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  color: #ff4d4d;
+  font-size: 26px;
   border: none;
   cursor: pointer;
-  transition: 0.25s;
-}
-button.primary {
-  background: #007bff;
-  color: white;
-}
-button.primary:hover {
-  background: #339dff;
-}
-button.accent {
-  background: #00b36b;
-  color: white;
-}
-button.accent:hover {
-  background: #00d47c;
-}
-button.secondary {
-  background: #444;
-  color: white;
-}
-button.secondary:hover {
-  background: #666;
+  transition: 0.2s ease;
 }
 
-/* === CARD === */
-.card {
-  background: #1e1e1e;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+.exit-btn:hover {
+  color: #ff1a1a;
+  transform: scale(1.2);
 }
 
 /* === FLIP CARD === */
 .flip-container {
   perspective: 1000px;
-  margin: 20px auto;
-  width: 250px;
-  height: 160px;
+  width: 100%;
+  height: 180px;
+  margin: 20px 0;
+  position: relative;
 }
+
 .flipper {
+  position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 0.4s ease;
   transform-style: preserve-3d;
-  position: relative;
+  transition: transform 0.6s ease;
   cursor: pointer;
 }
+
+.flipper.flipped {
+  transform: rotateY(180deg);
+}
+
 .front,
 .back {
   position: absolute;
@@ -175,139 +230,72 @@ button.secondary:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #2a2a2a;
+  background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
+  box-shadow:
+    inset 0 0 8px rgba(255, 255, 255, 0.05),
+    0 6px 10px rgba(0, 0, 0, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.4);
   color: white;
   font-size: 18px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  font-weight: 500;
   user-select: none;
-}
-.back {
-  transform: rotateY(180deg);
-}
-.flipped {
-  transform: rotateY(180deg);
-}
-
-/* === SWIPE BUTTON === */
-#swipeBtnContainer {
-  width: 100%;
-  max-width: 300px;
-  background: #444;
-  border-radius: 50px;
-  overflow: hidden;
-  position: relative;
-  user-select: none;
-  touch-action: pan-x;
-}
-#swipeBtn {
-  width: 150px;
-  background: #007bff;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 50px;
+  padding: 10px;
   text-align: center;
-  cursor: pointer;
-  position: absolute;
-  left: 0;
-  transition: left 0.2s ease;
-}
-
-/* === OTHER === */
-.message {
-  margin-bottom: 12px;
-  font-size: 16px;
-}
-.btn-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-}
-input:focus {
-  outline: none;
-  border-color: #66b3ff;
-}
-
-/* === CARD SWIPE ANIMATION === */
-.flip-container {
-    perspective: 1000px;
-    margin: 20px auto;
-    width: 250px;
-    height: 160px;
-    overflow: hidden;
-    position: relative;
-}
-
-.flipper {
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 0.4s ease, left 0.4s ease;
-    position: relative;
-    cursor: pointer;
-}
-
-/* === CARD SWIPE ANIMATION (TOUCH-UP) === */
-.flip-container {
-    perspective: 1000px;
-    margin: 20px auto;
-    width: 250px;
-    height: 160px;
-    overflow: hidden;
-    position: relative;
-}
-
-.flipper {
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s ease;
-    cursor: pointer;
-    opacity: 1;
-}
-
-/* Slide out left */
-.flip-container.swipe-left .flipper {
-    transform: translateX(-120%) rotateY(0deg);
-    opacity: 0;
-}
-
-/* Slide in from right */
-.flip-container.swipe-right .flipper {
-    transform: translateX(120%) rotateY(0deg);
-    opacity: 0;
-}
-
-/* Animate new card back to center */
-.flip-container.reset .flipper {
-    transform: translateX(0) rotateY(0deg);
-    opacity: 1;
-}
-
-/* Keep front/back flip intact */
-.front,
-.back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 12px;
-    backface-visibility: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #2a2a2a;
-    color: white;
-    font-size: 18px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    user-select: none;
+  transform-style: preserve-3d;
 }
 
 .back {
-    transform: rotateY(180deg);
+  transform: rotateY(180deg);
+  white-space: pre-line; /* allows \n formatting */
 }
 
-.flipped {
-    transform: rotateY(180deg);
+/* Smooth slide-in effect between players */
+.flip-container {
+  transition: transform 0.4s ease;
+}
+
+/* === REVEAL + END CONTROLS === */
+#endControls button {
+  width: 100%;
+  margin-top: 10px;
+}
+
+#imposterDisplay {
+  margin-top: 15px;
+  font-weight: 600;
+  font-size: 18px;
+  color: #ff4d4d;
+}
+
+/* === SCROLLBAR (optional) === */
+#playerList::-webkit-scrollbar {
+  width: 6px;
+}
+#playerList::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 3px;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 500px) {
+  body {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .flip-container {
+    height: 150px;
+  }
+
+  .front,
+  .back {
+    font-size: 16px;
+  }
 }

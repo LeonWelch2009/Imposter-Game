@@ -2,58 +2,62 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imposter Word Game</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+  <title>Imposter Word Game</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-    <div class="app">
-        <header>
-            <h1>Imposter Word Game</h1>
-        </header>
+  <div class="app">
+    <header>
+      <h1>Imposter Word Game</h1>
+    </header>
 
-        <!-- Setup Screen -->
-        <div id="setupScreen" class="card screen active">
-            <div class="message" id="message">Add players and select categories to start</div>
+    <!-- Setup Screen -->
+    <div id="setupScreen" class="card screen active">
+      <div class="message" id="message">Add players and select categories to start</div>
 
-            <input type="text" id="playerName" placeholder="Enter player name">
-            <button class="primary" id="addPlayerBtn">Add Player</button>
+      <input type="text" id="playerName" placeholder="Enter player name">
+      <button class="primary" id="addPlayerBtn">Add Player</button>
 
-            <ul id="playerList"></ul>
+      <ul id="playerList"></ul>
 
-            <div id="categories" style="display:none;"></div>
+      <div id="categories" style="display:none;"></div>
 
-            <div class="btn-row">
-                <button class="secondary" id="showCategoriesBtn">Show/Hide Categories</button>
-                <button class="primary" id="startGameBtn">Start Game</button>
-            </div>
-        </div>
-
-        <!-- Game Screen -->
-        <div id="gameScreen" class="card screen" style="display:none;">
-            <div class="flip-container" id="flipContainer">
-                <div class="flipper" id="flipper">
-                    <div class="front" id="cardFront">Player</div>
-                    <div class="back" id="cardBack">Word</div>
-                </div>
-            </div>
-
-            <div class="btn-row">
-                <button class="accent" id="nextPlayerBtn" style="display:inline-block;">Next Player</button>
-            </div>
-
-            <div id="endControls" class="btn-row" style="display:flex; flex-direction: column; align-items: center; margin-top: 20px;">
-                <button class="primary" id="revealImposterBtn" style="display:none;">Reveal Imposter(s)</button>
-                <div id="imposterDisplay" style="margin-top: 20px; font-weight: bold; color: #ff4d4d;"></div>
-                <button class="primary" id="restartBtn" style="display:none; margin-top: 12px;">New Game</button>
-            </div>
-        </div>
+      <div class="btn-row">
+        <button class="secondary" id="showCategoriesBtn">Show/Hide Categories</button>
+        <button class="primary" id="startGameBtn">Start Game</button>
+      </div>
     </div>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <!-- Game Screen -->
+    <div id="gameScreen" class="card screen" style="display:none; position: relative;">
+      <button id="exitBtn" class="exit-btn">×</button>
+
+      <div class="flip-container" id="flipContainer">
+        <div class="flipper" id="flipper">
+          <div class="front" id="cardFront">Player</div>
+          <div class="back" id="cardBack">Word</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="accent" id="nextPlayerBtn" style="display:none;">Next Player</button>
+      </div>
+
+      <div id="endControls" class="btn-row"
+        style="flex-direction: column; align-items: center; margin-top: 20px;">
+        <button class="primary" id="revealImposterBtn" style="display:none;">Reveal Imposter(s)</button>
+        <div id="imposterDisplay" style="margin-top: 20px; font-weight: bold; color: #ff4d4d;"></div>
+        <button class="primary" id="restartBtn" style="display:none; margin-top: 12px;">New Game</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 
 </html>

@@ -1,0 +1,603 @@
+from flask import Flask, jsonify, render_template, send_from_directory
+import os
+
+app = Flask(__name__)
+
+# Load categories from words.txt
+def load_categories():
+    categories = {}
+    if not os.path.exists("words.txt"):
+        return categories
+    with open("words.txt", "r", encoding="utf-8") as f:
+        current_category = None
+        for line in f:
+            line = line.strip()
+            if line.isupper():
+                current_category = line
+                categories[current_category] = []
+            elif line and current_category:
+                categories[current_category].append(line)
+    return categories
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/categories")
+def get_categories():
+    return jsonify(load_categories())
+
+# Serve static files (JS/CSS)
+@app.route("/static/<path:path>")
+def send_static(path):
+    return send_from_directory("static", path)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imposter Word Game</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="app">
+        <header>
+            <h1>Imposter Word Game</h1>
+        </header>
+
+        <!-- Setup Screen -->
+        <div id="setupScreen" class="card screen active">
+            <div class="message" id="message">Add players and select categories to start</div>
+
+            <input type="text" id="playerName" placeholder="Enter player name">
+            <button class="primary" id="addPlayerBtn">Add Player</button>
+
+            <ul id="playerList"></ul>
+
+            <div id="categories" style="display:none;"></div>
+
+            <div class="btn-row">
+                <button class="secondary" id="showCategoriesBtn">Show/Hide Categories</button>
+                <button class="primary" id="startGameBtn">Start Game</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="card screen" style="display:none;">
+            <div class="flip-container" id="flipContainer">
+                <div class="flipper" id="flipper">
+                    <div class="front" id="cardFront">Player</div>
+                    <div class="back" id="cardBack">Word</div>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="accent" id="nextPlayerBtn" style="display:inline-block;">Next Player</button>
+            </div>
+
+            <div id="endControls" class="btn-row" style="display:flex; flex-direction: column; align-items: center; margin-top: 20px;">
+                <button class="primary" id="revealImposterBtn" style="display:none;">Reveal Imposter(s)</button>
+                <div id="imposterDisplay" style="margin-top: 20px; font-weight: bold; color: #ff4d4d;"></div>
+                <button class="primary" id="restartBtn" style="display:none; margin-top: 12px;">New Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    let players = [];
+    let currentPlayerIndex = 0;
+    let imposterIndices = [];
+    let currentCategory = "";
+    let currentWord = "";
+    let categories = {};
+    let availableCategories = [];
+
+    // DOM elements
+    const playerNameInput = document.getElementById("playerName");
+    const addPlayerBtn = document.getElementById("addPlayerBtn");
+    const playerList = document.getElementById("playerList");
+    const startGameBtn = document.getElementById("startGameBtn");
+    const setupScreen = document.getElementById("setupScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const showCategoriesBtn = document.getElementById("showCategoriesBtn");
+    const categoriesContainer = document.getElementById("categories");
+    const flipContainer = document.getElementById("flipContainer");
+    const flipper = document.getElementById("flipper");
+    const cardFront = document.getElementById("cardFront");
+    const cardBack = document.getElementById("cardBack");
+    const nextPlayerBtn = document.getElementById("nextPlayerBtn");
+    const revealImposterBtn = document.getElementById("revealImposterBtn");
+    const imposterDisplay = document.getElementById("imposterDisplay");
+    const restartBtn = document.getElementById("restartBtn");
+
+    // === Load categories from server ===
+    fetch("/categories")
+      .then(res => res.json())
+      .then(data => {
+        categories = data || {};
+        renderCategoryCheckboxes();
+      })
+      .catch(err => console.error("Failed to load categories:", err));
+
+    // === Render category checkboxes ===
+    function renderCategoryCheckboxes() {
+        categoriesContainer.innerHTML = "";
+        Object.keys(categories).forEach(cat => {
+            const saved = localStorage.getItem(`cat_${cat}`);
+            const checkedAttr = saved === "true" || saved === null ? "checked" : "";
+            const div = document.createElement("div");
+            div.className = "category-checkbox";
+            // Format category nicely (capitalize first letter of each word)
+            const formattedCat = cat.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
+            div.innerHTML = `
+                <input type="checkbox" value="${cat}" ${checkedAttr}>
+                <label>${formattedCat}</label>
+            `;
+            categoriesContainer.appendChild(div);
+        });
+        categoriesContainer.querySelectorAll("input[type='checkbox']").forEach(inp => {
+            inp.addEventListener("change", () => {
+                localStorage.setItem(`cat_${inp.value}`, inp.checked ? "true" : "false");
+            });
+        });
+    }
+
+    // === Show / Hide categories button ===
+    showCategoriesBtn.addEventListener("click", () => {
+        const isHidden = window.getComputedStyle(categoriesContainer).display === "none";
+        categoriesContainer.style.display = isHidden ? "block" : "none";
+    });
+
+    // === Add player ===
+    addPlayerBtn.addEventListener("click", addPlayer);
+    playerNameInput.addEventListener("keypress", e => { if (e.key === "Enter") addPlayer(); });
+
+    function addPlayer() {
+        const name = playerNameInput.value.trim();
+        if (!name) return;
+
+        const formatted = name.split(/\s+/).map(w => w[0].toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+        if (!players.includes(formatted)) {
+            players.push(formatted);
+            playerNameInput.value = "";
+            updatePlayerList();
+        }
+    }
+
+    function updatePlayerList() {
+        playerList.innerHTML = "";
+        players.forEach((p, idx) => {
+            const li = document.createElement("li");
+            li.className = "player-item";
+            li.innerHTML = `<span>${p}</span><button class="remove-player">×</button>`;
+            li.querySelector("button").addEventListener("click", () => {
+                players.splice(idx, 1);
+                updatePlayerList();
+            });
+            playerList.appendChild(li);
+        });
+    }
+
+    // === Start game ===
+    startGameBtn.addEventListener("click", () => {
+        if (players.length < 3) return alert("Minimum 3 players required!");
+
+        const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
+        if (!checked.length) return alert("Select at least one category!");
+
+        availableCategories = checked.slice();
+        localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
+
+        imposterIndices = [];
+        const imposterCount = players.length >= 6 ? 2 : 1;
+        while (imposterIndices.length < imposterCount) {
+            const idx = Math.floor(Math.random() * players.length);
+            if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
+        }
+
+        currentPlayerIndex = 0;
+        pickWord();
+
+        setupScreen.style.display = "none";
+        gameScreen.style.display = "block";
+        nextPlayerBtn.style.display = "inline-block";
+        revealImposterBtn.style.display = "none";
+        imposterDisplay.textContent = "";
+        flipContainer.style.display = "block";
+        updateCard();
+    });
+
+    function pickWord() {
+        const catList = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
+        currentCategory = catList[Math.floor(Math.random() * catList.length)];
+        const words = categories[currentCategory] || [];
+        currentWord = words[Math.floor(Math.random() * words.length)] || "";
+    }
+
+    function updateCard(direction = null) {
+        cardFront.textContent = players[currentPlayerIndex];
+        cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
+            ? `IMPOSTER\n(Hint: ${currentCategory})`
+            : currentWord;
+
+        if (direction) {
+            const offset = direction === "left" ? "-100%" : "100%";
+            flipContainer.style.transition = "none";
+            flipContainer.style.transform = `translateX(${offset})`;
+            requestAnimationFrame(() => {
+                flipContainer.style.transition = "transform 0.4s ease";
+                flipContainer.style.transform = "translateX(0)";
+            });
+        }
+    }
+
+    // Flip card on hold
+    flipper.addEventListener("mousedown", () => flipper.classList.add("flipped"));
+    flipper.addEventListener("mouseup", () => flipper.classList.remove("flipped"));
+    flipper.addEventListener("mouseleave", () => flipper.classList.remove("flipped"));
+    flipper.addEventListener("touchstart", e => { e.preventDefault(); flipper.classList.add("flipped"); });
+    flipper.addEventListener("touchend", e => { e.preventDefault(); flipper.classList.remove("flipped"); });
+
+    // Next player with swipe animation
+    nextPlayerBtn.addEventListener("click", () => {
+        if (currentPlayerIndex >= players.length - 1) {
+            nextPlayerBtn.style.display = "none";
+            flipContainer.style.display = "none";
+            revealImposterBtn.style.display = "inline-block";
+        } else {
+            currentPlayerIndex++;
+            updateCard("right");
+        }
+    });
+
+    // Reveal imposter
+    revealImposterBtn.addEventListener("click", () => {
+        const names = imposterIndices.map(i => players[i]).join(", ");
+        imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
+        revealImposterBtn.style.display = "none";
+        restartBtn.style.display = "inline-block";
+    });
+
+    // Restart game
+    restartBtn.addEventListener("click", () => {
+        gameScreen.style.display = "none";
+        setupScreen.style.display = "block";
+        flipContainer.style.display = "block";
+        nextPlayerBtn.style.display = "inline-block";
+        revealImposterBtn.style.display = "none";
+        restartBtn.style.display = "none";
+        imposterDisplay.textContent = "";
+        currentPlayerIndex = 0;
+        updatePlayerList();
+        renderCategoryCheckboxes();
+    });
+});
+
+
+/* === GENERAL STYLES === */
+body {
+  background-color: #121212;
+  color: #e0e0e0;
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.app {
+  width: 100%;
+  max-width: 420px;
+  background-color: #1e1e1e;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+h1 {
+  color: #66b3ff;
+  margin-bottom: 12px;
+}
+
+/* === INPUT === */
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  background: #2a2a2a;
+  border: 1px solid #333;
+  color: #f0f0f0;
+  margin: 8px 0;
+  box-sizing: border-box;
+  font-size: 16px; /* prevents mobile zoom */
+}
+
+/* === PLAYER LIST === */
+ul#playerList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.player-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2a2a2a;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+/* === REMOVE PLAYER BUTTON === */
+.remove-player {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: #ff4d4d;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s ease;
+}
+.remove-player:hover {
+  background: #ff1a1a;
+  transform: scale(1.1);
+}
+
+/* === CATEGORY CHECKBOXES === */
+.category-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.category-checkbox input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #555;
+  border-radius: 6px;
+  background: #2a2a2a;
+  position: relative;
+  transition: 0.25s ease;
+}
+.category-checkbox input[type="checkbox"]:checked {
+  background: #007bff;
+  border-color: #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
+}
+.category-checkbox input[type="checkbox"]:checked::after {
+  content: "✓";
+  color: white;
+  position: absolute;
+  left: 3px;
+  top: -1px;
+  font-size: 14px;
+}
+
+/* === BUTTONS === */
+button {
+  width: 100%;
+  padding: 10px 14px;
+  margin: 6px 0;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s;
+}
+button.primary {
+  background: #007bff;
+  color: white;
+}
+button.primary:hover {
+  background: #339dff;
+}
+button.accent {
+  background: #00b36b;
+  color: white;
+}
+button.accent:hover {
+  background: #00d47c;
+}
+button.secondary {
+  background: #444;
+  color: white;
+}
+button.secondary:hover {
+  background: #666;
+}
+
+/* === CARD === */
+.card {
+  background: #1e1e1e;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* === FLIP CARD === */
+.flip-container {
+  perspective: 1000px;
+  margin: 20px auto;
+  width: 250px;
+  height: 160px;
+}
+.flipper {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.4s ease;
+  transform-style: preserve-3d;
+  position: relative;
+  cursor: pointer;
+}
+.front,
+.back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2a2a2a;
+  color: white;
+  font-size: 18px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  user-select: none;
+}
+.back {
+  transform: rotateY(180deg);
+}
+.flipped {
+  transform: rotateY(180deg);
+}
+
+/* === SWIPE BUTTON === */
+#swipeBtnContainer {
+  width: 100%;
+  max-width: 300px;
+  background: #444;
+  border-radius: 50px;
+  overflow: hidden;
+  position: relative;
+  user-select: none;
+  touch-action: pan-x;
+}
+#swipeBtn {
+  width: 150px;
+  background: #007bff;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 50px;
+  text-align: center;
+  cursor: pointer;
+  position: absolute;
+  left: 0;
+  transition: left 0.2s ease;
+}
+
+/* === OTHER === */
+.message {
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+input:focus {
+  outline: none;
+  border-color: #66b3ff;
+}
+
+/* === CARD SWIPE ANIMATION === */
+.flip-container {
+    perspective: 1000px;
+    margin: 20px auto;
+    width: 250px;
+    height: 160px;
+    overflow: hidden;
+    position: relative;
+}
+
+.flipper {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease, left 0.4s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+/* === CARD SWIPE ANIMATION (TOUCH-UP) === */
+.flip-container {
+    perspective: 1000px;
+    margin: 20px auto;
+    width: 250px;
+    height: 160px;
+    overflow: hidden;
+    position: relative;
+}
+
+.flipper {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s ease;
+    cursor: pointer;
+    opacity: 1;
+}
+
+/* Slide out left */
+.flip-container.swipe-left .flipper {
+    transform: translateX(-120%) rotateY(0deg);
+    opacity: 0;
+}
+
+/* Slide in from right */
+.flip-container.swipe-right .flipper {
+    transform: translateX(120%) rotateY(0deg);
+    opacity: 0;
+}
+
+/* Animate new card back to center */
+.flip-container.reset .flipper {
+    transform: translateX(0) rotateY(0deg);
+    opacity: 1;
+}
+
+/* Keep front/back flip intact */
+.front,
+.back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2a2a2a;
+    color: white;
+    font-size: 18px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    user-select: none;
+}
+
+.back {
+    transform: rotateY(180deg);
+}
+
+.flipped {
+    transform: rotateY(180deg);
+}
