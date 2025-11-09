@@ -2,11 +2,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let players = [];
     let currentPlayerIndex = 0;
     let imposterIndices = [];
-    let currentCategory = "";
-    let currentWord = "";
+    let trollRound = false;
     let categories = {};
     let availableCategories = [];
-    let starterAnnounced = false;
+    let starterIndex = null;
 
     // DOM elements
     const playerNameInput = document.getElementById("playerName");
@@ -33,29 +32,24 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.touches.length > 1) event.preventDefault();
     }, { passive: false });
 
-    // === Load categories from server ===
+    // Load categories
     fetch("/categories")
-      .then(res => res.json())
-      .then(data => {
-        categories = data || {};
-        renderCategoryCheckboxes();
-      })
-      .catch(err => console.error("Failed to load categories:", err));
+        .then(res => res.json())
+        .then(data => {
+            categories = data || {};
+            renderCategoryCheckboxes();
+        });
 
     function renderCategoryCheckboxes() {
         categoriesContainer.innerHTML = "";
         Object.keys(categories).forEach(cat => {
             const saved = localStorage.getItem(`cat_${cat}`);
             const checkedAttr = saved === "true" || saved === null ? "checked" : "";
-            const div = document.createElement("div");
-            div.className = "category-checkbox";
-            // Remove 'h' for display
             const displayName = cat.replace(/ h$/, "");
             const formattedCat = displayName.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
-            div.innerHTML = `
-                <input type="checkbox" value="${cat}" ${checkedAttr}>
-                <label>${formattedCat}</label>
-            `;
+            const div = document.createElement("div");
+            div.className = "category-checkbox";
+            div.innerHTML = `<input type="checkbox" value="${cat}" ${checkedAttr}><label>${formattedCat}</label>`;
             categoriesContainer.appendChild(div);
         });
         categoriesContainer.querySelectorAll("input[type='checkbox']").forEach(inp => {
@@ -65,12 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    showCategoriesBtn.addEventListener("click", () => {
-        const isHidden = window.getComputedStyle(categoriesContainer).display === "none";
-        categoriesContainer.style.display = isHidden ? "block" : "none";
-    });
-
-    // === Player Management ===
     addPlayerBtn.addEventListener("click", addPlayer);
     playerNameInput.addEventListener("keypress", e => { if (e.key === "Enter") addPlayer(); });
 
@@ -102,15 +90,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // === Start Game ===
     startGameBtn.addEventListener("click", () => {
         if (players.length < 3) return alert("Minimum 3 players required!");
-
         const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
         if (!checked.length) return alert("Select at least one category!");
-
         availableCategories = checked.slice();
         localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
 
-        // Troll round (~1 in 17 chance)
-        const trollRound = Math.random() < 1/17;
+        // Decide troll round (~1 in 17 chance)
+        trollRound = Math.random() < 1/17;
         imposterIndices = [];
         if (trollRound) {
             imposterIndices = players.map((_, i) => i);
@@ -122,88 +108,58 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        // Pick starter
+        starterIndex = Math.floor(Math.random() * players.length);
+
         currentPlayerIndex = 0;
-        pickWord();
-        starterAnnounced = false;
+        showPlayerCard();
 
         setupScreen.style.display = "none";
         gameScreen.style.display = "block";
-        flipContainer.style.display = "block";
         nextPlayerBtn.style.display = "none";
         revealImposterBtn.style.display = "none";
         imposterDisplay.textContent = "";
         starterDisplay.textContent = "";
-        updateCard();
     });
 
-    function pickWord() {
-        const catList = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
+    function showPlayerCard() {
+        const catList = availableCategories;
         const catChoice = catList[Math.floor(Math.random() * catList.length)];
         const words = categories[catChoice] || [];
-        currentCategory = catChoice.replace(/ h$/, ""); // remove 'h' for display
         const word = words[Math.floor(Math.random() * words.length)] || "";
 
-        // Imposter sees first letter if category has 'h'
-        if (imposterIndices.includes(currentPlayerIndex) && / h$/.test(catChoice)) {
-            currentWord = word[0] + "…";
-        } else {
-            currentWord = word;
-        }
-    }
+        currentCategory = catChoice.replace(/ h$/, "");
 
-    function updateCard(direction = null) {
         cardFront.textContent = players[currentPlayerIndex];
-        cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
-            ? `IMPOSTER\n(Hint: ${currentCategory})`
-            : currentWord;
 
-        if (direction) {
-            const offset = direction === "left" ? "-100%" : "100%";
-            flipContainer.style.transition = "none";
-            flipContainer.style.transform = `translateX(${offset})`;
-            requestAnimationFrame(() => {
-                flipContainer.style.transition = "transform 0.4s ease";
-                flipContainer.style.transform = "translateX(0)";
-            });
+        // Show hint for imposter if category has 'h'
+        if (imposterIndices.includes(currentPlayerIndex) && / h$/.test(catChoice)) {
+            cardBack.textContent = word[0] + "…";
+        } else if (imposterIndices.includes(currentPlayerIndex)) {
+            cardBack.textContent = `IMPOSTER\n(Hint: ${currentCategory})`;
+        } else {
+            cardBack.textContent = word;
         }
+
+        flipper.classList.remove("flipped");
+        nextPlayerBtn.style.display = "none";
     }
 
-    // === Card Flip ===
-    flipper.addEventListener("mousedown", () => {
-        flipper.classList.add("flipped");
-        nextPlayerBtn.style.display = "inline-block";
-    });
-    flipper.addEventListener("mouseup", () => flipper.classList.remove("flipped"));
-    flipper.addEventListener("mouseleave", () => flipper.classList.remove("flipped"));
-    flipper.addEventListener("touchstart", e => { 
-        e.preventDefault(); 
-        flipper.classList.add("flipped"); 
-        nextPlayerBtn.style.display = "inline-block"; 
-    });
-    flipper.addEventListener("touchend", e => { e.preventDefault(); flipper.classList.remove("flipped"); });
+    // Flip card
+    flipper.addEventListener("mousedown", () => nextPlayerBtn.style.display = "inline-block");
+    flipper.addEventListener("touchstart", () => nextPlayerBtn.style.display = "inline-block");
 
-    // === Next Player ===
     nextPlayerBtn.addEventListener("click", () => {
-        if (currentPlayerIndex >= players.length - 1) {
-            nextPlayerBtn.style.display = "none";
+        currentPlayerIndex++;
+        if (currentPlayerIndex >= players.length) {
             flipContainer.style.display = "none";
             revealImposterBtn.style.display = "inline-block";
-
-            if (!starterAnnounced) {
-                const starterIndex = Math.floor(Math.random() * players.length);
-                starterDisplay.textContent = `${players[starterIndex]} starts the discussion!`;
-                starterAnnounced = true;
-            }
+            starterDisplay.textContent = `${players[starterIndex]} starts the game!`;
         } else {
-            currentPlayerIndex++;
-            pickWord();
-            flipper.classList.remove("flipped");
-            updateCard("right");
-            nextPlayerBtn.style.display = "none";
+            showPlayerCard();
         }
     });
 
-    // === Reveal Imposters ===
     revealImposterBtn.addEventListener("click", () => {
         const names = imposterIndices.map(i => players[i]).join(", ");
         imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
@@ -211,35 +167,9 @@ document.addEventListener("DOMContentLoaded", () => {
         restartBtn.style.display = "inline-block";
     });
 
-    // === Restart ===
-    restartBtn.addEventListener("click", () => {
-        gameScreen.style.display = "none";
-        setupScreen.style.display = "block";
-        flipContainer.style.display = "block";
-        nextPlayerBtn.style.display = "inline-block";
-        revealImposterBtn.style.display = "none";
-        restartBtn.style.display = "none";
-        imposterDisplay.textContent = "";
-        starterDisplay.textContent = "";
-        currentPlayerIndex = 0;
-        updatePlayerList();
-        renderCategoryCheckboxes();
-    });
+    restartBtn.addEventListener("click", () => location.reload());
 
-    // === Exit Button ===
     exitBtn.addEventListener("click", () => {
-        if (confirm("Return to main menu? Progress will be lost.")) {
-            gameScreen.style.display = "none";
-            setupScreen.style.display = "block";
-            flipContainer.style.display = "block";
-            nextPlayerBtn.style.display = "inline-block";
-            revealImposterBtn.style.display = "none";
-            restartBtn.style.display = "none";
-            imposterDisplay.textContent = "";
-            starterDisplay.textContent = "";
-            currentPlayerIndex = 0;
-            updatePlayerList();
-            renderCategoryCheckboxes();
-        }
+        if (confirm("Return to main menu? Progress will be lost.")) location.reload();
     });
 });
