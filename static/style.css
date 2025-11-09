@@ -7,7 +7,6 @@ body {
   display: flex;
   justify-content: center;
   padding: 20px;
-  touch-action: manipulation; /* prevent zoom on double tap */
 }
 
 .app {
@@ -35,7 +34,7 @@ input[type="text"] {
   color: #f0f0f0;
   margin: 8px 0;
   box-sizing: border-box;
-  font-size: 16px; /* prevents mobile zoom */
+  font-size: 16px;
 }
 
 /* === PLAYER LIST === */
@@ -119,6 +118,8 @@ button {
   border: none;
   cursor: pointer;
   transition: 0.25s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent; /* prevent mobile highlight */
 }
 button.primary {
   background: #007bff;
@@ -148,12 +149,14 @@ button.secondary:hover {
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  perspective: 1000px; /* needed for 3D flip */
+  position: relative;
 }
 
-/* === FLIP CARD (3D effect applied here) === */
+/* === FLIP CARD === */
 .flip-container {
-  perspective: 1200px;
+  perspective: 1000px;
   margin: 20px auto;
   width: 250px;
   height: 160px;
@@ -162,11 +165,14 @@ button.secondary:hover {
 .flipper {
   width: 100%;
   height: 100%;
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1), box-shadow 0.3s ease;
   transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(.2,.8,.2,1), box-shadow 0.2s ease;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   cursor: pointer;
-  will-change: transform;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  border-radius: 12px;
 }
 .front,
 .back {
@@ -178,60 +184,56 @@ button.secondary:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(145deg, #2a2a2a, #1c1c1c);
   color: white;
   font-size: 18px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+  box-shadow: inset 0 -4px 8px rgba(0,0,0,0.4);
   user-select: none;
-  transform-style: preserve-3d;
 }
-
-/* front look — slightly raised, subtle gradient */
-.front {
-  background: linear-gradient(135deg, #282828, #1a1a1a);
-  box-shadow:
-    inset 0 2px 6px rgba(255,255,255,0.03),
-    0 12px 30px rgba(0,0,0,0.6),
-    0 4px 8px rgba(0,0,0,0.4);
-  transform: translateZ(2px);
-}
-
-/* back look — flipped with depth */
 .back {
-  transform: rotateY(180deg) translateZ(1px);
-  background: linear-gradient(135deg, #0f0f0f, #262626);
-  box-shadow:
-    inset 0 -2px 6px rgba(0,0,0,0.4),
-    0 12px 30px rgba(0,0,0,0.6);
-  white-space: pre-line;
+  transform: rotateY(180deg);
 }
-
-/* flipped state rotates the card */
 .flipped {
   transform: rotateY(180deg);
 }
 
-/* === SWIPE BUTTON (unused but preserved) === */
-#swipeBtnContainer {
-  width: 100%;
-  max-width: 300px;
-  background: #444;
-  border-radius: 50px;
-  overflow: hidden;
-  position: relative;
-  user-select: none;
-  touch-action: pan-x;
+/* === SWIPE ANIMATION === */
+.flip-container.swipe-left .flipper {
+  transform: translateX(-120%) rotateY(0deg);
+  opacity: 0;
 }
-#swipeBtn {
-  width: 150px;
-  background: #007bff;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 50px;
-  text-align: center;
-  cursor: pointer;
+.flip-container.swipe-right .flipper {
+  transform: translateX(120%) rotateY(0deg);
+  opacity: 0;
+}
+.flip-container.reset .flipper {
+  transform: translateX(0) rotateY(0deg);
+  opacity: 1;
+}
+
+/* === EXIT BUTTON X === */
+.exit-btn {
   position: absolute;
-  left: 0;
-  transition: left 0.2s ease;
+  top: 8px;
+  right: 8px;
+  font-size: 20px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  z-index: 10;
+}
+.exit-btn:hover {
+  background: #ff1a1a;
+  transform: scale(1.1);
 }
 
 /* === OTHER === */
@@ -247,78 +249,4 @@ button.secondary:hover {
 input:focus {
   outline: none;
   border-color: #66b3ff;
-}
-
-/* === SWIPE ANIMATIONS (kept) === */
-.flip-container {
-    perspective: 1000px;
-    margin: 20px auto;
-    width: 250px;
-    height: 160px;
-    overflow: hidden;
-    position: relative;
-}
-
-.flipper {
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s ease;
-    cursor: pointer;
-    opacity: 1;
-}
-
-.flip-container.swipe-left .flipper {
-    transform: translateX(-120%) rotateY(0deg);
-    opacity: 0;
-}
-.flip-container.swipe-right .flipper {
-    transform: translateX(120%) rotateY(0deg);
-    opacity: 0;
-}
-.flip-container.reset .flipper {
-    transform: translateX(0) rotateY(0deg);
-    opacity: 1;
-}
-.front,
-.back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 12px;
-    backface-visibility: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #2a2a2a;
-    color: white;
-    font-size: 18px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    user-select: none;
-}
-.back {
-    transform: rotateY(180deg);
-}
-.flipped {
-    transform: rotateY(180deg);
-}
-
-/* === REVEAL & END CONTROLS === */
-#endControls button { width: 100%; margin-top: 10px; }
-#imposterDisplay { margin-top: 15px; font-weight: 600; font-size: 18px; color: #ff4d4d; }
-
-/* === SCROLLBAR (optional) === */
-#playerList::-webkit-scrollbar { width: 6px; }
-#playerList::-webkit-scrollbar-thumb { background-color: #555; border-radius: 3px; }
-
-/* === RESPONSIVE === */
-@media (max-width: 500px) {
-  body { padding: 10px; }
-  .card { padding: 15px; }
-  button { width: 100%; }
-  .flip-container { height: 150px; }
-  .front, .back { font-size: 16px; }
 }
