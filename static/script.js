@@ -175,13 +175,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // === Next player ===
     nextPlayerBtn.addEventListener("click", () => {
         if (currentPlayerIndex >= players.length - 1) {
-            // Last player has seen their card
-            nextPlayerBtn.style.display = "none";
-            flipContainer.style.display = "none";
-            revealImposterBtn.style.display = "inline-block";
-
-            // Show starting player message after all cards
+            // Last player has seen their card, show starting message
             messageDiv.textContent = `${startingPlayer} starts the conversation!`;
+
+            // Hide card and adjust buttons
+            flipContainer.style.display = "none";
+            nextPlayerBtn.style.display = "none";
+            revealImposterBtn.style.display = "inline-block";
         } else {
             currentPlayerIndex++;
             updateCard("right"); // same word for all
