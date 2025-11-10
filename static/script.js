@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const imposterDisplay = document.getElementById("imposterDisplay");
     const restartBtn = document.getElementById("restartBtn");
     const messageDiv = document.getElementById("message");
+    const startMessage = document.getElementById("startMessage");
     const exitBtn = document.getElementById("exitBtn"); // X button
 
     // === Load categories from server ===
@@ -129,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
         revealImposterBtn.style.display = "none";
         imposterDisplay.textContent = "";
         flipContainer.style.display = "block";
+        startMessage.textContent = ""; // clear previous
         updateCard();
         showExitBtn(true); // show X button
     });
@@ -176,10 +178,9 @@ document.addEventListener("DOMContentLoaded", () => {
     nextPlayerBtn.addEventListener("click", () => {
         if (currentPlayerIndex >= players.length - 1) {
             // Last player has seen their card, show starting message
-            messageDiv.textContent = `${startingPlayer} starts the conversation!`;
-
-            // Hide card and adjust buttons
             flipContainer.style.display = "none";
+            startMessage.textContent = `${startingPlayer} starts the conversation!`;
+
             nextPlayerBtn.style.display = "none";
             revealImposterBtn.style.display = "inline-block";
         } else {
@@ -205,6 +206,7 @@ document.addEventListener("DOMContentLoaded", () => {
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "none";
         imposterDisplay.textContent = "";
+        startMessage.textContent = "";
         messageDiv.textContent = "Add players and select categories to start";
         currentPlayerIndex = 0;
         updatePlayerList();
@@ -221,6 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "none";
         imposterDisplay.textContent = "";
+        startMessage.textContent = "";
         messageDiv.textContent = "Add players and select categories to start";
         currentPlayerIndex = 0;
         updatePlayerList();
