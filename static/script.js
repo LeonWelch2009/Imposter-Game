@@ -119,7 +119,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Randomly pick starting player
         startingPlayer = players[Math.floor(Math.random() * players.length)];
-        messageDiv.textContent = `${startingPlayer} starts the conversation!`;
 
         currentPlayerIndex = 0;
         pickWord(); // pick one word for all players
@@ -176,9 +175,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // === Next player ===
     nextPlayerBtn.addEventListener("click", () => {
         if (currentPlayerIndex >= players.length - 1) {
+            // Last player has seen their card
             nextPlayerBtn.style.display = "none";
             flipContainer.style.display = "none";
             revealImposterBtn.style.display = "inline-block";
+
+            // Show starting player message after all cards
+            messageDiv.textContent = `${startingPlayer} starts the conversation!`;
         } else {
             currentPlayerIndex++;
             updateCard("right"); // same word for all
@@ -191,7 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
         imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "inline-block";
-        messageDiv.textContent = "";
     });
 
     // === Restart game ===
