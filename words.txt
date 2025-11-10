@@ -327,8 +327,6 @@ Zayn Malik
 Camila Cabello
 Jason Derulo
 Ellie Goulding
-Meghan Trainor
-Alicia Keys
 
 CHARACTERS
 Harry Potter
@@ -363,7 +361,6 @@ Willy Wonka
 Simba
 Mufasa
 Elsa
-Anna
 Olaf
 Woody
 Buzz Lightyear
@@ -459,7 +456,6 @@ Nelson Mandela
 Abraham Lincoln
 George Washington
 Benjamin Franklin
-Joan of Arc
 Florence Nightingale
 William Shakespeare
 Christopher Columbus
@@ -473,13 +469,10 @@ Pablo Picasso
 Wright Brothers
 Sigmund Freud
 Thomas Edison
-Frida Kahlo
 Mother Teresa
 Malcolm X
 Rosa Parks
 Walt Disney
-Albert Schweitzer
-Niels Bohr
 Alan Turing
 Stephen Hawking
 Jane Austen
