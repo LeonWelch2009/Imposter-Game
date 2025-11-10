@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
         messageDiv.textContent = `${startingPlayer} starts the conversation!`;
 
         currentPlayerIndex = 0;
-        pickWord();
+        pickWord(); // pick one word for all players
 
         setupScreen.style.display = "none";
         gameScreen.style.display = "block";
@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateCard(direction = null) {
         cardFront.textContent = players[currentPlayerIndex];
         cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
-            ? `IMPOSTER\n(Hint: ${getImposterHint(currentWord)})`
+            ? `IMPOSTER\n(Hint: ${currentCategory} - ${getImposterHint(currentWord)})`
             : currentWord;
 
         if (direction) {
@@ -174,8 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
             revealImposterBtn.style.display = "inline-block";
         } else {
             currentPlayerIndex++;
-            pickWord(); // pick new word each round
-            updateCard("right");
+            updateCard("right"); // same word for all
         }
     });
 
