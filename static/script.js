@@ -4,10 +4,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let imposterIndices = [];
     let currentCategory = "";
     let currentWord = "";
+    let prevCategory = "";
+    let prevWord = "";
     let categories = {};
     let availableCategories = [];
+    let starterPlayer = ""; // NEW
 
-    // DOM elements
+    // === DOM elements ===
     const playerNameInput = document.getElementById("playerName");
     const addPlayerBtn = document.getElementById("addPlayerBtn");
     const playerList = document.getElementById("playerList");
@@ -27,12 +30,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // === Load categories from server ===
     fetch("/categories")
-      .then(res => res.json())
-      .then(data => {
-        categories = data || {};
-        renderCategoryCheckboxes();
-      })
-      .catch(err => console.error("Failed to load categories:", err));
+        .then(res => res.json())
+        .then(data => {
+            categories = data || {};
+            renderCategoryCheckboxes();
+        })
+        .catch(err => console.error("Failed to load categories:", err));
 
     // === Render category checkboxes ===
     function renderCategoryCheckboxes() {
@@ -42,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const checkedAttr = saved === "true" || saved === null ? "checked" : "";
             const div = document.createElement("div");
             div.className = "category-checkbox";
-            // Format category nicely (capitalize first letter of each word)
             const formattedCat = cat.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
             div.innerHTML = `
                 <input type="checkbox" value="${cat}" ${checkedAttr}>
@@ -110,6 +112,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
         }
 
+        // Pick who starts the conversation (NEW)
+        const starterIndex = Math.floor(Math.random() * players.length);
+        starterPlayer = players[starterIndex];
+
         currentPlayerIndex = 0;
         pickWord();
 
@@ -122,13 +128,35 @@ document.addEventListener("DOMContentLoaded", () => {
         updateCard();
     });
 
+    // === Pick a new random word (with no immediate repeats) ===
     function pickWord() {
         const catList = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
-        currentCategory = catList[Math.floor(Math.random() * catList.length)];
-        const words = categories[currentCategory] || [];
-        currentWord = words[Math.floor(Math.random() * words.length)] || "";
+
+        if (!catList.length) {
+            currentCategory = "";
+            currentWord = "";
+            return;
+        }
+
+        let newCategory, newWord;
+        let attempts = 0;
+
+        do {
+            newCategory = catList[Math.floor(Math.random() * catList.length)];
+            const words = categories[newCategory] || [];
+            if (words.length === 0) break;
+            newWord = words[Math.floor(Math.random() * words.length)];
+            attempts++;
+            if (attempts > 10) break;
+        } while (newCategory === prevCategory && newWord === prevWord);
+
+        prevCategory = newCategory;
+        prevWord = newWord;
+        currentCategory = newCategory;
+        currentWord = newWord;
     }
 
+    // === Update card display ===
     function updateCard(direction = null) {
         cardFront.textContent = players[currentPlayerIndex];
         cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
@@ -146,14 +174,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Flip card on hold
+    // === Flip card on hold ===
     flipper.addEventListener("mousedown", () => flipper.classList.add("flipped"));
     flipper.addEventListener("mouseup", () => flipper.classList.remove("flipped"));
     flipper.addEventListener("mouseleave", () => flipper.classList.remove("flipped"));
     flipper.addEventListener("touchstart", e => { e.preventDefault(); flipper.classList.add("flipped"); });
     flipper.addEventListener("touchend", e => { e.preventDefault(); flipper.classList.remove("flipped"); });
 
-    // Next player with swipe animation
+    // === Next player with swipe animation ===
     nextPlayerBtn.addEventListener("click", () => {
         if (currentPlayerIndex >= players.length - 1) {
             nextPlayerBtn.style.display = "none";
@@ -165,15 +193,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Reveal imposter
+    // === Reveal imposter(s) ===
     revealImposterBtn.addEventListener("click", () => {
         const names = imposterIndices.map(i => players[i]).join(", ");
-        imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
+        imposterDisplay.innerHTML = `
+            <p>IMPOSTER(s): ${names}</p>
+            <p>🗣️ ${starterPlayer} starts the conversation!</p>
+        `;
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "inline-block";
     });
 
-    // Restart game
+    // === Restart game ===
     restartBtn.addEventListener("click", () => {
         gameScreen.style.display = "none";
         setupScreen.style.display = "block";
