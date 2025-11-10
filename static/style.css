@@ -12,11 +12,10 @@ body {
 .app {
   width: 100%;
   max-width: 420px;
-  background: linear-gradient(160deg, #1a1a1a, #121212);
+  background-color: #1e1e1e;
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5),
-    inset 0 0 15px rgba(255, 255, 255, 0.02);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   text-align: center;
   position: relative;
 }
@@ -37,11 +36,6 @@ input[type="text"] {
   margin: 8px 0;
   box-sizing: border-box;
   font-size: 16px;
-}
-
-input:focus {
-  outline: none;
-  border-color: #66b3ff;
 }
 
 /* === PLAYER LIST === */
@@ -158,135 +152,84 @@ button.secondary:hover {
   background: #666;
 }
 
-/* === CARD BASE === */
+/* === CARD === */
 .card {
   background: #1e1e1e;
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
   position: relative;
 }
 
-/* === FLIP CARD CONTAINER === */
+/* === FLIP CARD === */
 .flip-container {
-  perspective: 1200px;
+  perspective: 1000px;
   margin: 20px auto;
   width: 260px;
-  height: 170px;
+  height: 180px;
   position: relative;
 }
 
-/* === CARD FLIPPER === */
 .flipper {
   width: 100%;
   height: 100%;
+  transition: transform 0.25s ease;
   transform-style: preserve-3d;
-  transition: transform 0.3s cubic-bezier(0.55, 0.06, 0.68, 0.19);
-  /* Faster flip */
   position: relative;
   cursor: pointer;
 }
 
-/* === CARD FACES === */
 .front,
 .back {
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 16px;
+  border-radius: 12px;
   backface-visibility: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
+  background: #2a2a2a;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
   user-select: none;
-  background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
-  box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 10px 25px rgba(0, 0, 0, 0.4);
-  border: 1px solid #333;
-  color: #f8f8f8;
-  transform: rotateY(0deg);
 }
 
 .back {
   transform: rotateY(180deg);
-  background: linear-gradient(145deg, #0b0b0b, #242424);
-  box-shadow:
-    0 5px 12px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  border: 1px solid #555;
-  color: #e6e6e6;
 }
 
-/* === FLIP ANIMATION === */
-.flipper.flipped {
+.flipped {
   transform: rotateY(180deg);
 }
 
-/* === HOVER TILT EFFECT === */
-.flip-container:hover .flipper:not(.flipped) {
-  transform: rotateX(2deg) translateY(-3px);
-  transition: transform 0.25s ease-out;
-}
-
-/* === GAME SCREEN STYLING === */
-#gameScreen {
-  position: relative;
-  background: linear-gradient(160deg, #171717, #0d0d0d);
-  border-radius: 20px;
-  padding: 30px 20px;
-  box-shadow:
-    0 0 20px rgba(0, 0, 0, 0.5),
-    inset 0 0 15px rgba(255, 255, 255, 0.02);
-}
-
 /* === MESSAGE === */
-.message {
-  margin-bottom: 12px;
-  font-size: 16px;
-}
-
-/* === BUTTON ROW === */
-.btn-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-/* === IMPOSER DISPLAY === */
-#imposterDisplay p {
-  margin: 6px 0;
-  font-weight: 600;
-}
-
-#imposterDisplay p:first-child {
-  color: #ff4d4d;
-}
-
-#imposterDisplay p:last-child {
+#startMessage {
+  font-weight: bold;
+  font-size: 18px;
   color: #66b3ff;
+  margin-bottom: 16px;
+  text-align: center;
 }
 
 /* === EXIT BUTTON === */
 #exitBtn {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 20px;
-  background: transparent;
+  top: 12px;
+  right: 12px;
+  font-size: 26px;
+  font-weight: bold;
+  background: none;
   border: none;
-  cursor: pointer;
   color: #fff;
+  cursor: pointer;
   display: none;
-  z-index: 999;
-  transition: transform 0.2s ease;
+  transition: 0.2s ease;
 }
 
 #exitBtn:hover {
-  transform: scale(1.2);
+  color: #ff4d4d;
 }

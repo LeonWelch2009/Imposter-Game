@@ -27,9 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const restartBtn = document.getElementById("restartBtn");
     const messageDiv = document.getElementById("message");
     const startMessage = document.getElementById("startMessage");
-    const exitBtn = document.getElementById("exitBtn"); // X button
+    const exitBtn = document.getElementById("exitBtn");
 
-    // === Load categories from server ===
+    // Load categories
     fetch("/categories")
         .then(res => res.json())
         .then(data => {
@@ -38,7 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(err => console.error("Failed to load categories:", err));
 
-    // === Render category checkboxes ===
     function renderCategoryCheckboxes() {
         categoriesContainer.innerHTML = "";
         Object.keys(categories).forEach(cat => {
@@ -60,20 +59,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // === Show / Hide categories button ===
     showCategoriesBtn.addEventListener("click", () => {
         const isHidden = window.getComputedStyle(categoriesContainer).display === "none";
         categoriesContainer.style.display = isHidden ? "block" : "none";
     });
 
-    // === Add player ===
-    addPlayerBtn.addEventListener("click", addPlayer);
-    playerNameInput.addEventListener("keypress", e => { if (e.key === "Enter") addPlayer(); });
-
     function addPlayer() {
         const name = playerNameInput.value.trim();
         if (!name) return;
-
         const formatted = name.split(/\s+/).map(w => w[0].toUpperCase() + w.slice(1).toLowerCase()).join(" ");
         if (!players.includes(formatted)) {
             players.push(formatted);
@@ -81,6 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
             updatePlayerList();
         }
     }
+
+    addPlayerBtn.addEventListener("click", addPlayer);
+    playerNameInput.addEventListener("keypress", e => { if (e.key === "Enter") addPlayer(); });
 
     function updatePlayerList() {
         playerList.innerHTML = "";
@@ -96,21 +92,17 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // === Show/hide exit button ===
     function showExitBtn(show) {
         exitBtn.style.display = show ? "block" : "none";
     }
 
-    // === Start game ===
     startGameBtn.addEventListener("click", () => {
         if (players.length < 3) return alert("Minimum 3 players required!");
         const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
         if (!checked.length) return alert("Select at least one category!");
-
         availableCategories = checked.slice();
         localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
 
-        // Randomly assign imposters
         imposterIndices = [];
         const imposterCount = players.length >= 6 ? 2 : 1;
         while (imposterIndices.length < imposterCount) {
@@ -118,11 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
         }
 
-        // Randomly pick starting player
         startingPlayer = players[Math.floor(Math.random() * players.length)];
-
         currentPlayerIndex = 0;
-        pickWord(); // pick one word for all players
+        pickWord();
 
         setupScreen.style.display = "none";
         gameScreen.style.display = "block";
@@ -130,12 +120,11 @@ document.addEventListener("DOMContentLoaded", () => {
         revealImposterBtn.style.display = "none";
         imposterDisplay.textContent = "";
         flipContainer.style.display = "block";
-        startMessage.textContent = ""; // clear previous
+        startMessage.textContent = "";
+        showExitBtn(true);
         updateCard();
-        showExitBtn(true); // show X button
     });
 
-    // === Pick random word from a random category ===
     function pickWord() {
         const catList = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
         currentCategory = catList[Math.floor(Math.random() * catList.length)];
@@ -143,13 +132,11 @@ document.addEventListener("DOMContentLoaded", () => {
         currentWord = words[Math.floor(Math.random() * words.length)] || "";
     }
 
-    // === Generate imposter hint (first letter + underscores) ===
     function getImposterHint(word) {
         if (!word) return "?";
         return word[0] + "_".repeat(word.length - 1);
     }
 
-    // === Update the card display ===
     function updateCard(direction = null) {
         cardFront.textContent = players[currentPlayerIndex];
         cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
@@ -161,35 +148,30 @@ document.addEventListener("DOMContentLoaded", () => {
             flipContainer.style.transition = "none";
             flipContainer.style.transform = `translateX(${offset})`;
             requestAnimationFrame(() => {
-                flipContainer.style.transition = "transform 0.4s ease";
+                flipContainer.style.transition = "transform 0.25s ease";
                 flipContainer.style.transform = "translateX(0)";
             });
         }
     }
 
-    // === Flip card on hold ===
     flipper.addEventListener("mousedown", () => flipper.classList.add("flipped"));
     flipper.addEventListener("mouseup", () => flipper.classList.remove("flipped"));
     flipper.addEventListener("mouseleave", () => flipper.classList.remove("flipped"));
     flipper.addEventListener("touchstart", e => { e.preventDefault(); flipper.classList.add("flipped"); });
     flipper.addEventListener("touchend", e => { e.preventDefault(); flipper.classList.remove("flipped"); });
 
-    // === Next player ===
     nextPlayerBtn.addEventListener("click", () => {
         if (currentPlayerIndex >= players.length - 1) {
-            // Last player has seen their card, show starting message
             flipContainer.style.display = "none";
             startMessage.textContent = `${startingPlayer} starts the conversation!`;
-
             nextPlayerBtn.style.display = "none";
             revealImposterBtn.style.display = "inline-block";
         } else {
             currentPlayerIndex++;
-            updateCard("right"); // same word for all
+            updateCard("right");
         }
     });
 
-    // === Reveal imposter(s) ===
     revealImposterBtn.addEventListener("click", () => {
         const names = imposterIndices.map(i => players[i]).join(", ");
         imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
@@ -197,8 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
         restartBtn.style.display = "inline-block";
     });
 
-    // === Restart game ===
-    restartBtn.addEventListener("click", () => {
+    function resetGame() {
         gameScreen.style.display = "none";
         setupScreen.style.display = "block";
         flipContainer.style.display = "block";
@@ -212,22 +193,8 @@ document.addEventListener("DOMContentLoaded", () => {
         updatePlayerList();
         renderCategoryCheckboxes();
         showExitBtn(false);
-    });
+    }
 
-    // === Exit button functionality ===
-    exitBtn.addEventListener("click", () => {
-        gameScreen.style.display = "none";
-        setupScreen.style.display = "block";
-        flipContainer.style.display = "block";
-        nextPlayerBtn.style.display = "inline-block";
-        revealImposterBtn.style.display = "none";
-        restartBtn.style.display = "none";
-        imposterDisplay.textContent = "";
-        startMessage.textContent = "";
-        messageDiv.textContent = "Add players and select categories to start";
-        currentPlayerIndex = 0;
-        updatePlayerList();
-        renderCategoryCheckboxes();
-        showExitBtn(false);
-    });
+    restartBtn.addEventListener("click", resetGame);
+    exitBtn.addEventListener("click", resetGame);
 });
