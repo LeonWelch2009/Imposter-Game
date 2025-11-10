@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
     let players = [];
     let currentPlayerIndex = 0;
@@ -28,6 +27,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const revealImposterBtn = document.getElementById("revealImposterBtn");
     const imposterDisplay = document.getElementById("imposterDisplay");
     const restartBtn = document.getElementById("restartBtn");
+
+    // === Create Exit Button (NEW) ===
+    const exitBtn = document.createElement("button");
+    exitBtn.textContent = "✖";
+    exitBtn.id = "exitBtn";
+    exitBtn.style.position = "absolute";
+    exitBtn.style.top = "10px";
+    exitBtn.style.right = "10px";
+    exitBtn.style.fontSize = "20px";
+    exitBtn.style.background = "transparent";
+    exitBtn.style.border = "none";
+    exitBtn.style.cursor = "pointer";
+    exitBtn.style.color = "#fff";
+    exitBtn.style.display = "none";
+    exitBtn.style.zIndex = "999";
+    exitBtn.title = "Return to main menu";
+    document.body.appendChild(exitBtn);
 
     // === Load categories from server ===
     fetch("/categories")
@@ -126,6 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
         revealImposterBtn.style.display = "none";
         imposterDisplay.textContent = "";
         flipContainer.style.display = "block";
+        exitBtn.style.display = "block"; // show exit button
         updateCard();
     });
 
@@ -205,6 +222,19 @@ document.addEventListener("DOMContentLoaded", () => {
         restartBtn.style.display = "inline-block";
     });
 
+    // === Exit button handler (NEW) ===
+    exitBtn.addEventListener("click", () => {
+        gameScreen.style.display = "none";
+        setupScreen.style.display = "block";
+        exitBtn.style.display = "none";
+        flipContainer.style.display = "block";
+        nextPlayerBtn.style.display = "inline-block";
+        revealImposterBtn.style.display = "none";
+        restartBtn.style.display = "none";
+        imposterDisplay.textContent = "";
+        currentPlayerIndex = 0;
+    });
+
     // === Restart game ===
     restartBtn.addEventListener("click", () => {
         gameScreen.style.display = "none";
@@ -215,6 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
         restartBtn.style.display = "none";
         imposterDisplay.textContent = "";
         currentPlayerIndex = 0;
+        exitBtn.style.display = "none";
         updatePlayerList();
         renderCategoryCheckboxes();
     });
