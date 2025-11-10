@@ -1,4 +1,4 @@
-FRIENDS
+FRIENDS h
 Leo Morgan
 Ed Turner
 Tristan Caiger
@@ -15,7 +15,7 @@ Toby Kad
 Jacob Turvey
 Ewan Williams
 
-THORLEY MANOR
+THORLEY MANOR h
 Connor Neo
 Henry Jaques
 James Rose
@@ -34,8 +34,9 @@ Aiden Yeoman
 Gregg Sambridge
 Jason Yeoman
 Luke Western
+Alec Sneddon
 
-CLASH ROYALE
+CLASH ROYALE h
 Knight
 Archers
 Goblins
@@ -647,7 +648,7 @@ Ball
 Toy
 Candle
 
-STORTFORD SPOTS
+STORTFORD SPOTS h
 Northgate Car Park
 Cinema
 Rivermill

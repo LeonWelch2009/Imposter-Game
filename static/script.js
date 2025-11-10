@@ -4,12 +4,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let players = [];
   let currentPlayerIndex = 0;
   let imposterIndices = [];
-  let categories = {}; // loaded from /categories (keys include optional ' h')
+  let categories = {}; 
   let availableCategories = [];
-  let currentCategoryRaw = ""; // the raw key (may include ' h')
+  let currentCategoryRaw = "";
   let currentWord = "";
   let starterIndex = null;
-  // DOM
+
+  // DOM elements
   const playerNameInput = document.getElementById("playerName");
   const addPlayerBtn = document.getElementById("addPlayerBtn");
   const playerList = document.getElementById("playerList");
@@ -29,10 +30,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const starterDisplay = document.getElementById("starterDisplay");
   const exitBtn = document.getElementById("exitBtn");
 
-  // Prevent mobile double-tap zoom (extra precaution)
-  document.addEventListener("touchstart", (e) => {
-    if (e.touches && e.touches.length > 1) e.preventDefault();
-  }, { passive: false });
+  // Prevent mobile double-tap zoom
+  document.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches && e.touches.length > 1) e.preventDefault();
+    },
+    { passive: false }
+  );
 
   // === Load categories from server ===
   fetch("/categories")
@@ -47,11 +52,10 @@ document.addEventListener("DOMContentLoaded", () => {
       renderCategoryCheckboxes();
     });
 
-  // === Render categories (menu shows names WITHOUT trailing 'h') ===
+  // === Render categories (UI shows names without trailing 'h') ===
   function renderCategoryCheckboxes() {
     categoriesContainer.innerHTML = "";
     Object.keys(categories).forEach((rawKey) => {
-      // displayKey removes trailing ' h' or ' H'
       const displayKey = rawKey.replace(/\s+[hH]$/, "").trim();
       const saved = localStorage.getItem(`cat_${rawKey}`);
       const checked = saved === null ? true : saved === "true";
@@ -62,11 +66,12 @@ document.addEventListener("DOMContentLoaded", () => {
         .split(" ")
         .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : ""))
         .join(" ");
-      div.innerHTML = `<input type="checkbox" value="${rawKey}" ${checked ? "checked" : ""}><label>${formatted}</label>`;
+      div.innerHTML = `<input type="checkbox" value="${rawKey}" ${
+        checked ? "checked" : ""
+      }><label>${formatted}</label>`;
       categoriesContainer.appendChild(div);
     });
 
-    // save checkbox changes
     categoriesContainer.querySelectorAll("input[type='checkbox']").forEach((inp) => {
       inp.addEventListener("change", () => {
         localStorage.setItem(`cat_${inp.value}`, inp.checked ? "true" : "false");
@@ -74,13 +79,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Toggle categories panel
+  // === Toggle category list ===
   showCategoriesBtn.addEventListener("click", () => {
     const isHidden = window.getComputedStyle(categoriesContainer).display === "none";
     categoriesContainer.style.display = isHidden ? "block" : "none";
   });
 
-  // === Player management ===
+  // === Add player ===
   addPlayerBtn.addEventListener("click", addPlayer);
   playerNameInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") addPlayer();
@@ -114,15 +119,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // === Start game ===
+  // === Start Game ===
   startGameBtn.addEventListener("click", () => {
     if (players.length < 3) {
       alert("Minimum 3 players required!");
       return;
     }
 
-    // selected categories (raw keys)
-    const checked = Array.from(document.querySelectorAll("#categories input:checked")).map((i) => i.value);
+    const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(
+      (i) => i.value
+    );
     if (!checked.length) {
       alert("Select at least one category!");
       return;
@@ -130,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
     availableCategories = checked.slice();
     localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
 
-    // Choose imposters: 1 normally, 2 if 6+
+    // Pick imposters
     imposterIndices = [];
     const imposterCount = players.length >= 6 ? 2 : 1;
     while (imposterIndices.length < imposterCount) {
@@ -138,126 +144,119 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
     }
 
-    // Troll round chance: denominator random between 15..20
-    const denom = Math.floor(Math.random() * 6) + 15; // 15..20
+    // Troll round chance (1 in 15–20)
+    const denom = Math.floor(Math.random() * 6) + 15;
     if (Math.random() < 1 / denom) {
-      imposterIndices = players.map((_, i) => i); // everyone is imposter
-      // small notification (non-blocking)
-      console.info("Troll round! Everyone is the imposter this round.");
+      imposterIndices = players.map((_, i) => i);
+      console.info("Troll round! Everyone is imposter.");
     }
 
-    // pick a random starter (used after all players have seen their words)
     starterIndex = Math.floor(Math.random() * players.length);
-
-    // reset indexes and UI
     currentPlayerIndex = 0;
     imposterDisplay.textContent = "";
     starterDisplay.textContent = "";
     revealImposterBtn.style.display = "none";
     restartBtn.style.display = "none";
 
-    // show game screen, hide setup
     setupScreen.style.display = "none";
     gameScreen.style.display = "block";
     flipContainer.style.display = "block";
-
-    // hide next until flip
     nextPlayerBtn.style.display = "none";
-    // show exit while in player reveal phase
     exitBtn.style.display = "inline-block";
 
-    // pick first word & render
     pickWordForCurrentPlayer();
     updateCard();
   });
 
-  // Pick a random category & word for the current player
+  // === Pick word and category ===
   function pickWordForCurrentPlayer() {
-    const cats = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
+    const cats =
+      JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
     if (!cats || !cats.length) {
       currentCategoryRaw = "";
       currentWord = "";
       return;
     }
-    currentCategoryRaw = cats[Math.floor(Math.random() * cats.length)]; // raw key possibly with ' h'
+    currentCategoryRaw = cats[Math.floor(Math.random() * cats.length)];
     const words = categories[currentCategoryRaw] || [];
     currentWord = words[Math.floor(Math.random() * words.length)] || "";
   }
 
-  // Update the visible card content (front/back)
+  // === Update card display ===
   function updateCard() {
     const displayCategory = (currentCategoryRaw || "").replace(/\s+[hH]$/, "").trim();
     cardFront.textContent = players[currentPlayerIndex] || "";
-    if (imposterIndices.includes(currentPlayerIndex)) {
-      // if category has h, imposter gets first letter only
-      if (/\s+[hH]$/.test(currentCategoryRaw)) {
-        cardBack.textContent = `IMPOSTER\n(Hint: ${displayCategory})\nStarts with '${(currentWord || "").charAt(0).toUpperCase()}'`;
-      } else {
+
+    const isImposter = imposterIndices.includes(currentPlayerIndex);
+    const hasH = /\s+[hH]$/.test(currentCategoryRaw);
+
+    if (isImposter) {
+      // NEW LOGIC: 'h' = no hint, otherwise give first letter
+      if (hasH) {
         cardBack.textContent = `IMPOSTER\n(Hint: ${displayCategory})`;
+      } else {
+        cardBack.textContent = `IMPOSTER\n(Hint: ${displayCategory})\nStarts with '${(
+          currentWord || ""
+        )
+          .charAt(0)
+          .toUpperCase()}'`;
       }
     } else {
       cardBack.textContent = currentWord || "";
     }
 
-    // ensure it's front side and next button hidden until flip
     flipper.classList.remove("flipped");
     nextPlayerBtn.style.display = "none";
   }
 
-  // Flip behavior: flip only once per player; show next button once flipped.
+  // === Flip ===
   function flipCurrentCard() {
-    if (flipper.classList.contains("flipped")) return; // already flipped for this player
+    if (flipper.classList.contains("flipped")) return;
     flipper.classList.add("flipped");
-    // show next button after a tiny delay so flip animation can start
     setTimeout(() => {
       nextPlayerBtn.style.display = "inline-block";
     }, 80);
   }
 
-  // clicking/touch to flip
   flipper.addEventListener("click", (e) => {
-    // only allow flipping when card visible
     if (flipContainer.style.display === "none") return;
     flipCurrentCard();
   });
 
-  // support touchstart to avoid accidental double-tap zoom interference
-  flipper.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    flipCurrentCard();
-  }, { passive: false });
+  flipper.addEventListener(
+    "touchstart",
+    (e) => {
+      e.preventDefault();
+      flipCurrentCard();
+    },
+    { passive: false }
+  );
 
-  // Next player
+  // === Next Player ===
   nextPlayerBtn.addEventListener("click", () => {
-    // advance to next player
     currentPlayerIndex++;
     if (currentPlayerIndex >= players.length) {
-      // everyone done seeing their cards
       nextPlayerBtn.style.display = "none";
       flipContainer.style.display = "none";
       revealImposterBtn.style.display = "inline-block";
-      // show who starts (above card)
       starterDisplay.textContent = `${players[starterIndex]} starts the game!`;
-      // hide exit since no longer needed
       exitBtn.style.display = "none";
       return;
     }
-    // pick next word & update
     pickWordForCurrentPlayer();
     updateCard();
   });
 
-  // Reveal imposters
+  // === Reveal imposters ===
   revealImposterBtn.addEventListener("click", () => {
-    const names = imposterIndices.map(i => players[i]).join(", ");
+    const names = imposterIndices.map((i) => players[i]).join(", ");
     imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
     revealImposterBtn.style.display = "none";
     restartBtn.style.display = "inline-block";
   });
 
-  // Restart
+  // === Restart ===
   restartBtn.addEventListener("click", () => {
-    // reset to setup state and keep categories in localStorage as-is
     gameScreen.style.display = "none";
     setupScreen.style.display = "block";
     flipContainer.style.display = "block";
@@ -271,57 +270,41 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCategoryCheckboxes();
   });
 
-  // Exit button — confirm and return to main menu (setup)
+  // === Exit ===
   exitBtn.addEventListener("click", () => {
-    if (confirm("Return to main menu? Progress will be lost.")) {
-      // reload page to clear state (keeps category preferences in localStorage)
-      location.reload();
-    }
+    if (confirm("Return to main menu? Progress will be lost.")) location.reload();
   });
 
-  // Keyboard: Enter flips / advances during game; Enter adds player in setup
-  document.addEventListener("keydown", (e) => {
-    if (e.key !== "Enter") return;
-    // if setup screen visible and focused on input -> add player
-    const setupHidden = setupScreen.style.display === "none";
-    if (!setupHidden) {
-      // if playerName input is focused, add player (also handles enter)
-      if (document.activeElement === playerNameInput) {
-        addPlayer();
-        e.preventDefault();
-        return;
-      }
-      // If start button is visible and players >=3, pressing enter will start the game
-      // (optional convenience)
-      if (players.length >= 3) {
-        startGameBtn.focus();
-        startGameBtn.click();
-        e.preventDefault();
-        return;
-      }
-    } else {
-      // during game:
-      const cardVisible = flipContainer.style.display !== "none";
-      if (cardVisible) {
-        if (!flipper.classList.contains("flipped")) {
-          // flip
-          flipCurrentCard();
-        } else {
-          // advance
-          nextPlayerBtn.click();
+  // === Keyboard support (Enter flips or advances) ===
+  document.addEventListener(
+    "keydown",
+    (e) => {
+      if (e.key !== "Enter") return;
+      const inSetup = setupScreen.style.display !== "none";
+
+      if (inSetup) {
+        if (document.activeElement === playerNameInput) {
+          addPlayer();
+          e.preventDefault();
+          return;
         }
-        e.preventDefault();
+        if (players.length >= 3) {
+          startGameBtn.focus();
+          startGameBtn.click();
+          e.preventDefault();
+        }
       } else {
-        // if card not visible (e.g. after all seen), pressing enter could reveal imposters
-        if (revealImposterBtn.style.display !== "none") {
+        const cardVisible = flipContainer.style.display !== "none";
+        if (cardVisible) {
+          if (!flipper.classList.contains("flipped")) flipCurrentCard();
+          else nextPlayerBtn.click();
+          e.preventDefault();
+        } else if (revealImposterBtn.style.display !== "none") {
           revealImposterBtn.click();
           e.preventDefault();
         }
       }
-    }
-  }, true);
-
-  // expose a couple globals for debugging if needed (optional)
-  window._imposterIndices = () => imposterIndices.slice();
-  window._players = () => players.slice();
+    },
+    true
+  );
 });
