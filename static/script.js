@@ -27,9 +27,9 @@ async function loadWords() {
       const parts = line.split(" ");
       currentCategory = parts[0];
       showHint = parts[1] === "h";
-      categories[currentCategory] = [];
+      categories[currentCategory] = { words: [], hint: showHint };
     } else if (line) {
-      categories[currentCategory].push(line);
+      categories[currentCategory].words.push(line);
     }
   });
 
@@ -92,9 +92,11 @@ function startGame() {
   }
 
   selectedCategory = checked[Math.floor(Math.random() * checked.length)];
-  const wordList = categories[selectedCategory];
-  word = wordList[Math.floor(Math.random() * wordList.length)];
-  trollRound = Math.random() < 1 / 18; // 1 in 18 chance for troll round
+  const categoryObj = categories[selectedCategory];
+  word = categoryObj.words[Math.floor(Math.random() * categoryObj.words.length)];
+  showHint = categoryObj.hint;
+
+  trollRound = Math.random() < 1 / 18; // ~1 in 18 chance
   imposterIndex = Math.floor(Math.random() * players.length);
   currentPlayerIndex = 0;
   gameStarted = true;
@@ -102,16 +104,22 @@ function startGame() {
   document.getElementById("mainMenu").style.display = "none";
   document.getElementById("gameScreen").style.display = "block";
   document.getElementById("whoStarts").textContent = "";
-  document.getElementById("exitBtn").style.display = "block"; // show X initially
+  document.getElementById("exitBtn").style.display = "block";
 
   showCardBack();
 }
 
 function showCardBack() {
-  document.getElementById("cardFront").style.display = "flex";
-  document.getElementById("cardBack").style.display = "none";
-  document.getElementById("cardFlipper").classList.remove("flipped");
-  document.getElementById("nextPlayerBtn").style.display = "none"; // hidden until flipped
+  const flipper = document.getElementById("cardFlipper");
+  const front = document.getElementById("cardFront");
+  const back = document.getElementById("cardBack");
+  const nextBtn = document.getElementById("nextPlayerBtn");
+
+  front.style.display = "flex";
+  back.style.display = "none";
+  flipper.classList.remove("flipped");
+  nextBtn.style.display = "none"; // hidden until flip
+  document.getElementById("cardFlipper").style.display = "block";
   document.getElementById("playerPrompt").textContent = `${players[currentPlayerIndex]}, tap to see your word`;
 }
 
@@ -121,7 +129,6 @@ function flipCard() {
   const back = document.getElementById("cardBack");
   const nextBtn = document.getElementById("nextPlayerBtn");
 
-  // Prevent re-flip
   if (flipper.classList.contains("flipped")) return;
 
   flipper.classList.add("flipped");
@@ -129,7 +136,7 @@ function flipCard() {
     front.style.display = "none";
     back.style.display = "flex";
 
-    // Determine what to show
+    // Determine text to show
     if (trollRound) {
       back.textContent = "You are the IMPOSTER 🤫";
     } else if (currentPlayerIndex === imposterIndex) {
@@ -140,7 +147,7 @@ function flipCard() {
       back.textContent = word;
     }
 
-    // Show Next Player button once flipped
+    // Show Next Player button only after flip
     nextBtn.style.display = "block";
   }, 400);
 }
@@ -150,11 +157,11 @@ function nextPlayer() {
   if (currentPlayerIndex < players.length) {
     showCardBack();
   } else {
-    // All players done
+    // All players have seen their word
     const starter = players[Math.floor(Math.random() * players.length)];
     document.getElementById("playerPrompt").textContent = `${starter} starts the game! 🎯`;
     document.getElementById("nextPlayerBtn").style.display = "none";
-    document.getElementById("exitBtn").style.display = "none"; // hide X now
+    document.getElementById("exitBtn").style.display = "none";
     document.getElementById("cardFlipper").style.display = "none";
   }
 }
