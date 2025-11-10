@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const imposterDisplay = document.getElementById("imposterDisplay");
     const restartBtn = document.getElementById("restartBtn");
     const messageDiv = document.getElementById("message");
+    const exitBtn = document.getElementById("exitBtn"); // X button
 
     // === Load categories from server ===
     fetch("/categories")
@@ -94,6 +95,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // === Show/hide exit button ===
+    function showExitBtn(show) {
+        exitBtn.style.display = show ? "block" : "none";
+    }
+
     // === Start game ===
     startGameBtn.addEventListener("click", () => {
         if (players.length < 3) return alert("Minimum 3 players required!");
@@ -125,6 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
         imposterDisplay.textContent = "";
         flipContainer.style.display = "block";
         updateCard();
+        showExitBtn(true); // show X button
     });
 
     // === Pick random word from a random category ===
@@ -200,5 +207,22 @@ document.addEventListener("DOMContentLoaded", () => {
         currentPlayerIndex = 0;
         updatePlayerList();
         renderCategoryCheckboxes();
+        showExitBtn(false);
+    });
+
+    // === Exit button functionality ===
+    exitBtn.addEventListener("click", () => {
+        gameScreen.style.display = "none";
+        setupScreen.style.display = "block";
+        flipContainer.style.display = "block";
+        nextPlayerBtn.style.display = "inline-block";
+        revealImposterBtn.style.display = "none";
+        restartBtn.style.display = "none";
+        imposterDisplay.textContent = "";
+        messageDiv.textContent = "Add players and select categories to start";
+        currentPlayerIndex = 0;
+        updatePlayerList();
+        renderCategoryCheckboxes();
+        showExitBtn(false);
     });
 });
