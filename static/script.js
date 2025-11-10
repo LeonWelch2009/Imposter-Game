@@ -4,13 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let imposterIndices = [];
     let currentCategory = "";
     let currentWord = "";
-    let prevCategory = "";
-    let prevWord = "";
     let categories = {};
     let availableCategories = [];
-    let starterPlayer = ""; // NEW
+    let startingPlayer = "";
 
-    // === DOM elements ===
+    // DOM elements
     const playerNameInput = document.getElementById("playerName");
     const addPlayerBtn = document.getElementById("addPlayerBtn");
     const playerList = document.getElementById("playerList");
@@ -27,23 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const revealImposterBtn = document.getElementById("revealImposterBtn");
     const imposterDisplay = document.getElementById("imposterDisplay");
     const restartBtn = document.getElementById("restartBtn");
-
-    // === Create Exit Button (NEW) ===
-    const exitBtn = document.createElement("button");
-    exitBtn.textContent = "✖";
-    exitBtn.id = "exitBtn";
-    exitBtn.style.position = "absolute";
-    exitBtn.style.top = "10px";
-    exitBtn.style.right = "10px";
-    exitBtn.style.fontSize = "20px";
-    exitBtn.style.background = "transparent";
-    exitBtn.style.border = "none";
-    exitBtn.style.cursor = "pointer";
-    exitBtn.style.color = "#fff";
-    exitBtn.style.display = "none";
-    exitBtn.style.zIndex = "999";
-    exitBtn.title = "Return to main menu";
-    document.body.appendChild(exitBtn);
+    const messageDiv = document.getElementById("message");
 
     // === Load categories from server ===
     fetch("/categories")
@@ -115,13 +97,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // === Start game ===
     startGameBtn.addEventListener("click", () => {
         if (players.length < 3) return alert("Minimum 3 players required!");
-
         const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
         if (!checked.length) return alert("Select at least one category!");
 
         availableCategories = checked.slice();
         localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
 
+        // Randomly assign imposters
         imposterIndices = [];
         const imposterCount = players.length >= 6 ? 2 : 1;
         while (imposterIndices.length < imposterCount) {
@@ -129,9 +111,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
         }
 
-        // Pick who starts the conversation (NEW)
-        const starterIndex = Math.floor(Math.random() * players.length);
-        starterPlayer = players[starterIndex];
+        // Randomly pick starting player
+        startingPlayer = players[Math.floor(Math.random() * players.length)];
+        messageDiv.textContent = `${startingPlayer} starts the conversation!`;
 
         currentPlayerIndex = 0;
         pickWord();
@@ -142,43 +124,28 @@ document.addEventListener("DOMContentLoaded", () => {
         revealImposterBtn.style.display = "none";
         imposterDisplay.textContent = "";
         flipContainer.style.display = "block";
-        exitBtn.style.display = "block"; // show exit button
         updateCard();
     });
 
-    // === Pick a new random word (with no immediate repeats) ===
+    // === Pick random word from a random category ===
     function pickWord() {
         const catList = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
-
-        if (!catList.length) {
-            currentCategory = "";
-            currentWord = "";
-            return;
-        }
-
-        let newCategory, newWord;
-        let attempts = 0;
-
-        do {
-            newCategory = catList[Math.floor(Math.random() * catList.length)];
-            const words = categories[newCategory] || [];
-            if (words.length === 0) break;
-            newWord = words[Math.floor(Math.random() * words.length)];
-            attempts++;
-            if (attempts > 10) break;
-        } while (newCategory === prevCategory && newWord === prevWord);
-
-        prevCategory = newCategory;
-        prevWord = newWord;
-        currentCategory = newCategory;
-        currentWord = newWord;
+        currentCategory = catList[Math.floor(Math.random() * catList.length)];
+        const words = categories[currentCategory] || [];
+        currentWord = words[Math.floor(Math.random() * words.length)] || "";
     }
 
-    // === Update card display ===
+    // === Generate imposter hint (first letter + underscores) ===
+    function getImposterHint(word) {
+        if (!word) return "?";
+        return word[0] + "_".repeat(word.length - 1);
+    }
+
+    // === Update the card display ===
     function updateCard(direction = null) {
         cardFront.textContent = players[currentPlayerIndex];
         cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
-            ? `IMPOSTER\n(Hint: ${currentCategory})`
+            ? `IMPOSTER\n(Hint: ${getImposterHint(currentWord)})`
             : currentWord;
 
         if (direction) {
@@ -199,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
     flipper.addEventListener("touchstart", e => { e.preventDefault(); flipper.classList.add("flipped"); });
     flipper.addEventListener("touchend", e => { e.preventDefault(); flipper.classList.remove("flipped"); });
 
-    // === Next player with swipe animation ===
+    // === Next player ===
     nextPlayerBtn.addEventListener("click", () => {
         if (currentPlayerIndex >= players.length - 1) {
             nextPlayerBtn.style.display = "none";
@@ -207,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
             revealImposterBtn.style.display = "inline-block";
         } else {
             currentPlayerIndex++;
+            pickWord(); // pick new word each round
             updateCard("right");
         }
     });
@@ -214,25 +182,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // === Reveal imposter(s) ===
     revealImposterBtn.addEventListener("click", () => {
         const names = imposterIndices.map(i => players[i]).join(", ");
-        imposterDisplay.innerHTML = `
-            <p>IMPOSTER(s): ${names}</p>
-            <p>🗣️ ${starterPlayer} starts the conversation!</p>
-        `;
+        imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "inline-block";
-    });
-
-    // === Exit button handler (NEW) ===
-    exitBtn.addEventListener("click", () => {
-        gameScreen.style.display = "none";
-        setupScreen.style.display = "block";
-        exitBtn.style.display = "none";
-        flipContainer.style.display = "block";
-        nextPlayerBtn.style.display = "inline-block";
-        revealImposterBtn.style.display = "none";
-        restartBtn.style.display = "none";
-        imposterDisplay.textContent = "";
-        currentPlayerIndex = 0;
+        messageDiv.textContent = "";
     });
 
     // === Restart game ===
@@ -244,8 +197,8 @@ document.addEventListener("DOMContentLoaded", () => {
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "none";
         imposterDisplay.textContent = "";
+        messageDiv.textContent = "Add players and select categories to start";
         currentPlayerIndex = 0;
-        exitBtn.style.display = "none";
         updatePlayerList();
         renderCategoryCheckboxes();
     });
