@@ -1,3 +1,5 @@
+
+
 /* === GENERAL STYLES === */
 body {
   background-color: #121212;
@@ -7,7 +9,6 @@ body {
   display: flex;
   justify-content: center;
   padding: 20px;
-  -webkit-text-size-adjust: none; /* ✅ Prevents double-tap zoom */
 }
 
 .app {
@@ -18,7 +19,6 @@ body {
   padding: 24px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   text-align: center;
-  position: relative;
 }
 
 h1 {
@@ -120,7 +120,6 @@ button {
   border: none;
   cursor: pointer;
   transition: 0.25s;
-  -webkit-tap-highlight-color: transparent;
 }
 button.primary {
   background: #007bff;
@@ -146,20 +145,11 @@ button.secondary:hover {
 
 /* === CARD === */
 .card {
-  background: linear-gradient(145deg, #242424, #1a1a1a);
+  background: #1e1e1e;
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.4),
-              inset -2px -2px 5px rgba(255, 255, 255, 0.05),
-              0 4px 12px rgba(0, 0, 0, 0.5);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.4),
-              inset -2px -2px 5px rgba(255, 255, 255, 0.05),
-              0 6px 18px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 /* === FLIP CARD === */
@@ -168,18 +158,15 @@ button.secondary:hover {
   margin: 20px auto;
   width: 250px;
   height: 160px;
-  position: relative;
 }
-
 .flipper {
   width: 100%;
   height: 100%;
-  transform-style: preserve-3d;
   transition: transform 0.4s ease;
-  cursor: pointer;
+  transform-style: preserve-3d;
   position: relative;
+  cursor: pointer;
 }
-
 .front,
 .back {
   position: absolute;
@@ -190,10 +177,10 @@ button.secondary:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, #333, #1e1e1e);
+  background: #2a2a2a;
   color: white;
   font-size: 18px;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   user-select: none;
 }
 .back {
@@ -203,27 +190,28 @@ button.secondary:hover {
   transform: rotateY(180deg);
 }
 
-/* === EXIT BUTTON (fixed top right) === */
-#gameScreen {
+/* === SWIPE BUTTON === */
+#swipeBtnContainer {
+  width: 100%;
+  max-width: 300px;
+  background: #444;
+  border-radius: 50px;
+  overflow: hidden;
   position: relative;
+  user-select: none;
+  touch-action: pan-x;
 }
-#exitBtn {
-  position: absolute;
-  top: 10px;
-  right: 14px;
-  font-size: 22px;
-  background: transparent;
-  border: none;
-  color: #f0f0f0;
+#swipeBtn {
+  width: 150px;
+  background: #007bff;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 50px;
+  text-align: center;
   cursor: pointer;
-  z-index: 10;
-  line-height: 1;
-  transition: 0.25s ease;
-}
-#exitBtn:hover {
-  color: #ff4d4d;
-  transform: scale(1.15);
-  text-shadow: 0 0 8px rgba(255, 77, 77, 0.8);
+  position: absolute;
+  left: 0;
+  transition: left 0.2s ease;
 }
 
 /* === OTHER === */
@@ -239,4 +227,89 @@ button.secondary:hover {
 input:focus {
   outline: none;
   border-color: #66b3ff;
+}
+
+/* === CARD SWIPE ANIMATION === */
+.flip-container {
+    perspective: 1000px;
+    margin: 20px auto;
+    width: 250px;
+    height: 160px;
+    overflow: hidden;
+    position: relative;
+}
+
+.flipper {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease, left 0.4s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+/* === CARD SWIPE ANIMATION (TOUCH-UP) === */
+.flip-container {
+    perspective: 1000px;
+    margin: 20px auto;
+    width: 250px;
+    height: 160px;
+    overflow: hidden;
+    position: relative;
+}
+
+.flipper {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s ease;
+    cursor: pointer;
+    opacity: 1;
+}
+
+/* Slide out left */
+.flip-container.swipe-left .flipper {
+    transform: translateX(-120%) rotateY(0deg);
+    opacity: 0;
+}
+
+/* Slide in from right */
+.flip-container.swipe-right .flipper {
+    transform: translateX(120%) rotateY(0deg);
+    opacity: 0;
+}
+
+/* Animate new card back to center */
+.flip-container.reset .flipper {
+    transform: translateX(0) rotateY(0deg);
+    opacity: 1;
+}
+
+/* Keep front/back flip intact */
+.front,
+.back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2a2a2a;
+    color: white;
+    font-size: 18px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    user-select: none;
+}
+
+.back {
+    transform: rotateY(180deg);
+}
+
+.flipped {
+    transform: rotateY(180deg);
 }
