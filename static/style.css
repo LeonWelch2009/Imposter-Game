@@ -212,7 +212,6 @@ button.secondary:hover {
   transform: rotateY(0deg);
 }
 
-/* === BACK FACE === */
 .back {
   transform: rotateY(180deg);
   background: linear-gradient(145deg, #0b0b0b, #242424);
@@ -224,13 +223,13 @@ button.secondary:hover {
 }
 
 /* === FLIP ANIMATION === */
-.flipped {
-  transform: rotateY(180deg) rotateX(3deg);
+.flipper.flipped {
+  transform: rotateY(180deg);
 }
 
-/* === HOVER 3D EFFECT === */
-.flip-container:hover .flipper {
-  transform: translateY(-3px) rotateX(2deg);
+/* === HOVER TILT EFFECT === */
+.flip-container:hover .flipper:not(.flipped) {
+  transform: rotateX(2deg) translateY(-3px);
   transition: transform 0.25s ease-out;
 }
 
@@ -258,32 +257,7 @@ button.secondary:hover {
   gap: 10px;
 }
 
-/* === SWIPE BUTTON === */
-#swipeBtnContainer {
-  width: 100%;
-  max-width: 300px;
-  background: #444;
-  border-radius: 50px;
-  overflow: hidden;
-  position: relative;
-  user-select: none;
-  touch-action: pan-x;
-}
-
-#swipeBtn {
-  width: 150px;
-  background: #007bff;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 50px;
-  text-align: center;
-  cursor: pointer;
-  position: absolute;
-  left: 0;
-  transition: left 0.2s ease;
-}
-
-/* === IMPROVED IMPOSER DISPLAY === */
+/* === IMPROVER IMPOSER DISPLAY === */
 #imposterDisplay p {
   margin: 6px 0;
   font-weight: 600;
