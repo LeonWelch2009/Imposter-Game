@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
     let players = [];
     let currentPlayerIndex = 0;
@@ -28,12 +27,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // === Load categories from server ===
     fetch("/categories")
-      .then(res => res.json())
-      .then(data => {
-        categories = data || {};
-        renderCategoryCheckboxes();
-      })
-      .catch(err => console.error("Failed to load categories:", err));
+        .then(res => res.json())
+        .then(data => {
+            categories = data || {};
+            renderCategoryCheckboxes();
+        })
+        .catch(err => console.error("Failed to load categories:", err));
 
     // === Render category checkboxes ===
     function renderCategoryCheckboxes() {
@@ -43,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const checkedAttr = saved === "true" || saved === null ? "checked" : "";
             const div = document.createElement("div");
             div.className = "category-checkbox";
-            // Format category nicely (capitalize first letter of each word)
             const formattedCat = cat.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
             div.innerHTML = `
                 <input type="checkbox" value="${cat}" ${checkedAttr}>
@@ -104,13 +102,21 @@ document.addEventListener("DOMContentLoaded", () => {
         availableCategories = checked.slice();
         localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
 
+        // === Assign imposters ===
         imposterIndices = [];
         const imposterCount = players.length >= 6 ? 2 : 1;
-        while (imposterIndices.length < imposterCount) {
-            const idx = Math.floor(Math.random() * players.length);
-            if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
+
+        const allImposterChance = Math.floor(Math.random() * 15) === 0; // 1 in 15 chance everyone is imposter
+        if (allImposterChance) {
+            imposterIndices = players.map((_, i) => i);
+        } else {
+            while (imposterIndices.length < imposterCount) {
+                const idx = Math.floor(Math.random() * players.length);
+                if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
+            }
         }
 
+        // === Pick category and word for normal players ===
         currentPlayerIndex = 0;
         pickWord();
 
@@ -132,9 +138,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateCard(direction = null) {
         cardFront.textContent = players[currentPlayerIndex];
-        cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
-            ? `IMPOSTER\n(Hint: ${currentCategory})`
-            : currentWord;
+
+        // Determine card back
+        let backText = "";
+        if (imposterIndices.includes(currentPlayerIndex)) {
+            // Imposter hint: category + first letter of word
+            const words = categories[currentCategory] || [];
+            const randomWord = words[Math.floor(Math.random() * words.length)] || "";
+            backText = `IMPOSTER\n(Hint: ${currentCategory}, starts with "${randomWord[0]}")`;
+        } else {
+            backText = currentWord;
+        }
+        cardBack.textContent = backText;
 
         if (direction) {
             const offset = direction === "left" ? "-100%" : "100%";
@@ -154,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
     flipper.addEventListener("touchstart", e => { e.preventDefault(); flipper.classList.add("flipped"); });
     flipper.addEventListener("touchend", e => { e.preventDefault(); flipper.classList.remove("flipped"); });
 
-    // Next player with swipe animation
+    // Next player
     nextPlayerBtn.addEventListener("click", () => {
         if (currentPlayerIndex >= players.length - 1) {
             nextPlayerBtn.style.display = "none";
@@ -162,6 +177,8 @@ document.addEventListener("DOMContentLoaded", () => {
             revealImposterBtn.style.display = "inline-block";
         } else {
             currentPlayerIndex++;
+            // Pick a new word for next normal player
+            if (!imposterIndices.includes(currentPlayerIndex)) pickWord();
             updateCard("right");
         }
     });
