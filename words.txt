@@ -36,7 +36,7 @@ Jason Yeoman
 Luke Western
 Alec Sneddon
 
-CLASH ROYALE h
+CLASH ROYALE 
 Knight
 Archers
 Goblins
@@ -648,7 +648,7 @@ Ball
 Toy
 Candle
 
-STORTFORD SPOTS h
+STORTFORD SPOTS 
 Northgate Car Park
 Cinema
 Rivermill
