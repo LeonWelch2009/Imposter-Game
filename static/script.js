@@ -59,6 +59,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // === Show/Hide Categories Button (FIX ADDED HERE) ===
+    showCategoriesBtn.addEventListener("click", () => {
+        const isHidden = categoriesContainer.style.display === "none";
+        categoriesContainer.style.display = isHidden ? "block" : "none";
+        showCategoriesBtn.textContent = isHidden ? "Hide Categories" : "Show Categories";
+    });
+
     // === Add player ===
     addPlayerBtn.addEventListener("click", addPlayer);
     playerNameInput.addEventListener("keypress", e => { if (e.key === "Enter") addPlayer(); });
