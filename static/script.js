@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const imposterDisplay = document.getElementById("imposterDisplay");
     const restartBtn = document.getElementById("restartBtn");
 
-    // === Load categories from server ===
+    // === Load categories ===
     fetch("/categories")
         .then(res => res.json())
         .then(data => {
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(err => console.error("Failed to load categories:", err));
 
-    // === Render category checkboxes ===
+    // === Render category selection ===
     function renderCategoryCheckboxes() {
         categoriesContainer.innerHTML = "";
         Object.keys(categories).forEach(cat => {
@@ -42,25 +42,22 @@ document.addEventListener("DOMContentLoaded", () => {
             const checkedAttr = saved === "true" || saved === null ? "checked" : "";
             const div = document.createElement("div");
             div.className = "category-checkbox";
+
             const formattedCat = cat.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
+
             div.innerHTML = `
                 <input type="checkbox" value="${cat}" ${checkedAttr}>
                 <label>${formattedCat}</label>
             `;
             categoriesContainer.appendChild(div);
         });
-        categoriesContainer.querySelectorAll("input[type='checkbox']").forEach(inp => {
+
+        categoriesContainer.querySelectorAll("input").forEach(inp => {
             inp.addEventListener("change", () => {
-                localStorage.setItem(`cat_${inp.value}`, inp.checked ? "true" : "false");
+                localStorage.setItem(`cat_${inp.value}`, inp.checked);
             });
         });
     }
-
-    // === Show / Hide categories button ===
-    showCategoriesBtn.addEventListener("click", () => {
-        const isHidden = window.getComputedStyle(categoriesContainer).display === "none";
-        categoriesContainer.style.display = isHidden ? "block" : "none";
-    });
 
     // === Add player ===
     addPlayerBtn.addEventListener("click", addPlayer);
@@ -92,31 +89,23 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // === Start game ===
+    // === Start Game ===
     startGameBtn.addEventListener("click", () => {
         if (players.length < 3) return alert("Minimum 3 players required!");
-
         const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
         if (!checked.length) return alert("Select at least one category!");
 
-        availableCategories = checked.slice();
+        availableCategories = checked;
         localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
 
-        // === Assign imposters ===
         imposterIndices = [];
         const imposterCount = players.length >= 6 ? 2 : 1;
 
-        const allImposterChance = Math.floor(Math.random() * 15) === 0; // 1 in 15 chance everyone is imposter
-        if (allImposterChance) {
-            imposterIndices = players.map((_, i) => i);
-        } else {
-            while (imposterIndices.length < imposterCount) {
-                const idx = Math.floor(Math.random() * players.length);
-                if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
-            }
+        while (imposterIndices.length < imposterCount) {
+            const idx = Math.floor(Math.random() * players.length);
+            if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
         }
 
-        // === Pick category and word for normal players ===
         currentPlayerIndex = 0;
         pickWord();
 
@@ -138,18 +127,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateCard(direction = null) {
         cardFront.textContent = players[currentPlayerIndex];
-
-        // Determine card back
-        let backText = "";
-        if (imposterIndices.includes(currentPlayerIndex)) {
-            // Imposter hint: category + first letter of word
-            const words = categories[currentCategory] || [];
-            const randomWord = words[Math.floor(Math.random() * words.length)] || "";
-            backText = `IMPOSTER\n(Hint: ${currentCategory}, starts with "${randomWord[0]}")`;
-        } else {
-            backText = currentWord;
-        }
-        cardBack.textContent = backText;
+        cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
+            ? `IMPOSTER\n(Hint: ${currentCategory})`
+            : currentWord;
 
         if (direction) {
             const offset = direction === "left" ? "-100%" : "100%";
@@ -162,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Flip card on hold
+    // Hold to flip card
     flipper.addEventListener("mousedown", () => flipper.classList.add("flipped"));
     flipper.addEventListener("mouseup", () => flipper.classList.remove("flipped"));
     flipper.addEventListener("mouseleave", () => flipper.classList.remove("flipped"));
@@ -177,13 +157,11 @@ document.addEventListener("DOMContentLoaded", () => {
             revealImposterBtn.style.display = "inline-block";
         } else {
             currentPlayerIndex++;
-            // Pick a new word for next normal player
-            if (!imposterIndices.includes(currentPlayerIndex)) pickWord();
             updateCard("right");
         }
     });
 
-    // Reveal imposter
+    // Reveal Imposter(s)
     revealImposterBtn.addEventListener("click", () => {
         const names = imposterIndices.map(i => players[i]).join(", ");
         imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
@@ -191,7 +169,6 @@ document.addEventListener("DOMContentLoaded", () => {
         restartBtn.style.display = "inline-block";
     });
 
-    // Restart game
     restartBtn.addEventListener("click", () => {
         gameScreen.style.display = "none";
         setupScreen.style.display = "block";
