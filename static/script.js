@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentHint = "";
     let categories = {};
     let availableCategories = [];
+    let trollModeHints = []; // NEW: Array to store individual hints/categories for Troll Mode
 
     // DOM elements
     const playerNameInput = document.getElementById("playerName");
@@ -47,13 +48,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const uniqueId = `cat_checkbox_${index}`;
             const formattedCat = cat.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
 
-            // Container div (optional, but keeps things tidy)
+            // Container div
             const wrapper = document.createElement("div");
             wrapper.className = "category-option";
 
             // 1. The Input (Hidden by CSS)
             // 2. The Label (Styled as the Button)
-            // When label is clicked, it toggles the input via 'for' attribute
             wrapper.innerHTML = `
                 <input type="checkbox" id="${uniqueId}" value="${cat}" class="category-input" ${checkedAttr}>
                 <label for="${uniqueId}" class="category-tile">${formattedCat}</label>
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // === Start Game ===
+    // --- START GAME ---
     startGameBtn.addEventListener("click", () => {
         if (players.length < 3) return alert("Minimum 3 players required!");
         const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
@@ -115,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
 
         imposterIndices = [];
+        trollModeHints = []; // Reset hints array
 
         // Troll Mode: 1 in 15 chance
         const isTrollRound = Math.random() < (1 / 15);
@@ -122,16 +123,25 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isTrollRound) {
             console.log("😈 Troll Mode Activated");
             imposterIndices = players.map((_, index) => index);
+
+            // NEW: Generate unique random hints/categories for every player
+            for (let i = 0; i < players.length; i++) {
+                trollModeHints.push(pickRandomWordAndCategory(availableCategories));
+            }
         } else {
             const imposterCount = players.length >= 6 ? 2 : 1;
             while (imposterIndices.length < imposterCount) {
                 const idx = Math.floor(Math.random() * players.length);
                 if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
             }
+            // Standard game: Pick one set of word/hint for the round
+            const roundDetails = pickRandomWordAndCategory(availableCategories);
+            currentCategory = roundDetails.category;
+            currentWord = roundDetails.word;
+            currentHint = roundDetails.hint;
         }
 
         currentPlayerIndex = 0;
-        pickWord();
 
         setupScreen.style.display = "none";
         gameScreen.style.display = "block";
@@ -142,25 +152,27 @@ document.addEventListener("DOMContentLoaded", () => {
         updateCard();
     });
 
-    function pickWord() {
-        const catList = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
-        currentCategory = catList[Math.floor(Math.random() * catList.length)];
-        const wordsList = categories[currentCategory] || [];
+    // NEW: Function to pick a random word/category/hint set
+    function pickRandomWordAndCategory(categoryList) {
+        const selectedCategory = categoryList[Math.floor(Math.random() * categoryList.length)];
+        const wordsList = categories[selectedCategory] || [];
 
         const selection = wordsList[Math.floor(Math.random() * wordsList.length)];
 
+        let word = "Error";
+        let hint = "Error";
+
         if (selection) {
-            currentWord = selection.word;
+            word = selection.word;
             const hints = selection.hints || [];
             if (hints.length > 0) {
-                currentHint = hints[Math.floor(Math.random() * hints.length)];
+                hint = hints[Math.floor(Math.random() * hints.length)];
             } else {
-                currentHint = currentCategory;
+                hint = selectedCategory;
             }
-        } else {
-            currentWord = "Error";
-            currentHint = "Error";
         }
+
+        return { category: selectedCategory, word: word, hint: hint };
     }
 
     // === Update Card ===
@@ -168,12 +180,24 @@ document.addEventListener("DOMContentLoaded", () => {
         cardFront.textContent = players[currentPlayerIndex];
 
         if (imposterIndices.includes(currentPlayerIndex)) {
-            // Imposter sees Category AND Hint
+            let playerCategory, playerHint;
+
+            if (imposterIndices.length === players.length) {
+                // Troll Mode: Get specific random hint for this player
+                const playerDetails = trollModeHints[currentPlayerIndex];
+                playerCategory = playerDetails.category;
+                playerHint = playerDetails.hint;
+            } else {
+                // Standard Imposter Mode: Get the round's standard hint/category
+                playerCategory = currentCategory;
+                playerHint = currentHint;
+            }
+
             cardBack.innerHTML = `
                 <div class="imposter-title">⚠️ Imposter</div>
-                <div class="imposter-category">${currentCategory}</div>
+                <div class="imposter-category">${playerCategory}</div>
                 <div class="imposter-hint-label">Your Hint</div>
-                <div class="imposter-hint-text">${currentHint}</div>
+                <div class="imposter-hint-text">${playerHint}</div>
             `;
         } else {
             // Innocent View
