@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, render_template, send_from_directory
 import os
+import random
 
 app = Flask(__name__)
 
@@ -8,15 +9,33 @@ def load_categories():
     categories = {}
     if not os.path.exists("words.txt"):
         return categories
+    
     with open("words.txt", "r", encoding="utf-8") as f:
         current_category = None
         for line in f:
             line = line.strip()
+            if not line:
+                continue
+                
+            # If line is ALL CAPS, it's a category header
             if line.isupper():
                 current_category = line
                 categories[current_category] = []
-            elif line and current_category:
-                categories[current_category].append(line)
+            elif current_category:
+                # Split by pipe. First part is Word, rest are Hints.
+                parts = line.split('|')
+                word = parts[0].strip()
+                
+                # Get all hints provided. If none, default to Category Name.
+                hints = [h.strip() for h in parts[1:]]
+                if not hints:
+                    hints = [current_category]
+                
+                categories[current_category].append({
+                    "word": word,
+                    "hints": hints 
+                })
+                
     return categories
 
 @app.route("/")

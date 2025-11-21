@@ -36,619 +36,7 @@ Jason Yeoman
 Luke Western
 Alec Sneddon
 
-CLASH ROYALE 
-Knight
-Archers
-Goblins
-Giant
-Miner
-Princess
-Skeletons
-Minions
-Baby Dragon
-Valkyrie
-Musketeer
-Wizard
-Witch
-Hog Rider
-Balloon
-Barbarians
-Minion Horde
-Skeleton Army
-Fire Spirits
-Ice Spirit
-Bats
-Prince
-Golem
-Lava Hound
-Goblin Barrel
-Freeze
-Rage
-Poison
-Lightning
-Rocket
-Graveyard
-Elixir
-Crown Tower
-Trophy
-Chest
-Clan
-Deck
-
-SPORTS
-Soccer
-Basketball
-Tennis
-Baseball
-Golf
-Swimming
-Running
-Cycling
-Boxing
-Wrestling
-Volleyball
-Cricket
-Rugby
-Hockey
-Badminton
-Table tennis
-Skiing
-Snowboarding
-Skateboarding
-Surfing
-Gymnastics
-Martial arts
-Archery
-Fencing
-Weightlifting
-Diving
-Sailing
-Rowing
-Horse racing
-Car racing
-Motocross
-Climbing
-Yoga
-Dance
-Cheerleading
-Bowling
-Fishing
-Hunting
-Hiking
-Skating
-Curling
-Bobsleigh
-Lacrosse
-Polo
-Squash
-Handball
-Water polo
-Triathlon
-Decathlon
-Pentathlon
-
-FRUITS
-Apple
-Banana
-Orange
-Mango
-Pineapple
-Strawberry
-Blueberry
-Raspberry
-Grape
-Cherry
-Watermelon
-Kiwi
-Papaya
-Peach
-Plum
-Apricot
-Nectarine
-Coconut
-Lemon
-Lime
-Pomegranate
-Blackcurrant
-Cranberry
-Dragonfruit
-Passionfruit
-Lychee
-Guava
-Fig
-Date
-Pear
-Tangerine
-Cantaloupe
-Honeydew
-Starfruit
-Mulberry
-Gooseberry
-Persimmon
-Clementine
-Boysenberry
-Prickly pear
-Custard apple
-Jackfruit
-Soursop
-Bilberry
-Redcurrant
-Elderberry
-Jujube
-Sapodilla
-Durian
-Breadfruit
-
-MEALS
-Spaghetti Bolognese
-Pizza Margherita
-Roast Chicken
-Fish and Chips
-Lasagna
-Hamburger
-Hot Dog
-Tacos
-Burrito
-Sushi
-Ramen
-Pad Thai
-Fried Rice
-Chicken Curry
-Shepherd’s Pie
-Steak and Fries
-Grilled Salmon
-Caesar Salad
-Mac and Cheese
-Omelette
-Pancakes
-Waffles
-Club Sandwich
-Beef Stew
-Chilli Con Carne
-Chicken Tikka Masala
-Butter Chicken
-Peking Duck
-Shakshuka
-Fajitas
-Pho
-Bibimbap
-Gnocchi
-Risotto
-Moussaka
-Kebabs
-Burrata Salad
-Clam Chowder
-Jambalaya
-Paella
-Falafel Wrap
-Souvlaki
-Enchiladas
-Pulled Pork
-Carbonara
-Casserole
-Meatloaf
-Chicken Alfredo
-Tempura
-Ratatouille
-
-CITIES
-Paris
-London
-New York
-Tokyo
-Sydney
-Los Angeles
-Dubai
-Rome
-Berlin
-Barcelona
-Toronto
-Beijing
-Moscow
-Bangkok
-Delhi
-Seoul
-Istanbul
-Cairo
-Singapore
-Cape Town
-Rio de Janeiro
-Amsterdam
-Venice
-Vienna
-Prague
-Lisbon
-Mexico City
-San Francisco
-Hong Kong
-Florence
-Budapest
-Marrakech
-Munich
-Stockholm
-Zurich
-Havana
-Athens
-Oslo
-Warsaw
-Dublin
-Edinburgh
-Brussels
-Reykjavik
-Copenhagen
-Buenos Aires
-Jerusalem
-Helsinki
-Kyoto
-Jakarta
-Nairobi
-
-SINGERS
-Taylor Swift
-Ed Sheeran
-Adele
-Beyoncé
-Bruno Mars
-Rihanna
-Justin Bieber
-Billie Eilish
-Shawn Mendes
-Harry Styles
-Lady Gaga
-Ariana Grande
-The Weeknd
-Dua Lipa
-Sam Smith
-Olivia Rodrigo
-Drake
-Selena Gomez
-Katy Perry
-Post Malone
-Doja Cat
-Lana Del Rey
-Charlie Puth
-Sia
-Elton John
-Miley Cyrus
-Calvin Harris
-Lewis Capaldi
-Jennifer Lopez
-Michael Jackson
-Whitney Houston
-Madonna
-Elvis Presley
-Freddie Mercury
-George Michael
-Bob Marley
-Amy Winehouse
-John Legend
-Christina Aguilera
-Usher
-Nicki Minaj
-Cardi B
-Shakira
-Zayn Malik
-Camila Cabello
-Jason Derulo
-Ellie Goulding
-
-CHARACTERS
-Harry Potter
-Hermione Granger
-Ron Weasley
-Darth Vader
-Luke Skywalker
-Yoda
-Spider-Man
-Iron Man
-Captain America
-Thor
-Hulk
-Black Widow
-Batman
-Superman
-Wonder Woman
-The Joker
-Harley Quinn
-Frodo Baggins
-Gandalf
-Legolas
-Aragorn
-Katniss Everdeen
-Peeta Mellark
-Sherlock Holmes
-Dr Watson
-James Bond
-Indiana Jones
-Jack Sparrow
-Willy Wonka
-Simba
-Mufasa
-Elsa
-Olaf
-Woody
-Buzz Lightyear
-SpongeBob SquarePants
-Patrick Star
-Scooby-Doo
-Shrek
-Donkey
-Fiona
-Gru
-Minion
-Optimus Prime
-Megatron
-Neo
-Trinity
-Morpheus
-Black Panther
-Deadpool
-Wolverine
-
-ACTOR
-Leonardo DiCaprio
-Brad Pitt
-Johnny Depp
-Tom Hanks
-Robert Downey Jr.
-Chris Evans
-Chris Hemsworth
-Scarlett Johansson
-Jennifer Lawrence
-Emma Stone
-Anne Hathaway
-Morgan Freeman
-Will Smith
-Denzel Washington
-Hugh Jackman
-Matt Damon
-Keanu Reeves
-Christian Bale
-Tom Cruise
-Natalie Portman
-Ryan Reynolds
-Sandra Bullock
-Julia Roberts
-George Clooney
-Meryl Streep
-Kate Winslet
-Heath Ledger
-Cillian Murphy
-Florence Pugh
-Margot Robbie
-Adam Driver
-Timothée Chalamet
-Zendaya
-Benedict Cumberbatch
-Daniel Craig
-Jake Gyllenhaal
-Samuel L. Jackson
-Robert De Niro
-Al Pacino
-Joaquin Phoenix
-Nicole Kidman
-Charlize Theron
-Anne Hathaway
-Harrison Ford
-Rami Malek
-Emma Watson
-Ben Affleck
-Mark Ruffalo
-Chris Pratt
-Jason Momoa
-
-HISTORICAL FIGURE
-Albert Einstein
-Isaac Newton
-Nikola Tesla
-Marie Curie
-Galileo Galilei
-Charles Darwin
-Leonardo da Vinci
-Aristotle
-Socrates
-Plato
-Alexander the Great
-Julius Caesar
-Cleopatra
-Napoleon Bonaparte
-Queen Elizabeth I
-Winston Churchill
-Martin Luther King Jr.
-Mahatma Gandhi
-Nelson Mandela
-Abraham Lincoln
-George Washington
-Benjamin Franklin
-Florence Nightingale
-William Shakespeare
-Christopher Columbus
-Marco Polo
-Amelia Earhart
-Charles Dickens
-Beethoven
-Mozart
-Vincent van Gogh
-Pablo Picasso
-Wright Brothers
-Sigmund Freud
-Thomas Edison
-Mother Teresa
-Malcolm X
-Rosa Parks
-Walt Disney
-Alan Turing
-Stephen Hawking
-Jane Austen
-Ada Lovelace
-Genghis Khan
-Sun Tzu
-Confucius
-Queen Victoria
-
-PLACES
-Supermarket
-Cinema
-Police Station
-Fire Station
-Hospital
-Library
-School
-University
-Playground
-Amusement Park
-Restaurant
-Cafe
-Bakery
-Butcher Shop
-Post Office
-Train Station
-Bus Stop
-Airport
-Shopping Mall
-Clothing Store
-Bookstore
-Pharmacy
-Barber Shop
-Hair Salon
-Gym
-Swimming Pool
-Beach
-Park
-Zoo
-Museum
-Aquarium
-Garage
-Car Wash
-Hotel
-Church
-Mosque
-Temple
-Bank
-Office
-Factory
-Construction Site
-Farm
-Barn
-Garden
-Kitchen
-Living Room
-Bedroom
-Bathroom
-Basement
-Attic
-Garage
-Playroom
-Classroom
-
-JOBS
-Teacher
-Doctor
-Nurse
-Firefighter
-Police Officer
-Chef
-Waiter
-Builder
-Electrician
-Plumber
-Mechanic
-Engineer
-Architect
-Lawyer
-Judge
-Farmer
-Dentist
-Scientist
-Pilot
-Flight Attendant
-Taxi Driver
-Bus Driver
-Train Conductor
-Actor
-Singer
-Musician
-Artist
-Photographer
-Journalist
-Writer
-Author
-Librarian
-Vet
-Zookeeper
-Hairdresser
-Fashion Designer
-Graphic Designer
-Software Developer
-IT Technician
-Game Developer
-Cashier
-Receptionist
-Manager
-Salesperson
-Bartender
-Cleaner
-Paramedic
-Soldier
-Security Guard
-Politician
-Athlete
-Coach
-
-HOUSEHOLD OBJECTS
-Table
-Chair
-Desk
-Bed
-Sofa
-Lamp
-Television
-Computer
-Phone
-Tablet
-Keyboard
-Mouse
-Book
-Notebook
-Pen
-Pencil
-Ruler
-Scissors
-Mirror
-Clock
-Plate
-Cup
-Bowl
-Spoon
-Fork
-Knife
-Towel
-Blanket
-Pillow
-Remote
-Camera
-Headphones
-Charger
-Bag
-Backpack
-Wallet
-Purse
-Umbrella
-Shoe
-Hat
-Glasses
-Toothbrush
-Comb
-Hairdryer
-Key
-Door
-Window
-Bottle
-Ball
-Toy
-Candle
-
-STORTFORD SPOTS 
+STORTFORD SPOTS
 Northgate Car Park
 Cinema
 Rivermill
@@ -666,86 +54,696 @@ Southern Country Park
 Grange Paddocks
 Thorley Sainsburys
 
+CLASH ROYALE
+Knight|Good stats|Mustache|Cost
+Archers|Pink hair|Arrows|Towers
+Goblins|Green|Stab|Barrel
+Giant|Building|Tank|Slow
+Miner|Dig|Nerf|Shovel
+Princess|Log|Bridge|Range
+Skeletons|Larry|One elixir|Distraction
+Minions|Blue|Fly|Three
+Baby Dragon|Burp|Splash|Green
+Valkyrie|Axe|Spin|Redhead
+Musketeer|Boomstick|Pink|Helmet
+Wizard|Showtime|Fireball|Hood
+Witch|Larry|Purple|Staff
+Hog Rider|Jump|Hammer|Call
+Balloon|Bomb|Loon|Parade
+Barbarians|Hut|Sword|Blonde
+Minion Horde|Arrows|Six|Swarm
+Skeleton Army|Zap|Crowd|Larrys
+Fire Spirits|Furnace|Hug|Jump
+Ice Spirit|Freeze|Reset|One
+Bats|Night Witch|Purple|Fast
+Prince|Charge|Lance|Pony
+Golem|Explode|Rock|Eight
+Lava Hound|Pups|Air|Tank
+Goblin Barrel|Bait|Log|Throw
+Freeze|Stop|Surprise|Cold
+Rage|Purple|Bottle|Fast
+Poison|Tick|Spell|Orange
+Lightning|Three|Stun|Big
+Rocket|Chief Pat|Missile|Six
+Graveyard|RNG|Skeletons|Spell
+Elixir|Pump|Pink|Mana
+Crown Tower|King|Princess|Activation
+Trophy|Ladder|Points|Road
+Chest|Unlock|Keys|Cycle
+Clan|War|Donation|Chat
+Deck|Average|Cycle|Beatdown
+
+SPORTS
+Soccer|Handball|Offside|Ted Lasso
+Basketball|Space Jam|Jordans|Shot clock
+Tennis|Love|Williams|Wimbledon
+Baseball|Moneyball|Diamond|Strike
+Golf|Happy Gilmore|Green|Caddy
+Swimming|Nemo|Laps|Phelps
+Running|Forrest Gump|Marathon|Bolt
+Cycling|Armstrong|Tour|Spandex
+Boxing|Rocky|Ear|Belt
+Wrestling|Cena|Fake|Ropes
+Volleyball|Cast Away|Sand|Spike
+Cricket|Wicket|Ashes|Bat
+Rugby|Haka|Scrum|No pads
+Hockey|Mighty Ducks|Puck|Ice
+Badminton|Shuttlecock|Birdie|Net
+Table tennis|Gump|Paddle|Pong
+Skiing|South Park|Poles|Lift
+Snowboarding|Shawn White|Binding|Powder
+Skateboarding|Tony Hawk|Kickflip|Deck
+Surfing|Point Break|Wax|Shark
+Gymnastics|Biles|Chalk|Mat
+Martial arts|Cobra Kai|Belt|Dojo
+Archery|Katniss|Hawkeye|Bullseye
+Fencing|Parent Trap|Mask|Point
+Weightlifting|Schwarzenegger|Chalk|Clean
+Diving|Splash|Board|Pike
+Sailing|Knot|Wind|Mast
+Rowing|Winklevoss|Coxswain|Oar
+Horse racing|Jockey|Bet|Derby
+Car racing|Lightning McQueen|Pit|Flag
+Motocross|Dirt|Goggles|Whip
+Climbing|Free Solo|Chalk|Belay
+Yoga|Mat|Namaste|Pants
+Dance|Footloose|Rhythm|Shoes
+Cheerleading|Bring It On|Pyramid|Poms
+Bowling|Lebowski|Shoes|Strike
+Fishing|Nemo|Bait|Hook
+Hunting|Bambi|Camo|Season
+Hiking|Wild|Trail|Boots
+Skating|Blades of Glory|Ice|Axel
+Curling|Broom|Stone|Sheet
+Bobsleigh|Cool Runnings|Push|Sled
+Lacrosse|Net|Stick|Helmet
+Polo|Ralph Lauren|Horse|Mallet
+Squash|Wall|Rubber|Racket
+Handball|Glue|Goal|Throw
+Water polo|Cap|Eggbeater|Pool
+Triathlon|Ironman|Three|Suit
+Decathlon|Ten|Jenner|Track
+Pentathlon|Five|Laser|Horse
+
+FRUITS
+Apple|Jobs|Snow White|Doctor
+Banana|Minion|Scale|Slip
+Orange|Godfather|Color|Juice
+Mango|Chutney|Tropical|Pit
+Pineapple|Spongebob|Pizza|Upside down
+Strawberry|Fields|Cream|Seeds
+Blueberry|Muffin|Violet|Pie
+Raspberry|Beret|Tart|Seeds
+Grape|Wrath|Vine|Wine
+Cherry|Pop|Bomb|Pit
+Watermelon|Sugar|Seedless|Summer
+Kiwi|New Zealand|Fuzzy|Bird
+Papaya|Enzyme|Seeds|Tropical
+Peach|Mario|James|Fuzz
+Plum|Jack Horner|Purple|Prune
+Apricot|Jam|Stone|Orange
+Nectarine|Fuzzless|Pit|Sweet
+Coconut|Cast Away|Horse|Oil
+Lemon|Lemonade|Sour|Zest
+Lime|Corona|Coconut|Sour
+Pomegranate|Persephone|Seeds|Red
+Blackcurrant|Ribena|Purple|Drink
+Cranberry|Zombie|Sauce|Bog
+Dragonfruit|Fire|Cactus|Pink
+Passionfruit|Martini|Wrinkle|Purple
+Lychee|Spiky|Sweet|Asian
+Guava|Juice|Pink|Tropical
+Fig|Newton|Leaf|Wasp
+Date|Calendar|Palm|Sweet
+Pear|Shape|Green|Soft
+Tangerine|Dream|Peel|Citrus
+Cantaloupe|Melon|Orange|Net
+Honeydew|BoJack|Melon|Green
+Starfruit|Mario|Shape|Slice
+Mulberry|Bush|Berry|Silk
+Gooseberry|Top Gun|Tart|Green
+Persimmon|Astringent|Orange|Winter
+Clementine|Darling|Box|Peel
+Boysenberry|Hybrid|Jam|Purple
+Prickly pear|Baloo|Cactus|Spine
+Custard apple|Sugar|Creamy|Seeds
+Jackfruit|Vegan|Meat|Big
+Soursop|Tea|Spiky|Green
+Bilberry|Euro|Blue|Wild
+Redcurrant|Jelly|Tart|Cluster
+Elderberry|Python|Syrup|Immunity
+Jujube|Candy|Red|Dried
+Sapodilla|Gum|Brown|Sweet
+Durian|Smell|Banned|Spiky
+Breadfruit|Mutiny|Starch|Tree
+
+MEALS
+Spaghetti Bolognese|Eminem|Western|Meatball
+Pizza Margherita|Turtles|Delivery|Slice
+Roast Chicken|Sunday|Dinner|Bird
+Fish and Chips|Newspaper|Vinegar|Seaside
+Lasagna|Garfield|Layers|Oven
+Hamburger|Royale|Clown|King
+Hot Dog|Costco|Baseball|Mustard
+Tacos|Tuesday|Shell|Truck
+Burrito|Chipotle|Wrap|Bowl
+Sushi|Nemo|Roll|Raw
+Ramen|Naruto|Noodles|Dorm
+Pad Thai|Peanut|Wok|Noodle
+Fried Rice|Uncle Roger|Egg|Wok
+Chicken Curry|Spice|Rice|Takeaway
+Shepherd’s Pie|Mash|Lamb|Cottage
+Steak and Fries|Rare|Bistro|Cut
+Grilled Salmon|Bear|Pink|River
+Caesar Salad|Brutus|Crouton|Dressing
+Mac and Cheese|Kraft|Box|Yellow
+Omelette|Du Fromage|Eggs|Fold
+Pancakes|Syrup|Stack|Flat
+Waffles|Donkey|Grid|Iron
+Club Sandwich|Golf|Cut|Toothpick
+Beef Stew|Slow|Pot|Winter
+Chilli Con Carne|Beans|Carne|Bowl
+Chicken Tikka Masala|Glasgow|Orange|Curry
+Butter Chicken|Creamy|Mild|Naan
+Peking Duck|Pancakes|Hoisin|Crispy
+Shakshuka|Eggs|Pan|Tomato
+Fajitas|Sizzle|Wrap|Plate
+Pho|Bowl|Broth|Vietnam
+Bibimbap|Stone|Mix|Bowl
+Gnocchi|Potato|Soft|Pasta
+Risotto|Stir|Rice|Creamy
+Moussaka|Greek|Layers|Eggplant
+Kebabs|3AM|Skewer|Grill
+Burrata Salad|Ball|Cream|Cheese
+Clam Chowder|Family Guy|White|Bowl
+Jambalaya|Creole|Pot|Rice
+Paella|Pan|Rice|Seafood
+Falafel Wrap|Chickpea|Vegan|Ball
+Souvlaki|Hercules|Stick|Meat
+Enchiladas|Schitt's Creek|Roll|Sauce
+Pulled Pork|Sandwich|BBQ|Slow
+Carbonara|Coal|Egg|Pasta
+Casserole|Mom|Dish|Bake
+Meatloaf|Bat|Dinner|Ketchup
+Chicken Alfredo|White|Pasta|Sauce
+Tempura|Fry|Batter|Shrimp
+Ratatouille|Mouse|Remy|Stew
+
+CITIES
+Paris|Hilton|Ratatouille|Plaster
+London|Calling|Bridge|Eye
+New York|Sinatra|Apple|State
+Tokyo|Drift|Neon|Godzilla
+Sydney|Nemo|Opera|Harbour
+Los Angeles|Angels|Hollyweed|Traffic
+Dubai|Money|Sand|Tall
+Rome|Holiday|Empire|Roads
+Berlin|Wall|Techno|Doughnut
+Barcelona|Cheetah Girls|Messi|1992
+Toronto|Drake|Raptors|Tower
+Beijing|Duck|Wall|Olympics
+Moscow|Mule|Red|Square
+Bangkok|Hangover|Night|Thai
+Delhi|Belly|Capital|Crowd
+Seoul|Gangnam|Parasite|Squid
+Istanbul|Taken|Constantine|Cats
+Cairo|Paper|Mummy|Pyramid
+Singapore|Gum|Rich|Lion
+Cape Town|Water|Mountain|South
+Rio de Janeiro|Fast Five|Carnival|Jesus
+Amsterdam|Green|Canal|Red
+Venice|Spiderman|Sinking|Boat
+Vienna|Sausage|Wait|Opera
+Prague|Mission Impossible|Bridge|Czech
+Lisbon|Tart|Tram|Hills
+Mexico City|Spectre|Aztec|Altitude
+San Francisco|Full House|Fog|Bridge
+Hong Kong|King Kong|Skyline|Harbour
+Florence|Machine|Art|Italy
+Budapest|Hotel|Pest|Baths
+Marrakech|Market|Red|Morocco
+Munich|Oktoberfest|Beer|Bayern
+Stockholm|Syndrome|IKEA|North
+Zurich|Bank|Gnomes|Lake
+Havana|Cabana|Cigars|Cars
+Athens|Hercules|Ruins|Gods
+Oslo|Viking|Peace|North
+Warsaw|Uprising|Pianist|Poland
+Dublin|Pint|Green|Clover
+Edinburgh|Trainspotting|Castle|Fringe
+Brussels|Sprouts|Muscles|EU
+Reykjavik|Ice|Fire|Green
+Copenhagen|Danish|Mermaid|Bike
+Buenos Aires|Tango|Evita|Silver
+Jerusalem|Crusade|Wall|Old
+Helsinki|Heist|Sauna|White
+Kyoto|Protocol|Shrine|Old
+Jakarta|Java|Sink|Traffic
+Nairobi|Heist|Safari|Lion
+
+SINGERS
+Taylor Swift|Chiefs|Snake|Red
+Ed Sheeran|Ginger|Cats|Loop
+Adele|Hello|Rolling|Divorce
+Beyoncé|Halo|Bee|Queen
+Bruno Mars|Uptown|Hat|Funk
+Rihanna|Umbrella|Makeup|Work
+Justin Bieber|Peaches|Baby|Canada
+Billie Eilish|Green|Bad|Whisper
+Shawn Mendes|Stitches|Camila|Vine
+Harry Styles|Direction|Sugar|Fruit
+Lady Gaga|Meat|Star|Poker
+Ariana Grande|Ponytail|High|Cat
+The Weeknd|Bowl|Starboy|Lights
+Dua Lipa|Levitating|Rules|Dance
+Sam Smith|Stay|Unholy|Bond
+Olivia Rodrigo|Drivers|Sour|Vampire
+Drake|Meme|Wheelchair|Phone
+Selena Gomez|Wizards|Chef|Wolf
+Katy Perry|Shark|Roar|Firework
+Post Malone|Tattoos|Circles|Rockstar
+Doja Cat|Cow|Paint|Street
+Lana Del Rey|Summertime|Sadness|Video
+Charlie Puth|Fast|Pitch|Piano
+Sia|Chandelier|Wig|Face
+Elton John|Rocket|Glasses|Piano
+Miley Cyrus|Wrecking|Montana|Flowers
+Calvin Harris|Summer|DJ|Ex
+Lewis Capaldi|Sad|Scottish|Glasses
+Jennifer Lopez|Block|Ring|Green
+Michael Jackson|Glove|Moon|Thriller
+Whitney Houston|Bodyguard|Will|Voice
+Madonna|Prayer|Vogue|Queen
+Elvis Presley|Hound|Jailhouse|King
+Freddie Mercury|Queen|Bohemian|Teeth
+George Michael|Faith|Christmas|Wham
+Bob Marley|Lion|Jamming|Reggae
+Amy Winehouse|Rehab|Black|Hive
+John Legend|Ordinary|Piano|Chrissy
+Christina Aguilera|Genie|Voice|Dirrty
+Usher|Confessions|Raymond|Yeah
+Nicki Minaj|Anaconda|Barbie|Pink
+Cardi B|WAP|Shoes|Yellow
+Shakira|Hips|Wolf|Pique
+Zayn Malik|Pillow|Direction|Gigi
+Camila Cabello|Havana|Fifth|Shawn
+Jason Derulo|Name|Trumpets|Talk
+Ellie Goulding|Lights|Wedding|Burn
+
+CHARACTERS
+Harry Potter|Scar|Boy|Wizard
+Hermione Granger|Smart|Time|Cat
+Ron Weasley|Rat|Spider|Red
+Darth Vader|Father|Breath|Mask
+Luke Skywalker|Hand|Farm|Twin
+Yoda|Grammar|Small|Green
+Spider-Man|Web|Uncle|Photo
+Iron Man|Suit|Heart|Snap
+Captain America|Shield|Ice|America
+Thor|Hammer|Hair|Thunder
+Hulk|Smash|Green|Angry
+Black Widow|Spy|Red|Budapest
+Batman|Cave|Parents|Rich
+Superman|Krypton|Cape|Glasses
+Wonder Woman|Lasso|Jet|Amazon
+The Joker|Society|Smile|Bat
+Harley Quinn|Bat|Pudding|Pig-tails
+Frodo Baggins|Ring|Foot|Shire
+Gandalf|Pass|Grey|Staff
+Legolas|Elf|Eye|Bow
+Aragorn|King|Sword|Ranger
+Katniss Everdeen|Fire|Mockingjay|Bow
+Peeta Mellark|Bread|Paint|Camouflage
+Sherlock Holmes|Elementary|Hat|Watson
+Dr Watson|Doctor|Sidekick|Partner
+James Bond|Martini|Seven|Aston
+Indiana Jones|Snake|Whip|Hat
+Jack Sparrow|Rum|Jar|Compass
+Willy Wonka|Factory|Ticket|Hat
+Simba|King|Circle|Dad
+Mufasa|Stampede|Cloud|King
+Elsa|Cold|Glove|Let go
+Olaf|Summer|Carrot|Hug
+Woody|Snake|Boot|Cowboy
+Buzz Lightyear|Beyond|Laser|Wing
+SpongeBob SquarePants|Job|Pants|Laugh
+Patrick Star|Rock|Pink|Shorts
+Scooby-Doo|Snack|Van|Ghost
+Shrek|Swamp|Onion|Layer
+Donkey|Waffles|Dragon|Talk
+Fiona|Princess|Green|Tower
+Gru|Moon|Minion|Nose
+Minion|Banana|Goggles|Gru
+Optimus Prime|Truck|Roll|Auto
+Megatron|Gun|Villain|Decepticon
+Neo|Spoon|One|Pill
+Trinity|Dodge|Kick|Matrix
+Morpheus|Pill|Dream|Chair
+Black Panther|Forever|Cat|Wakanda
+Deadpool|Regenerate|Fourth|Red
+Wolverine|Claws|X|Logan
+
+ACTOR
+Leonardo DiCaprio|Bear|Iceberg|Oscar
+Brad Pitt|Club|Seven|Angelina
+Johnny Depp|Pirate|Scissor|Amber
+Tom Hanks|Volleyball|Box|Captain
+Robert Downey Jr.|Suit|Snap|Sherlock
+Chris Evans|Shield|America|Knives
+Chris Hemsworth|Hammer|Australia|Thor
+Scarlett Johansson|Voice|Ghost|Widow
+Jennifer Lawrence|Bow|Trip|Pizza
+Emma Stone|Spider|Land|Cruella
+Anne Hathaway|Devil|Diaries|Cat
+Morgan Freeman|God|Voice|Redemption
+Will Smith|Slap|Prince|Ali
+Denzel Washington|Training|Equalizer|Flight
+Hugh Jackman|Showman|Claws|Logan
+Matt Damon|Mars|Hunting|Bourne
+Keanu Reeves|Dog|Pill|Speed
+Christian Bale|Bat|Psycho|Weight
+Tom Cruise|Run|Plane|Mission
+Natalie Portman|Swan|Leon|Thor
+Ryan Reynolds|Gin|Green|Deadpool
+Sandra Bullock|Bus|Blind|Space
+Julia Roberts|Woman|Erin|Smile
+George Clooney|Coffee|Eleven|Bat
+Meryl Streep|Devil|Mia|Prada
+Kate Winslet|Door|Iceberg|Rose
+Heath Ledger|Smile|Joker|Knight
+Cillian Murphy|Atomic|Blinders|Cap
+Florence Pugh|Midsommar|Dress|Cooking
+Margot Robbie|Doll|Wolf|Harley
+Adam Driver|Force|Marriage|Bus
+Timothée Chalamet|Peach|Sand|Chocolate
+Zendaya|Spider|Dune|Shake
+Benedict Cumberbatch|Strange|Game|Khan
+Daniel Craig|License|Knives|Bond
+Jake Gyllenhaal|Bubble|Mountain|Donnie
+Samuel L. Jackson|Snake|Mother|Patch
+Robert De Niro|Taxi|Focker|Irisman
+Al Pacino|Scarface|Godfather|Scent
+Joaquin Phoenix|Stairs|Her|Joker
+Nicole Kidman|Cruise|Lies|Moulin
+Charlize Theron|Road|Monster|Atomic
+Harrison Ford|Whip|Solo|Plane
+Rami Malek|Teeth|Robot|Queen
+Emma Watson|Belle|Witch|Wallflower
+Ben Affleck|Gone|Bat|Good
+Mark Ruffalo|Green|Angry|Magician
+Chris Pratt|Galaxy|Dino|Lego
+Jason Momoa|Water|Game|Fish
+
+HISTORICAL FIGURE
+Albert Einstein|Hair|Tongue|Relativity
+Isaac Newton|Apple|Gravity|Fig
+Nikola Tesla|Car|Coil|Pigeon
+Marie Curie|Glow|Element|Rad
+Galileo Galilei|Telescope|Star|Drop
+Charles Darwin|Monkey|Finch|Boat
+Leonardo da Vinci|Code|Smile|Supper
+Aristotle|Thinker|Logic|Greek
+Socrates|Poison|Method|Question
+Plato|Cave|Form|Republic
+Alexander the Great|Knot|King|Horse
+Julius Caesar|Salad|Brutus|Stab
+Cleopatra|Snake|Carpet|Queen
+Napoleon Bonaparte|Short|Hand|Waterloo
+Queen Elizabeth I|Virgin|Ruff|Red
+Winston Churchill|Cigar|V|Bulldog
+Martin Luther King Jr.|Dream|Mountain|March
+Mahatma Gandhi|Glasses|Salt|Peace
+Nelson Mandela|Prison|Apartheid|Long
+Abraham Lincoln|Hat|Log|Theater
+George Washington|Cherry|Dollar|Teeth
+Benjamin Franklin|Kite|Key|Bill
+Florence Nightingale|Lamp|Nurse|War
+William Shakespeare|Skull|Play|Bard
+Christopher Columbus|Ocean|Blue|Ship
+Marco Polo|Pool|Silk|Travel
+Amelia Earhart|Plane|Lost|Pacific
+Charles Dickens|Christmas|Twist|Cities
+Beethoven|Dog|Deaf|Piano
+Mozart|Wolf|Child|Piano
+Vincent van Gogh|Ear|Starry|Sunflower
+Pablo Picasso|Cube|Blue|Abstract
+Wright Brothers|Flight|Kitty|Plane
+Sigmund Freud|Slip|Mother|Couch
+Thomas Edison|Bulb|Phonograph|Idea
+Mother Teresa|Saint|Help|Nun
+Malcolm X|X|Glasses|Rights
+Rosa Parks|Bus|Seat|Tired
+Walt Disney|Mouse|Frozen|Park
+Alan Turing|Computer|Apple|Code
+Stephen Hawking|Chair|Voice|Brief
+Jane Austen|Prejudice|Pride|Emma
+Ada Lovelace|Code|Computer|Byron
+Genghis Khan|Mongol|Horse|Wall
+Sun Tzu|Art|War|Win
+Confucius|Cookie|Say|Wise
+Queen Victoria|Secret|Mourning|Empire
+
+PLACES
+Supermarket|Trolley|Aisle|Bag
+Cinema|Popcorn|Ticket|Seat
+Police Station|Donut|Jail|Blue
+Fire Station|Pole|Dalmatian|Truck
+Hospital|Gown|Food|Beep
+Library|Card|Quiet|Shhh
+School|Bell|Bus|Work
+University|Debt|Degree|Party
+Playground|Sand|Slide|Recess
+Amusement Park|Line|Ride|Sick
+Restaurant|Menu|Tip|Check
+Cafe|Laptop|Bean|Wifi
+Bakery|Dozen|Smell|Yeast
+Butcher Shop|Knife|Apron|Blood
+Post Office|Stamp|Line|Box
+Train Station|Track|Whistle|Ticket
+Bus Stop|Wait|Rain|Bench
+Airport|Security|Shoe|Gate
+Shopping Mall|Food|Rat|Parking
+Clothing Store|Mirror|Tag|Fit
+Bookstore|Cover|Coffee|Smell
+Pharmacy|Script|Drug|Counter
+Barber Shop|Pole|Talk|Fade
+Hair Salon|Dryer|Gossip|Dye
+Gym|Selfie|Resolution|Sweat
+Swimming Pool|Pee|Chlorine|Deep
+Beach|Sand|Burn|Crab
+Park|Bench|Dog|Grass
+Zoo|Glass|Smell|Cage
+Museum|Quiet|Old|Touch
+Aquarium|Glass|Tank|Wet
+Garage|Oil|Tool|Door
+Car Wash|Suds|Track|Dry
+Hotel|Mini|Bed|Soap
+Church|Pew|Sunday|Kneel
+Mosque|Rug|Shoe|Tower
+Temple|Monk|Quiet|Pray
+Bank|Pen|Robber|Vault
+Office|Printer|Stapler|Boss
+Factory|Smoke|Line|Make
+Construction Site|Hat|Dig|Crane
+Farm|Smell|Early|Barn
+Barn|Red|Hay|Owl
+Garden|Weed|Hose|Gnome
+Kitchen|Heat|Sink|Chef
+Living Room|TV|Couch|Remote
+Bedroom|Dark|Sheet|Alarm
+Bathroom|Paper|Flush|Tile
+Basement|Dark|Box|Storage
+Attic|Insulation|Dust|Ghost
+Garage|Band|Door|Park
+Playroom|Mess|Toy|Box
+Classroom|Board|Desk|Raise
+
+JOBS
+Teacher|Apple|Summer|Pet
+Doctor|Handwriting|Apple|Coat
+Nurse|Shot|Care|Scrubs
+Firefighter|Cat|Pole|Hose
+Police Officer|Donut|Badge|Siren
+Chef|Hat|Knife|Heat
+Waiter|Tip|Check|Menu
+Builder|Brick|Hat|Tea
+Electrician|Spark|Wire|Shock
+Plumber|Crack|Clog|Pipe
+Mechanic|Oil|Bill|Fix
+Engineer|Math|Bridge|Build
+Architect|Plan|Draw|Design
+Lawyer|Suit|Liar|Brief
+Judge|Wig|Hammer|Order
+Farmer|Early|Crop|McDonald
+Dentist|Drill|Smile|Floss
+Scientist|Coat|Lab|Test
+Pilot|Aviator|Captain|Fly
+Flight Attendant|Exit|Cart|Safety
+Taxi Driver|Talk|Meter|Yellow
+Bus Driver|Wheels|Stop|School
+Train Conductor|Ticket|Choo|Track
+Actor|Lines|Wait|Break
+Singer|Mic|Key|Song
+Musician|Band|Gig|Case
+Artist|Starving|Paint|Beret
+Photographer|Cheese|Flash|Lens
+Journalist|Scoop|Press|News
+Writer|Block|Page|Book
+Author|Sign|Book|Chapter
+Librarian|Shhh|Stamp|Book
+Vet|Dog|Cone|Shot
+Zookeeper|Poop|Feed|Key
+Hairdresser|Talk|Cut|Dye
+Fashion Designer|Runway|Sew|Trend
+Graphic Designer|Pixel|Logo|Font
+Software Developer|Bug|Code|Coffee
+IT Technician|Off|On|Mouse
+Game Developer|Glitch|Level|Code
+Cashier|Beep|Change|Paper
+Receptionist|Phone|Desk|Hold
+Manager|Karen|Office|Boss
+Salesperson|Commission|Deal|Pitch
+Bartender|Listen|Tip|Tap
+Cleaner|Mop|Dust|Spray
+Paramedic|Siren|Save|Rush
+Soldier|March|Green|Salute
+Security Guard|Mall|Sleep|Badge
+Politician|Baby|Lie|Vote
+Athlete|Sweat|Medal|Pro
+Coach|Whistle|Plan|Cap
+
+HOUSEHOLD OBJECTS
+Table|Legs|Eat|Set
+Chair|Sit|Legs|Fold
+Desk|Job|Work|Draw
+Bed|Sheet|Bug|Spring
+Sofa|Potato|Change|Sit
+Lamp|Shade|Genie|Pixar
+Television|Remote|Show|Channel
+Computer|Mouse|Apple|Virus
+Phone|Smart|Call|Scroll
+Tablet|Kid|Touch|Screen
+Keyboard|Type|Click|Space
+Mouse|Cat|Click|Pad
+Book|Worm|Cover|Page
+Notebook|Ryan|Spiral|Paper
+Pen|Pal|Click|Ink
+Pencil|Lead|Rubber|Sharp
+Ruler|King|Inch|Straight
+Scissors|Rock|Run|Cut
+Mirror|Wall|Look|Selfie
+Clock|Tiktok|Hand|Face
+Plate|Spin|Clean|Dish
+Cup|Tea|Cake|Handle
+Bowl|Super|Cereal|Spoon
+Spoon|Little|Soup|Silver
+Fork|Road|Pitch|Prong
+Knife|Back|Butter|Sharp
+Towel|Hitchhiker|Dry|Beach
+Blanket|Fort|Wet|Pig
+Pillow|Fight|Talk|Soft
+Remote|Lost|Control|Click
+Camera|Action|Flash|Roll
+Headphones|Quiet|Beats|Cancelling
+Charger|Dead|Wall|Cord
+Bag|Lady|Tea|Paper
+Backpack|Dora|School|Strap
+Wallet|Lost|Photo|Card
+Purse|Clutch|Coin|Bag
+Umbrella|Ella|Rain|Open
+Shoe|Horn|Horse|Lace
+Hat|Cat|Top|Head
+Glasses|Nerd|Sun|Read
+Toothbrush|Electric|Paste|Bristle
+Comb|Over|Honey|Teeth
+Hairdryer|Blow|Hot|Salon
+Key|Chain|Lock|Lost
+Door|Knock|Hinge|Jamb
+Window|Pain|Soul|Glass
+Bottle|Spin|Message|Cap
+Ball|Foot|Base|Basket
+Toy|Story|Chest|Play
+Candle|Wick|Wax|Scent
+
 CELEBRITIES
-Dwayne Johnson
-Scarlett Johansson
-Tom Holland
-Zendaya
-Chris Hemsworth
-Gal Gadot
-Leonardo DiCaprio
-Jennifer Lawrence
-Ryan Reynolds
-Margot Robbie
-Robert Downey Jr.
-Emma Stone
-Brad Pitt
-Angelina Jolie
-Will Smith
-Natalie Portman
-Chris Evans
-Beyoncé
-Taylor Swift
-Ariana Grande
-Kanye West
-Rihanna
-Justin Bieber
-Kylie Jenner
-Kendall Jenner
-Jackie Chan
-Keanu Reeves
-Tom Cruise
-Meryl Streep
-Robert Pattinson
-Emma Watson
-Daniel Radcliffe
-Selena Gomez
-Dua Lipa
-Harry Styles
-Ed Sheeran
-Michael B. Jordan
-Hugh Jackman
-Chris Pratt
-Anne Hathaway
-Kourtney Kardashian
-Kim Kardashian
-Cardi B
-Drake
-Eminem
+Dwayne Johnson|Stone|Paper|Scissors
+Scarlett Johansson|Black|Lost|Marriage
+Tom Holland|Umbrella|Spider|British
+Zendaya|Coleman|Dune|Euphoria
+Chris Hemsworth|Thor|Surf|Brother
+Gal Gadot|Imagine|Woman|Fast
+Leonardo DiCaprio|Model|Oscar|Climate
+Jennifer Lawrence|Fall|Trip|Katniss
+Ryan Reynolds|Wrexham|Gin|Canadian
+Margot Robbie|Barbie|Harley|Aussie
+Robert Downey Jr.|Iron|Pepper|Sherlock
+Emma Stone|Easy|La La|Cruella
+Brad Pitt|Club|Angelina|Ocean
+Angelina Jolie|Raider|Brad|Lip
+Will Smith|Slap|Fresh|Men
+Natalie Portman|Black|Star|Thor
+Chris Evans|America|Buzz|Knives
+Beyoncé|Lemonade|Jay|Single
+Taylor Swift|Cat|Jet|Scarf
+Ariana Grande|High|Venti|Positions
+Kanye West|Ye|Fish|Shoe
+Rihanna|Umbrella|Fenty|Work
+Justin Bieber|Sorry|Selena|Hailey
+Kylie Jenner|Lip|Pepsi|Kardashian
+Kendall Jenner|Pepsi|Model|Runway
+Jackie Chan|Stunt|Rush|Kung Fu
+Keanu Reeves|Wick|Matrix|Dog
+Tom Cruise|Couch|Mission|Top
+Meryl Streep|Prada|Queen|Sophie
+Robert Pattinson|Bat|Sparkle|Twilight
+Emma Watson|Belle|Hermione|Book
+Daniel Radcliffe|Wand|Swiss|Potter
+Selena Gomez|Murders|Bieber|Disney
+Dua Lipa|Levitate|Rule|Dance
+Harry Styles|Watermelon|1D|Dress
+Ed Sheeran|Shape|Math|Ginger
+Michael B. Jordan|Creed|Wire|Panther
+Hugh Jackman|Claw|Showman|Oz
+Chris Pratt|Dino|Mario|Galaxy
+Anne Hathaway|Devil|Diaries|Les
+Kourtney Kardashian|Barker|Poosh|Sister
+Kim Kardashian|Tape|Paper|Lawyer
+Cardi B|WAP|Shoe|Money
+Drake|Hotline|Degrassi|Owl
+Eminem|Mom|Spaghetti|Slim
 
 FOOTBALLERS
-Lionel Messi
-Cristiano Ronaldo
-Pelé
-Diego Maradona
-Neymar
-David Beckham
-Ronaldinho
-Kylian Mbappé
-Zinedine Zidane
-Ronaldo Nazário (R9)
-Mohamed Salah
-Harry Kane
-Wayne Rooney
-Sergio Ramos
-Zlatan Ibrahimović
-Luis Suárez
-Thierry Henry
-Sergio Agüero
-Gareth Bale
-Robert Lewandowski
-Virgil van Dijk
-Luka Modrić
-Didier Drogba
-Frank Lampard
-Steven Gerrard
-Paul Pogba
-Dele Alli
-Kevin De Bruyne
-Marcus Rashford
-Jesse Lingard
-Jordan Pickford
-Mesut Özil
-Son Heung-min
-Hugo Lloris
-Luka Modric
+Lionel Messi|Goat|Ant|Miami
+Cristiano Ronaldo|Siu|Seven|United
+Pelé|King|Three|Brazil
+Diego Maradona|Hand|God|Napoli
+Neymar|Dive|Sister|Hair
+David Beckham|Posh|Spice|Bend
+Ronaldinho|Prison|Smile|Skill
+Kylian Mbappé|Turtle|Speed|Madrid
+Zinedine Zidane|Head|Butt|Bald
+Ronaldo Nazário (R9)|Fenomeno|Hair|Knee
+Mohamed Salah|King|Pharaoh|Curl
+Harry Kane|Spurs|Penalty|Lion
+Wayne Rooney|Shrek|Granny|Overhead
+Sergio Ramos|Red|Card|Shoulder
+Zlatan Ibrahimović|Lion|God|Nose
+Luis Suárez|Bite|Teeth|Uruguay
+Thierry Henry|Va Va|Voom|Hand
+Sergio Agüero|Kun|City|Last
+Gareth Bale|Golf|Wales|Madrid
+Robert Lewandowski|Pole|Goal|Barca
+Virgil van Dijk|Wall|Hair|Liverpool
+Luka Modrić|Golden|Ball|Outside
+Didier Drogba|Chelsea|Stop|Civil
+Frank Lampard|Ghost|Goal|Blue
+Steven Gerrard|Slip|Captain|Shot
+Paul Pogba|Dab|Hair|Virus
+Dele Alli|Fortnite|Spurs|Everton
+Kevin De Bruyne|Assist|Talk|Red
+Marcus Rashford|School|Meal|Doctor
+Jesse Lingard|Dance|Milly|Rock
+Jordan Pickford|Arms|Rave|Everton
+Mesut Özil|Eyes|Assist|Gunner
+Son Heung-min|Smile|Spurs|Dad
+Hugo Lloris|Captain|Spurs|Save

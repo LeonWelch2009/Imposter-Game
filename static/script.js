@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let imposterIndices = [];
     let currentCategory = "";
     let currentWord = "";
+    let currentHint = "";
     let categories = {};
     let availableCategories = [];
 
@@ -24,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const revealImposterBtn = document.getElementById("revealImposterBtn");
     const imposterDisplay = document.getElementById("imposterDisplay");
     const restartBtn = document.getElementById("restartBtn");
-    const exitGameBtn = document.getElementById("exitGameBtn"); // NEW
+    const exitGameBtn = document.getElementById("exitGameBtn");
 
     // === Load categories ===
     fetch("/categories")
@@ -96,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // === Start Game (UPDATED WITH TROLL MODE) ===
+    // === Start Game ===
     startGameBtn.addEventListener("click", () => {
         if (players.length < 3) return alert("Minimum 3 players required!");
         const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
@@ -107,16 +108,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         imposterIndices = [];
 
-        // === TROLL MODE LOGIC ===
-        // 1 in 15 chance (approx 6.6%)
+        // Troll Mode: 1 in 15 chance
         const isTrollRound = Math.random() < (1 / 15);
 
         if (isTrollRound) {
-            console.log("😈 Troll Mode Activated: Everyone is an Imposter.");
-            // Make EVERY player an imposter
+            console.log("😈 Troll Mode Activated");
             imposterIndices = players.map((_, index) => index);
         } else {
-            // Standard Game Logic
             const imposterCount = players.length >= 6 ? 2 : 1;
             while (imposterIndices.length < imposterCount) {
                 const idx = Math.floor(Math.random() * players.length);
@@ -139,17 +137,36 @@ document.addEventListener("DOMContentLoaded", () => {
     function pickWord() {
         const catList = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
         currentCategory = catList[Math.floor(Math.random() * catList.length)];
-        const words = categories[currentCategory] || [];
-        currentWord = words[Math.floor(Math.random() * words.length)] || "";
+        const wordsList = categories[currentCategory] || [];
+
+        const selection = wordsList[Math.floor(Math.random() * wordsList.length)];
+
+        if (selection) {
+            currentWord = selection.word;
+            // Pick ONE random hint from the list of 3
+            const hints = selection.hints || [];
+            if (hints.length > 0) {
+                currentHint = hints[Math.floor(Math.random() * hints.length)];
+            } else {
+                currentHint = currentCategory;
+            }
+        } else {
+            currentWord = "Error";
+            currentHint = "Error";
+        }
     }
 
     function updateCard(direction = null) {
         cardFront.textContent = players[currentPlayerIndex];
-        cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
-            ? `IMPOSTER\n(Hint: ${currentCategory})`
-            : currentWord;
 
-        // Reset flip state physically in case it stuck
+        if (imposterIndices.includes(currentPlayerIndex)) {
+            // Imposter sees the hint
+            cardBack.innerHTML = `<span style="font-size:0.8em; color:#ff4d4d;">IMPOSTER</span><br><br>Hint:<br>${currentHint}`;
+        } else {
+            // Innocent sees the word
+            cardBack.textContent = currentWord;
+        }
+
         flipper.classList.remove("flipped");
 
         if (direction) {
@@ -163,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Hold to flip card
+    // Hold to flip
     flipper.addEventListener("mousedown", () => flipper.classList.add("flipped"));
     flipper.addEventListener("mouseup", () => flipper.classList.remove("flipped"));
     flipper.addEventListener("mouseleave", () => flipper.classList.remove("flipped"));
@@ -182,22 +199,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Reveal Imposter(s)
+    // Reveal
     revealImposterBtn.addEventListener("click", () => {
         const names = imposterIndices.map(i => players[i]).join(", ");
-
-        // Check if everyone is an imposter for a funny message
         if (imposterIndices.length === players.length) {
             imposterDisplay.innerHTML = `EVERYONE was the Imposter!<br>😈 TROLL MODE 😈`;
         } else {
             imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
         }
-
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "inline-block";
     });
 
-    // === Reset Game Logic (Refactored) ===
     function resetGame() {
         gameScreen.style.display = "none";
         setupScreen.style.display = "block";
@@ -207,15 +220,12 @@ document.addEventListener("DOMContentLoaded", () => {
         restartBtn.style.display = "none";
         imposterDisplay.textContent = "";
         currentPlayerIndex = 0;
-        flipper.classList.remove("flipped"); // Ensure card is reset
+        flipper.classList.remove("flipped");
         updatePlayerList();
         renderCategoryCheckboxes();
     }
 
-    // Event Listeners for Reset
     restartBtn.addEventListener("click", resetGame);
-
-    // NEW: Exit button listener
     exitGameBtn.addEventListener("click", () => {
         if (confirm("Are you sure you want to quit to the main menu?")) {
             resetGame();
