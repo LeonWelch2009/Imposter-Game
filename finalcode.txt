@@ -1,102 +1,3 @@
-from flask import Flask, jsonify, render_template, send_from_directory
-import os
-
-app = Flask(__name__)
-
-# Load categories from words.txt
-def load_categories():
-    categories = {}
-    if not os.path.exists("words.txt"):
-        return categories
-    with open("words.txt", "r", encoding="utf-8") as f:
-        current_category = None
-        for line in f:
-            line = line.strip()
-            if line.isupper():
-                current_category = line
-                categories[current_category] = []
-            elif line and current_category:
-                categories[current_category].append(line)
-    return categories
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route("/categories")
-def get_categories():
-    return jsonify(load_categories())
-
-# Serve static files (JS/CSS)
-@app.route("/static/<path:path>")
-def send_static(path):
-    return send_from_directory("static", path)
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imposter Word Game</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-
-<body>
-    <div class="app">
-        <header>
-            <h1>Imposter Word Game</h1>
-        </header>
-
-        <!-- Setup Screen -->
-        <div id="setupScreen" class="card screen active">
-            <div class="message" id="message">Add players and select categories to start</div>
-
-            <input type="text" id="playerName" placeholder="Enter player name">
-            <button class="primary" id="addPlayerBtn">Add Player</button>
-
-            <ul id="playerList"></ul>
-
-            <div id="categories" style="display:none;"></div>
-
-            <div class="btn-row">
-                <button class="secondary" id="showCategoriesBtn">Show/Hide Categories</button>
-                <button class="primary" id="startGameBtn">Start Game</button>
-            </div>
-        </div>
-
-        <!-- Game Screen -->
-        <div id="gameScreen" class="card screen" style="display:none;">
-            <div class="flip-container" id="flipContainer">
-                <div class="flipper" id="flipper">
-                    <div class="front" id="cardFront">Player</div>
-                    <div class="back" id="cardBack">Word</div>
-                </div>
-            </div>
-
-            <div class="btn-row">
-                <button class="accent" id="nextPlayerBtn" style="display:inline-block;">Next Player</button>
-            </div>
-
-            <div id="endControls" class="btn-row" style="display:flex; flex-direction: column; align-items: center; margin-top: 20px;">
-                <button class="primary" id="revealImposterBtn" style="display:none;">Reveal Imposter(s)</button>
-                <div id="imposterDisplay" style="margin-top: 20px; font-weight: bold; color: #ff4d4d;"></div>
-                <button class="primary" id="restartBtn" style="display:none; margin-top: 12px;">New Game</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-</body>
-
-</html>
-
-
 document.addEventListener("DOMContentLoaded", () => {
     let players = [];
     let currentPlayerIndex = 0;
@@ -124,16 +25,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const imposterDisplay = document.getElementById("imposterDisplay");
     const restartBtn = document.getElementById("restartBtn");
 
-    // === Load categories from server ===
+    // === Load categories ===
     fetch("/categories")
-      .then(res => res.json())
-      .then(data => {
-        categories = data || {};
-        renderCategoryCheckboxes();
-      })
-      .catch(err => console.error("Failed to load categories:", err));
+        .then(res => res.json())
+        .then(data => {
+            categories = data || {};
+            renderCategoryCheckboxes();
+        })
+        .catch(err => console.error("Failed to load categories:", err));
 
-    // === Render category checkboxes ===
+    // === Render category selection ===
     function renderCategoryCheckboxes() {
         categoriesContainer.innerHTML = "";
         Object.keys(categories).forEach(cat => {
@@ -141,25 +42,28 @@ document.addEventListener("DOMContentLoaded", () => {
             const checkedAttr = saved === "true" || saved === null ? "checked" : "";
             const div = document.createElement("div");
             div.className = "category-checkbox";
-            // Format category nicely (capitalize first letter of each word)
+
             const formattedCat = cat.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
+
             div.innerHTML = `
                 <input type="checkbox" value="${cat}" ${checkedAttr}>
                 <label>${formattedCat}</label>
             `;
             categoriesContainer.appendChild(div);
         });
-        categoriesContainer.querySelectorAll("input[type='checkbox']").forEach(inp => {
+
+        categoriesContainer.querySelectorAll("input").forEach(inp => {
             inp.addEventListener("change", () => {
-                localStorage.setItem(`cat_${inp.value}`, inp.checked ? "true" : "false");
+                localStorage.setItem(`cat_${inp.value}`, inp.checked);
             });
         });
     }
 
-    // === Show / Hide categories button ===
+    // === Show/Hide Categories Button (FIX ADDED HERE) ===
     showCategoriesBtn.addEventListener("click", () => {
-        const isHidden = window.getComputedStyle(categoriesContainer).display === "none";
+        const isHidden = categoriesContainer.style.display === "none";
         categoriesContainer.style.display = isHidden ? "block" : "none";
+        showCategoriesBtn.textContent = isHidden ? "Hide Categories" : "Show Categories";
     });
 
     // === Add player ===
@@ -192,18 +96,18 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // === Start game ===
+    // === Start Game ===
     startGameBtn.addEventListener("click", () => {
         if (players.length < 3) return alert("Minimum 3 players required!");
-
         const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
         if (!checked.length) return alert("Select at least one category!");
 
-        availableCategories = checked.slice();
+        availableCategories = checked;
         localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
 
         imposterIndices = [];
         const imposterCount = players.length >= 6 ? 2 : 1;
+
         while (imposterIndices.length < imposterCount) {
             const idx = Math.floor(Math.random() * players.length);
             if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
@@ -245,14 +149,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Flip card on hold
+    // Hold to flip card
     flipper.addEventListener("mousedown", () => flipper.classList.add("flipped"));
     flipper.addEventListener("mouseup", () => flipper.classList.remove("flipped"));
     flipper.addEventListener("mouseleave", () => flipper.classList.remove("flipped"));
     flipper.addEventListener("touchstart", e => { e.preventDefault(); flipper.classList.add("flipped"); });
     flipper.addEventListener("touchend", e => { e.preventDefault(); flipper.classList.remove("flipped"); });
 
-    // Next player with swipe animation
+    // Next player
     nextPlayerBtn.addEventListener("click", () => {
         if (currentPlayerIndex >= players.length - 1) {
             nextPlayerBtn.style.display = "none";
@@ -264,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Reveal imposter
+    // Reveal Imposter(s)
     revealImposterBtn.addEventListener("click", () => {
         const names = imposterIndices.map(i => players[i]).join(", ");
         imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
@@ -272,7 +176,6 @@ document.addEventListener("DOMContentLoaded", () => {
         restartBtn.style.display = "inline-block";
     });
 
-    // Restart game
     restartBtn.addEventListener("click", () => {
         gameScreen.style.display = "none";
         setupScreen.style.display = "block";
@@ -286,6 +189,120 @@ document.addEventListener("DOMContentLoaded", () => {
         renderCategoryCheckboxes();
     });
 });
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Imposter Word Game</title>
+        <link rel="icon" type="image/png"
+            href="{{ url_for('static', filename='favicon.png') }}">
+        <link rel="stylesheet"
+            href="{{ url_for('static', filename='style.css') }}">
+    </head>
+
+    <body>
+        <div class="app">
+            <header>
+                <h1>Imposter Word Game</h1>
+            </header>
+
+            <!-- Setup Screen -->
+            <div id="setupScreen" class="card screen active">
+                <div class="message" id="message">Add players and select
+                    categories to start</div>
+
+                <input type="text" id="playerName"
+                    placeholder="Enter player name">
+                <button class="primary" id="addPlayerBtn">Add Player</button>
+
+                <ul id="playerList"></ul>
+
+                <div id="categories" style="display:none;"></div>
+
+                <div class="btn-row">
+                    <button class="secondary" id="showCategoriesBtn">Show/Hide
+                        Categories</button>
+                    <button class="primary" id="startGameBtn">Start
+                        Game</button>
+                </div>
+            </div>
+
+            <!-- Game Screen -->
+            <div id="gameScreen" class="card screen" style="display:none;">
+                <div class="flip-container" id="flipContainer">
+                    <div class="flipper" id="flipper">
+                        <div class="front" id="cardFront">Player</div>
+                        <div class="back" id="cardBack">Word</div>
+                    </div>
+                </div>
+
+                <div class="btn-row">
+                    <button class="accent" id="nextPlayerBtn">Next
+                        Player</button>
+                </div>
+
+                <div id="endControls" class="btn-row"
+                    style="flex-direction: column; align-items: center;">
+                    <button class="primary" id="revealImposterBtn"
+                        style="display:none;">Reveal Imposter(s)</button>
+                    <div id="imposterDisplay"
+                        style="margin-top: 20px; font-weight: bold; color: #ff4d4d;"></div>
+                    <button class="primary" id="restartBtn"
+                        style="display:none; margin-top: 12px;">New
+                        Game</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+    </body>
+</html>
+
+
+
+
+from flask import Flask, jsonify, render_template, send_from_directory
+import os
+
+app = Flask(__name__)
+
+# Load categories from words.txt
+def load_categories():
+    categories = {}
+    if not os.path.exists("words.txt"):
+        return categories
+    with open("words.txt", "r", encoding="utf-8") as f:
+        current_category = None
+        for line in f:
+            line = line.strip()
+            if line.isupper():
+                current_category = line
+                categories[current_category] = []
+            elif line and current_category:
+                categories[current_category].append(line)
+    return categories
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/categories")
+def get_categories():
+    return jsonify(load_categories())
+
+# Serve static files (JS/CSS)
+@app.route("/static/<path:path>")
+def send_static(path):
+    return send_from_directory("static", path)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
 
 
 /* === GENERAL STYLES === */
@@ -324,7 +341,8 @@ input[type="text"] {
   color: #f0f0f0;
   margin: 8px 0;
   box-sizing: border-box;
-  font-size: 16px; /* prevents mobile zoom */
+  font-size: 16px;
+  /* prevents mobile zoom */
 }
 
 /* === PLAYER LIST === */
@@ -361,6 +379,7 @@ ul#playerList {
   align-items: center;
   transition: 0.2s ease;
 }
+
 .remove-player:hover {
   background: #ff1a1a;
   transform: scale(1.1);
@@ -375,6 +394,7 @@ ul#playerList {
   cursor: pointer;
   font-size: 14px;
 }
+
 .category-checkbox input[type="checkbox"] {
   appearance: none;
   width: 18px;
@@ -385,11 +405,13 @@ ul#playerList {
   position: relative;
   transition: 0.25s ease;
 }
+
 .category-checkbox input[type="checkbox"]:checked {
   background: #007bff;
   border-color: #007bff;
   box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
 }
+
 .category-checkbox input[type="checkbox"]:checked::after {
   content: "✓";
   color: white;
@@ -409,24 +431,30 @@ button {
   cursor: pointer;
   transition: 0.25s;
 }
+
 button.primary {
   background: #007bff;
   color: white;
 }
+
 button.primary:hover {
   background: #339dff;
 }
+
 button.accent {
   background: #00b36b;
   color: white;
 }
+
 button.accent:hover {
   background: #00d47c;
 }
+
 button.secondary {
   background: #444;
   color: white;
 }
+
 button.secondary:hover {
   background: #666;
 }
@@ -447,6 +475,7 @@ button.secondary:hover {
   width: 250px;
   height: 160px;
 }
+
 .flipper {
   width: 100%;
   height: 100%;
@@ -455,6 +484,7 @@ button.secondary:hover {
   position: relative;
   cursor: pointer;
 }
+
 .front,
 .back {
   position: absolute;
@@ -471,9 +501,11 @@ button.secondary:hover {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   user-select: none;
 }
+
 .back {
   transform: rotateY(180deg);
 }
+
 .flipped {
   transform: rotateY(180deg);
 }
@@ -489,6 +521,7 @@ button.secondary:hover {
   user-select: none;
   touch-action: pan-x;
 }
+
 #swipeBtn {
   width: 150px;
   background: #007bff;
@@ -507,11 +540,13 @@ button.secondary:hover {
   margin-bottom: 12px;
   font-size: 16px;
 }
+
 .btn-row {
   display: flex;
   justify-content: space-between;
   gap: 10px;
 }
+
 input:focus {
   outline: none;
   border-color: #66b3ff;
@@ -519,85 +554,66 @@ input:focus {
 
 /* === CARD SWIPE ANIMATION === */
 .flip-container {
-    perspective: 1000px;
-    margin: 20px auto;
-    width: 250px;
-    height: 160px;
-    overflow: hidden;
-    position: relative;
+  perspective: 1000px;
+  margin: 20px auto;
+  width: 250px;
+  height: 160px;
+  overflow: hidden;
+  position: relative;
 }
 
 .flipper {
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transition: transform 0.4s ease, left 0.4s ease;
-    position: relative;
-    cursor: pointer;
-}
-
-/* === CARD SWIPE ANIMATION (TOUCH-UP) === */
-.flip-container {
-    perspective: 1000px;
-    margin: 20px auto;
-    width: 250px;
-    height: 160px;
-    overflow: hidden;
-    position: relative;
-}
-
-.flipper {
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s ease;
-    cursor: pointer;
-    opacity: 1;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s ease;
+  cursor: pointer;
+  opacity: 1;
 }
 
 /* Slide out left */
 .flip-container.swipe-left .flipper {
-    transform: translateX(-120%) rotateY(0deg);
-    opacity: 0;
+  transform: translateX(-120%) rotateY(0deg);
+  opacity: 0;
 }
 
 /* Slide in from right */
 .flip-container.swipe-right .flipper {
-    transform: translateX(120%) rotateY(0deg);
-    opacity: 0;
+  transform: translateX(120%) rotateY(0deg);
+  opacity: 0;
 }
 
 /* Animate new card back to center */
 .flip-container.reset .flipper {
-    transform: translateX(0) rotateY(0deg);
-    opacity: 1;
+  transform: translateX(0) rotateY(0deg);
+  opacity: 1;
 }
 
 /* Keep front/back flip intact */
 .front,
 .back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 12px;
-    backface-visibility: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #2a2a2a;
-    color: white;
-    font-size: 18px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    user-select: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2a2a2a;
+  color: white;
+  font-size: 18px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  user-select: none;
 }
 
 .back {
-    transform: rotateY(180deg);
+  transform: rotateY(180deg);
 }
 
 .flipped {
-    transform: rotateY(180deg);
+  transform: rotateY(180deg);
 }

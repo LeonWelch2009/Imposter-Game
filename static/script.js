@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const revealImposterBtn = document.getElementById("revealImposterBtn");
     const imposterDisplay = document.getElementById("imposterDisplay");
     const restartBtn = document.getElementById("restartBtn");
+    const exitGameBtn = document.getElementById("exitGameBtn"); // NEW
 
     // === Load categories ===
     fetch("/categories")
@@ -59,7 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // === Show/Hide Categories Button (FIX ADDED HERE) ===
     showCategoriesBtn.addEventListener("click", () => {
         const isHidden = categoriesContainer.style.display === "none";
         categoriesContainer.style.display = isHidden ? "block" : "none";
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // === Start Game ===
+    // === Start Game (UPDATED WITH TROLL MODE) ===
     startGameBtn.addEventListener("click", () => {
         if (players.length < 3) return alert("Minimum 3 players required!");
         const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
@@ -106,11 +106,22 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
 
         imposterIndices = [];
-        const imposterCount = players.length >= 6 ? 2 : 1;
 
-        while (imposterIndices.length < imposterCount) {
-            const idx = Math.floor(Math.random() * players.length);
-            if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
+        // === TROLL MODE LOGIC ===
+        // 1 in 15 chance (approx 6.6%)
+        const isTrollRound = Math.random() < (1 / 15);
+
+        if (isTrollRound) {
+            console.log("😈 Troll Mode Activated: Everyone is an Imposter.");
+            // Make EVERY player an imposter
+            imposterIndices = players.map((_, index) => index);
+        } else {
+            // Standard Game Logic
+            const imposterCount = players.length >= 6 ? 2 : 1;
+            while (imposterIndices.length < imposterCount) {
+                const idx = Math.floor(Math.random() * players.length);
+                if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
+            }
         }
 
         currentPlayerIndex = 0;
@@ -137,6 +148,9 @@ document.addEventListener("DOMContentLoaded", () => {
         cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
             ? `IMPOSTER\n(Hint: ${currentCategory})`
             : currentWord;
+
+        // Reset flip state physically in case it stuck
+        flipper.classList.remove("flipped");
 
         if (direction) {
             const offset = direction === "left" ? "-100%" : "100%";
@@ -171,12 +185,20 @@ document.addEventListener("DOMContentLoaded", () => {
     // Reveal Imposter(s)
     revealImposterBtn.addEventListener("click", () => {
         const names = imposterIndices.map(i => players[i]).join(", ");
-        imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
+
+        // Check if everyone is an imposter for a funny message
+        if (imposterIndices.length === players.length) {
+            imposterDisplay.innerHTML = `EVERYONE was the Imposter!<br>😈 TROLL MODE 😈`;
+        } else {
+            imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
+        }
+
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "inline-block";
     });
 
-    restartBtn.addEventListener("click", () => {
+    // === Reset Game Logic (Refactored) ===
+    function resetGame() {
         gameScreen.style.display = "none";
         setupScreen.style.display = "block";
         flipContainer.style.display = "block";
@@ -185,7 +207,18 @@ document.addEventListener("DOMContentLoaded", () => {
         restartBtn.style.display = "none";
         imposterDisplay.textContent = "";
         currentPlayerIndex = 0;
+        flipper.classList.remove("flipped"); // Ensure card is reset
         updatePlayerList();
         renderCategoryCheckboxes();
+    }
+
+    // Event Listeners for Reset
+    restartBtn.addEventListener("click", resetGame);
+
+    // NEW: Exit button listener
+    exitGameBtn.addEventListener("click", () => {
+        if (confirm("Are you sure you want to quit to the main menu?")) {
+            resetGame();
+        }
     });
 });
