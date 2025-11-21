@@ -56,7 +56,7 @@ ul#playerList {
   margin-bottom: 6px;
 }
 
-/* === REMOVE PLAYER BUTTON (UPDATED STYLE) === */
+/* === REMOVE PLAYER BUTTON === */
 .remove-player {
   width: 30px;
   height: 30px;
@@ -82,19 +82,14 @@ ul#playerList {
   transform: scale(1.1);
 }
 
-/* === CATEGORY CHECKBOXES (NOW CLICKABLE) === */
-/* Changed from div to label to make text clickable */
-label.category-checkbox {
+/* === CATEGORY CHECKBOXES (REVERTED TO OLD STYLE) === */
+.category-checkbox {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 6px;
   cursor: pointer;
-  /* Shows hand icon */
   font-size: 14px;
-  user-select: none;
-  /* Prevents highlighting text while clicking */
-  padding: 4px 0;
 }
 
 .category-checkbox input[type="checkbox"] {
@@ -106,8 +101,6 @@ label.category-checkbox {
   background: #2a2a2a;
   position: relative;
   transition: 0.25s ease;
-  flex-shrink: 0;
-  /* Prevents box from squishing */
 }
 
 .category-checkbox input[type="checkbox"]:checked {
@@ -178,8 +171,8 @@ button.secondary:hover {
   perspective: 1000px;
   margin: 20px auto;
   width: 250px;
-  height: 180px;
-  /* Slightly taller for imposter text */
+  height: 200px;
+  /* Increased height to fit Category + Hint */
   overflow: hidden;
   position: relative;
 }
@@ -213,36 +206,44 @@ button.secondary:hover {
   text-align: center;
   white-space: pre-wrap;
   flex-direction: column;
-  /* Allows stacking text */
 }
 
 .back {
   transform: rotateY(180deg);
   background: #252525;
-  /* Slightly lighter back */
 }
 
 .flipped {
   transform: rotateY(180deg);
 }
 
-/* === NEW: IMPOSTER CARD STYLING === */
+/* === IMPOSTER CARD STYLING === */
 .imposter-title {
   color: #ff4d4d;
   font-weight: 800;
   font-size: 22px;
   letter-spacing: 1px;
   text-transform: uppercase;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   text-shadow: 0 0 8px rgba(255, 77, 77, 0.3);
+}
+
+.imposter-category {
+  color: #aaa;
+  font-size: 14px;
+  font-style: italic;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 5px;
+  width: 80%;
 }
 
 .imposter-hint-label {
   color: #888;
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .imposter-hint-text {

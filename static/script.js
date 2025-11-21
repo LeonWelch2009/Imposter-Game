@@ -36,12 +36,13 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(err => console.error("Failed to load categories:", err));
 
-    // === Render category selection ===
+    // === Render category selection (REVERTED TO OLD STYLE) ===
     function renderCategoryCheckboxes() {
         categoriesContainer.innerHTML = "";
         Object.keys(categories).forEach(cat => {
             const saved = localStorage.getItem(`cat_${cat}`);
             const checkedAttr = saved === "true" || saved === null ? "checked" : "";
+
             const div = document.createElement("div");
             div.className = "category-checkbox";
 
@@ -143,7 +144,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (selection) {
             currentWord = selection.word;
-            // Pick ONE random hint from the list of 3
             const hints = selection.hints || [];
             if (hints.length > 0) {
                 currentHint = hints[Math.floor(Math.random() * hints.length)];
@@ -156,15 +156,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // === Update Card (NOW INCLUDES CATEGORY) ===
     function updateCard(direction = null) {
         cardFront.textContent = players[currentPlayerIndex];
 
         if (imposterIndices.includes(currentPlayerIndex)) {
-            // Imposter sees the hint
-            cardBack.innerHTML = `<span style="font-size:0.8em; color:#ff4d4d;">IMPOSTER</span><br><br>Hint:<br>${currentHint}`;
+            // Imposter sees Category AND Hint
+            cardBack.innerHTML = `
+                <div class="imposter-title">⚠️ Imposter</div>
+                <div class="imposter-category">${currentCategory}</div>
+                <div class="imposter-hint-label">Your Hint</div>
+                <div class="imposter-hint-text">${currentHint}</div>
+            `;
         } else {
-            // Innocent sees the word
-            cardBack.textContent = currentWord;
+            // Innocent View
+            cardBack.innerHTML = `
+                <div style="font-size: 24px; font-weight: bold;">${currentWord}</div>
+            `;
         }
 
         flipper.classList.remove("flipped");
