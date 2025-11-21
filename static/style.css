@@ -82,14 +82,19 @@ ul#playerList {
   transform: scale(1.1);
 }
 
-/* === CATEGORY CHECKBOXES === */
-.category-checkbox {
+/* === CATEGORY CHECKBOXES (NOW CLICKABLE) === */
+/* Changed from div to label to make text clickable */
+label.category-checkbox {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 6px;
   cursor: pointer;
+  /* Shows hand icon */
   font-size: 14px;
+  user-select: none;
+  /* Prevents highlighting text while clicking */
+  padding: 4px 0;
 }
 
 .category-checkbox input[type="checkbox"] {
@@ -101,6 +106,8 @@ ul#playerList {
   background: #2a2a2a;
   position: relative;
   transition: 0.25s ease;
+  flex-shrink: 0;
+  /* Prevents box from squishing */
 }
 
 .category-checkbox input[type="checkbox"]:checked {
@@ -171,7 +178,8 @@ button.secondary:hover {
   perspective: 1000px;
   margin: 20px auto;
   width: 250px;
-  height: 160px;
+  height: 180px;
+  /* Slightly taller for imposter text */
   overflow: hidden;
   position: relative;
 }
@@ -200,18 +208,51 @@ button.secondary:hover {
   font-size: 18px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   user-select: none;
-  padding: 10px;
+  padding: 15px;
   box-sizing: border-box;
   text-align: center;
   white-space: pre-wrap;
+  flex-direction: column;
+  /* Allows stacking text */
 }
 
 .back {
   transform: rotateY(180deg);
+  background: #252525;
+  /* Slightly lighter back */
 }
 
 .flipped {
   transform: rotateY(180deg);
+}
+
+/* === NEW: IMPOSTER CARD STYLING === */
+.imposter-title {
+  color: #ff4d4d;
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  text-shadow: 0 0 8px rgba(255, 77, 77, 0.3);
+}
+
+.imposter-hint-label {
+  color: #888;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.imposter-hint-text {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 6px;
+  width: 100%;
 }
 
 /* === OTHER === */
@@ -226,7 +267,6 @@ button.secondary:hover {
   gap: 10px;
 }
 
-/* NEW: Adds spacing to prevent overlap with the exit button */
 #endControls {
   margin-top: 50px;
 }
