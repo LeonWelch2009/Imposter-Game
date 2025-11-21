@@ -82,40 +82,62 @@ ul#playerList {
   transform: scale(1.1);
 }
 
-/* === CATEGORY CHECKBOXES (REVERTED TO OLD STYLE) === */
-.category-checkbox {
+/* === CATEGORY GRID BUTTONS (NEW) === */
+#categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  /* Auto-sizing grid */
+  gap: 10px;
+  margin-bottom: 15px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* The container for the Input+Label pair */
+.category-option {
+  display: contents;
+  /* Allows the label to participate in the grid directly */
+}
+
+/* Hide the actual checkbox input completely */
+.category-input {
+  display: none;
+}
+
+/* Style the label to look like a button */
+.category-tile {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 6px;
+  justify-content: center;
+  background-color: #2a2a2a;
+  border: 2px solid #333;
+  border-radius: 12px;
+  padding: 10px 5px;
   cursor: pointer;
-  font-size: 14px;
+  transition: all 0.2s ease;
+  user-select: none;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #888;
+  min-height: 40px;
 }
 
-.category-checkbox input[type="checkbox"] {
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border: 2px solid #555;
-  border-radius: 6px;
-  background: #2a2a2a;
-  position: relative;
-  transition: 0.25s ease;
+/* Hover Effect */
+.category-tile:hover {
+  background-color: #333;
+  border-color: #444;
+  transform: translateY(-2px);
 }
 
-.category-checkbox input[type="checkbox"]:checked {
-  background: #007bff;
+/* CHECKED STATE: This makes it turn blue when toggled on */
+.category-input:checked+.category-tile {
+  background-color: #007bff;
   border-color: #007bff;
-  box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
-}
-
-.category-checkbox input[type="checkbox"]:checked::after {
-  content: "✓";
   color: white;
-  position: absolute;
-  left: 3px;
-  top: -1px;
-  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+  transform: translateY(-1px);
 }
 
 /* === BUTTONS === */
@@ -172,7 +194,6 @@ button.secondary:hover {
   margin: 20px auto;
   width: 250px;
   height: 200px;
-  /* Increased height to fit Category + Hint */
   overflow: hidden;
   position: relative;
 }

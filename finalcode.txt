@@ -1,310 +1,3 @@
-document.addEventListener("DOMContentLoaded", () => {
-    let players = [];
-    let currentPlayerIndex = 0;
-    let imposterIndices = [];
-    let currentCategory = "";
-    let currentWord = "";
-    let categories = {};
-    let availableCategories = [];
-
-    // DOM elements
-    const playerNameInput = document.getElementById("playerName");
-    const addPlayerBtn = document.getElementById("addPlayerBtn");
-    const playerList = document.getElementById("playerList");
-    const startGameBtn = document.getElementById("startGameBtn");
-    const setupScreen = document.getElementById("setupScreen");
-    const gameScreen = document.getElementById("gameScreen");
-    const showCategoriesBtn = document.getElementById("showCategoriesBtn");
-    const categoriesContainer = document.getElementById("categories");
-    const flipContainer = document.getElementById("flipContainer");
-    const flipper = document.getElementById("flipper");
-    const cardFront = document.getElementById("cardFront");
-    const cardBack = document.getElementById("cardBack");
-    const nextPlayerBtn = document.getElementById("nextPlayerBtn");
-    const revealImposterBtn = document.getElementById("revealImposterBtn");
-    const imposterDisplay = document.getElementById("imposterDisplay");
-    const restartBtn = document.getElementById("restartBtn");
-
-    // === Load categories ===
-    fetch("/categories")
-        .then(res => res.json())
-        .then(data => {
-            categories = data || {};
-            renderCategoryCheckboxes();
-        })
-        .catch(err => console.error("Failed to load categories:", err));
-
-    // === Render category selection ===
-    function renderCategoryCheckboxes() {
-        categoriesContainer.innerHTML = "";
-        Object.keys(categories).forEach(cat => {
-            const saved = localStorage.getItem(`cat_${cat}`);
-            const checkedAttr = saved === "true" || saved === null ? "checked" : "";
-            const div = document.createElement("div");
-            div.className = "category-checkbox";
-
-            const formattedCat = cat.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
-
-            div.innerHTML = `
-                <input type="checkbox" value="${cat}" ${checkedAttr}>
-                <label>${formattedCat}</label>
-            `;
-            categoriesContainer.appendChild(div);
-        });
-
-        categoriesContainer.querySelectorAll("input").forEach(inp => {
-            inp.addEventListener("change", () => {
-                localStorage.setItem(`cat_${inp.value}`, inp.checked);
-            });
-        });
-    }
-
-    // === Show/Hide Categories Button (FIX ADDED HERE) ===
-    showCategoriesBtn.addEventListener("click", () => {
-        const isHidden = categoriesContainer.style.display === "none";
-        categoriesContainer.style.display = isHidden ? "block" : "none";
-        showCategoriesBtn.textContent = isHidden ? "Hide Categories" : "Show Categories";
-    });
-
-    // === Add player ===
-    addPlayerBtn.addEventListener("click", addPlayer);
-    playerNameInput.addEventListener("keypress", e => { if (e.key === "Enter") addPlayer(); });
-
-    function addPlayer() {
-        const name = playerNameInput.value.trim();
-        if (!name) return;
-
-        const formatted = name.split(/\s+/).map(w => w[0].toUpperCase() + w.slice(1).toLowerCase()).join(" ");
-        if (!players.includes(formatted)) {
-            players.push(formatted);
-            playerNameInput.value = "";
-            updatePlayerList();
-        }
-    }
-
-    function updatePlayerList() {
-        playerList.innerHTML = "";
-        players.forEach((p, idx) => {
-            const li = document.createElement("li");
-            li.className = "player-item";
-            li.innerHTML = `<span>${p}</span><button class="remove-player">×</button>`;
-            li.querySelector("button").addEventListener("click", () => {
-                players.splice(idx, 1);
-                updatePlayerList();
-            });
-            playerList.appendChild(li);
-        });
-    }
-
-    // === Start Game ===
-    startGameBtn.addEventListener("click", () => {
-        if (players.length < 3) return alert("Minimum 3 players required!");
-        const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
-        if (!checked.length) return alert("Select at least one category!");
-
-        availableCategories = checked;
-        localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
-
-        imposterIndices = [];
-        const imposterCount = players.length >= 6 ? 2 : 1;
-
-        while (imposterIndices.length < imposterCount) {
-            const idx = Math.floor(Math.random() * players.length);
-            if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
-        }
-
-        currentPlayerIndex = 0;
-        pickWord();
-
-        setupScreen.style.display = "none";
-        gameScreen.style.display = "block";
-        nextPlayerBtn.style.display = "inline-block";
-        revealImposterBtn.style.display = "none";
-        imposterDisplay.textContent = "";
-        flipContainer.style.display = "block";
-        updateCard();
-    });
-
-    function pickWord() {
-        const catList = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
-        currentCategory = catList[Math.floor(Math.random() * catList.length)];
-        const words = categories[currentCategory] || [];
-        currentWord = words[Math.floor(Math.random() * words.length)] || "";
-    }
-
-    function updateCard(direction = null) {
-        cardFront.textContent = players[currentPlayerIndex];
-        cardBack.textContent = imposterIndices.includes(currentPlayerIndex)
-            ? `IMPOSTER\n(Hint: ${currentCategory})`
-            : currentWord;
-
-        if (direction) {
-            const offset = direction === "left" ? "-100%" : "100%";
-            flipContainer.style.transition = "none";
-            flipContainer.style.transform = `translateX(${offset})`;
-            requestAnimationFrame(() => {
-                flipContainer.style.transition = "transform 0.4s ease";
-                flipContainer.style.transform = "translateX(0)";
-            });
-        }
-    }
-
-    // Hold to flip card
-    flipper.addEventListener("mousedown", () => flipper.classList.add("flipped"));
-    flipper.addEventListener("mouseup", () => flipper.classList.remove("flipped"));
-    flipper.addEventListener("mouseleave", () => flipper.classList.remove("flipped"));
-    flipper.addEventListener("touchstart", e => { e.preventDefault(); flipper.classList.add("flipped"); });
-    flipper.addEventListener("touchend", e => { e.preventDefault(); flipper.classList.remove("flipped"); });
-
-    // Next player
-    nextPlayerBtn.addEventListener("click", () => {
-        if (currentPlayerIndex >= players.length - 1) {
-            nextPlayerBtn.style.display = "none";
-            flipContainer.style.display = "none";
-            revealImposterBtn.style.display = "inline-block";
-        } else {
-            currentPlayerIndex++;
-            updateCard("right");
-        }
-    });
-
-    // Reveal Imposter(s)
-    revealImposterBtn.addEventListener("click", () => {
-        const names = imposterIndices.map(i => players[i]).join(", ");
-        imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
-        revealImposterBtn.style.display = "none";
-        restartBtn.style.display = "inline-block";
-    });
-
-    restartBtn.addEventListener("click", () => {
-        gameScreen.style.display = "none";
-        setupScreen.style.display = "block";
-        flipContainer.style.display = "block";
-        nextPlayerBtn.style.display = "inline-block";
-        revealImposterBtn.style.display = "none";
-        restartBtn.style.display = "none";
-        imposterDisplay.textContent = "";
-        currentPlayerIndex = 0;
-        updatePlayerList();
-        renderCategoryCheckboxes();
-    });
-});
-
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Imposter Word Game</title>
-        <link rel="icon" type="image/png"
-            href="{{ url_for('static', filename='favicon.png') }}">
-        <link rel="stylesheet"
-            href="{{ url_for('static', filename='style.css') }}">
-    </head>
-
-    <body>
-        <div class="app">
-            <header>
-                <h1>Imposter Word Game</h1>
-            </header>
-
-            <!-- Setup Screen -->
-            <div id="setupScreen" class="card screen active">
-                <div class="message" id="message">Add players and select
-                    categories to start</div>
-
-                <input type="text" id="playerName"
-                    placeholder="Enter player name">
-                <button class="primary" id="addPlayerBtn">Add Player</button>
-
-                <ul id="playerList"></ul>
-
-                <div id="categories" style="display:none;"></div>
-
-                <div class="btn-row">
-                    <button class="secondary" id="showCategoriesBtn">Show/Hide
-                        Categories</button>
-                    <button class="primary" id="startGameBtn">Start
-                        Game</button>
-                </div>
-            </div>
-
-            <!-- Game Screen -->
-            <div id="gameScreen" class="card screen" style="display:none;">
-                <div class="flip-container" id="flipContainer">
-                    <div class="flipper" id="flipper">
-                        <div class="front" id="cardFront">Player</div>
-                        <div class="back" id="cardBack">Word</div>
-                    </div>
-                </div>
-
-                <div class="btn-row">
-                    <button class="accent" id="nextPlayerBtn">Next
-                        Player</button>
-                </div>
-
-                <div id="endControls" class="btn-row"
-                    style="flex-direction: column; align-items: center;">
-                    <button class="primary" id="revealImposterBtn"
-                        style="display:none;">Reveal Imposter(s)</button>
-                    <div id="imposterDisplay"
-                        style="margin-top: 20px; font-weight: bold; color: #ff4d4d;"></div>
-                    <button class="primary" id="restartBtn"
-                        style="display:none; margin-top: 12px;">New
-                        Game</button>
-                </div>
-            </div>
-        </div>
-
-        <script src="{{ url_for('static', filename='script.js') }}"></script>
-    </body>
-</html>
-
-
-
-
-from flask import Flask, jsonify, render_template, send_from_directory
-import os
-
-app = Flask(__name__)
-
-# Load categories from words.txt
-def load_categories():
-    categories = {}
-    if not os.path.exists("words.txt"):
-        return categories
-    with open("words.txt", "r", encoding="utf-8") as f:
-        current_category = None
-        for line in f:
-            line = line.strip()
-            if line.isupper():
-                current_category = line
-                categories[current_category] = []
-            elif line and current_category:
-                categories[current_category].append(line)
-    return categories
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route("/categories")
-def get_categories():
-    return jsonify(load_categories())
-
-# Serve static files (JS/CSS)
-@app.route("/static/<path:path>")
-def send_static(path):
-    return send_from_directory("static", path)
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
-
-
 /* === GENERAL STYLES === */
 body {
   background-color: #121212;
@@ -342,7 +35,6 @@ input[type="text"] {
   margin: 8px 0;
   box-sizing: border-box;
   font-size: 16px;
-  /* prevents mobile zoom */
 }
 
 /* === PLAYER LIST === */
@@ -366,26 +58,31 @@ ul#playerList {
 
 /* === REMOVE PLAYER BUTTON === */
 .remove-player {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: none;
-  background: #ff4d4d;
-  color: white;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  color: #666;
+  font-size: 24px;
   font-weight: bold;
-  cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+  border: none;
+  line-height: 1;
+  border-radius: 50%;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  cursor: pointer;
   transition: 0.2s ease;
 }
 
 .remove-player:hover {
-  background: #ff1a1a;
+  background: rgba(255, 77, 77, 0.2);
+  color: #ff4d4d;
   transform: scale(1.1);
 }
 
-/* === CATEGORY CHECKBOXES === */
+/* === CATEGORY CHECKBOXES (REVERTED TO OLD STYLE) === */
 .category-checkbox {
   display: flex;
   align-items: center;
@@ -459,21 +156,25 @@ button.secondary:hover {
   background: #666;
 }
 
-/* === CARD === */
+/* === CARD CONTAINER === */
 .card {
   background: #1e1e1e;
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  position: relative;
 }
 
-/* === FLIP CARD === */
+/* === FLIP CARD ANIMATION === */
 .flip-container {
   perspective: 1000px;
   margin: 20px auto;
   width: 250px;
-  height: 160px;
+  height: 200px;
+  /* Increased height to fit Category + Hint */
+  overflow: hidden;
+  position: relative;
 }
 
 .flipper {
@@ -500,39 +201,59 @@ button.secondary:hover {
   font-size: 18px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   user-select: none;
+  padding: 15px;
+  box-sizing: border-box;
+  text-align: center;
+  white-space: pre-wrap;
+  flex-direction: column;
 }
 
 .back {
   transform: rotateY(180deg);
+  background: #252525;
 }
 
 .flipped {
   transform: rotateY(180deg);
 }
 
-/* === SWIPE BUTTON === */
-#swipeBtnContainer {
-  width: 100%;
-  max-width: 300px;
-  background: #444;
-  border-radius: 50px;
-  overflow: hidden;
-  position: relative;
-  user-select: none;
-  touch-action: pan-x;
+/* === IMPOSTER CARD STYLING === */
+.imposter-title {
+  color: #ff4d4d;
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  text-shadow: 0 0 8px rgba(255, 77, 77, 0.3);
 }
 
-#swipeBtn {
-  width: 150px;
-  background: #007bff;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 50px;
-  text-align: center;
-  cursor: pointer;
-  position: absolute;
-  left: 0;
-  transition: left 0.2s ease;
+.imposter-category {
+  color: #aaa;
+  font-size: 14px;
+  font-style: italic;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 5px;
+  width: 80%;
+}
+
+.imposter-hint-label {
+  color: #888;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+
+.imposter-hint-text {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 6px;
+  width: 100%;
 }
 
 /* === OTHER === */
@@ -547,73 +268,404 @@ button.secondary:hover {
   gap: 10px;
 }
 
+#endControls {
+  margin-top: 50px;
+}
+
 input:focus {
   outline: none;
   border-color: #66b3ff;
 }
 
-/* === CARD SWIPE ANIMATION === */
-.flip-container {
-  perspective: 1000px;
-  margin: 20px auto;
-  width: 250px;
-  height: 160px;
-  overflow: hidden;
-  position: relative;
-}
-
-.flipper {
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
+/* === EXIT (X) BUTTON STYLES === */
+.close-btn {
   position: absolute;
-  top: 0;
-  left: 0;
-  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s ease;
-  cursor: pointer;
-  opacity: 1;
-}
-
-/* Slide out left */
-.flip-container.swipe-left .flipper {
-  transform: translateX(-120%) rotateY(0deg);
-  opacity: 0;
-}
-
-/* Slide in from right */
-.flip-container.swipe-right .flipper {
-  transform: translateX(120%) rotateY(0deg);
-  opacity: 0;
-}
-
-/* Animate new card back to center */
-.flip-container.reset .flipper {
-  transform: translateX(0) rotateY(0deg);
-  opacity: 1;
-}
-
-/* Keep front/back flip intact */
-.front,
-.back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  backface-visibility: hidden;
+  top: 10px;
+  right: 10px;
+  width: 30px !important;
+  height: 30px;
+  background: transparent;
+  color: #666;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 0;
+  margin: 0;
+  border: none;
+  line-height: 1;
+  z-index: 100;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #2a2a2a;
-  color: white;
-  font-size: 18px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  user-select: none;
+  transition: 0.2s ease;
 }
 
-.back {
-  transform: rotateY(180deg);
+.close-btn:hover {
+  background: rgba(255, 77, 77, 0.2);
+  color: #ff4d4d;
+  transform: scale(1.1);
 }
 
-.flipped {
-  transform: rotateY(180deg);
-}
+from flask import Flask, jsonify, render_template, send_from_directory
+import os
+import random
+
+app = Flask(__name__)
+
+# Load categories from words.txt
+def load_categories():
+    categories = {}
+    if not os.path.exists("words.txt"):
+        return categories
+    
+    with open("words.txt", "r", encoding="utf-8") as f:
+        current_category = None
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+                
+            # If line is ALL CAPS, it's a category header
+            if line.isupper():
+                current_category = line
+                categories[current_category] = []
+            elif current_category:
+                # Split by pipe. First part is Word, rest are Hints.
+                parts = line.split('|')
+                word = parts[0].strip()
+                
+                # Get all hints provided. If none, default to Category Name.
+                hints = [h.strip() for h in parts[1:]]
+                if not hints:
+                    hints = [current_category]
+                
+                categories[current_category].append({
+                    "word": word,
+                    "hints": hints 
+                })
+                
+    return categories
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/categories")
+def get_categories():
+    return jsonify(load_categories())
+
+# Serve static files (JS/CSS)
+@app.route("/static/<path:path>")
+def send_static(path):
+    return send_from_directory("static", path)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imposter Word Game</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="app">
+        <header>
+            <h1>Imposter Word Game</h1>
+        </header>
+
+        <div id="setupScreen" class="card screen active">
+            <div class="message" id="message">Add players and select categories to start</div>
+
+            <input type="text" id="playerName" placeholder="Enter player name">
+            <button class="primary" id="addPlayerBtn">Add Player</button>
+
+            <ul id="playerList"></ul>
+
+            <div id="categories" style="display:none;"></div>
+
+            <div class="btn-row">
+                <button class="secondary" id="showCategoriesBtn">Show/Hide Categories</button>
+                <button class="primary" id="startGameBtn">Start Game</button>
+            </div>
+        </div>
+
+        <div id="gameScreen" class="card screen" style="display:none;">
+
+            <button id="exitGameBtn" class="close-btn" title="Exit to Main Menu">×</button>
+
+            <div class="flip-container" id="flipContainer">
+                <div class="flipper" id="flipper">
+                    <div class="front" id="cardFront">Player</div>
+                    <div class="back" id="cardBack">Word</div>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="accent" id="nextPlayerBtn">Next Player</button>
+            </div>
+
+            <div id="endControls" class="btn-row" style="flex-direction: column; align-items: center;">
+                <button class="primary" id="revealImposterBtn" style="display:none;">Reveal Imposter(s)</button>
+
+                <div id="imposterDisplay" style="margin-top: 20px; font-weight: bold; color: #ff4d4d;"></div>
+
+                <button class="primary" id="restartBtn" style="display:none; margin-top: 12px;">New Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    let players = [];
+    let currentPlayerIndex = 0;
+    let imposterIndices = [];
+    let currentCategory = "";
+    let currentWord = "";
+    let currentHint = "";
+    let categories = {};
+    let availableCategories = [];
+
+    // DOM elements
+    const playerNameInput = document.getElementById("playerName");
+    const addPlayerBtn = document.getElementById("addPlayerBtn");
+    const playerList = document.getElementById("playerList");
+    const startGameBtn = document.getElementById("startGameBtn");
+    const setupScreen = document.getElementById("setupScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const showCategoriesBtn = document.getElementById("showCategoriesBtn");
+    const categoriesContainer = document.getElementById("categories");
+    const flipContainer = document.getElementById("flipContainer");
+    const flipper = document.getElementById("flipper");
+    const cardFront = document.getElementById("cardFront");
+    const cardBack = document.getElementById("cardBack");
+    const nextPlayerBtn = document.getElementById("nextPlayerBtn");
+    const revealImposterBtn = document.getElementById("revealImposterBtn");
+    const imposterDisplay = document.getElementById("imposterDisplay");
+    const restartBtn = document.getElementById("restartBtn");
+    const exitGameBtn = document.getElementById("exitGameBtn");
+
+    // === Load categories ===
+    fetch("/categories")
+        .then(res => res.json())
+        .then(data => {
+            categories = data || {};
+            renderCategoryCheckboxes();
+        })
+        .catch(err => console.error("Failed to load categories:", err));
+
+    // === Render category selection (REVERTED TO OLD STYLE) ===
+    function renderCategoryCheckboxes() {
+        categoriesContainer.innerHTML = "";
+        Object.keys(categories).forEach(cat => {
+            const saved = localStorage.getItem(`cat_${cat}`);
+            const checkedAttr = saved === "true" || saved === null ? "checked" : "";
+
+            const div = document.createElement("div");
+            div.className = "category-checkbox";
+
+            const formattedCat = cat.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
+
+            div.innerHTML = `
+                <input type="checkbox" value="${cat}" ${checkedAttr}>
+                <label>${formattedCat}</label>
+            `;
+            categoriesContainer.appendChild(div);
+        });
+
+        categoriesContainer.querySelectorAll("input").forEach(inp => {
+            inp.addEventListener("change", () => {
+                localStorage.setItem(`cat_${inp.value}`, inp.checked);
+            });
+        });
+    }
+
+    showCategoriesBtn.addEventListener("click", () => {
+        const isHidden = categoriesContainer.style.display === "none";
+        categoriesContainer.style.display = isHidden ? "block" : "none";
+        showCategoriesBtn.textContent = isHidden ? "Hide Categories" : "Show Categories";
+    });
+
+    // === Add player ===
+    addPlayerBtn.addEventListener("click", addPlayer);
+    playerNameInput.addEventListener("keypress", e => { if (e.key === "Enter") addPlayer(); });
+
+    function addPlayer() {
+        const name = playerNameInput.value.trim();
+        if (!name) return;
+
+        const formatted = name.split(/\s+/).map(w => w[0].toUpperCase() + w.slice(1).toLowerCase()).join(" ");
+        if (!players.includes(formatted)) {
+            players.push(formatted);
+            playerNameInput.value = "";
+            updatePlayerList();
+        }
+    }
+
+    function updatePlayerList() {
+        playerList.innerHTML = "";
+        players.forEach((p, idx) => {
+            const li = document.createElement("li");
+            li.className = "player-item";
+            li.innerHTML = `<span>${p}</span><button class="remove-player">×</button>`;
+            li.querySelector("button").addEventListener("click", () => {
+                players.splice(idx, 1);
+                updatePlayerList();
+            });
+            playerList.appendChild(li);
+        });
+    }
+
+    // === Start Game ===
+    startGameBtn.addEventListener("click", () => {
+        if (players.length < 3) return alert("Minimum 3 players required!");
+        const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
+        if (!checked.length) return alert("Select at least one category!");
+
+        availableCategories = checked;
+        localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
+
+        imposterIndices = [];
+
+        // Troll Mode: 1 in 15 chance
+        const isTrollRound = Math.random() < (1 / 15);
+
+        if (isTrollRound) {
+            console.log("😈 Troll Mode Activated");
+            imposterIndices = players.map((_, index) => index);
+        } else {
+            const imposterCount = players.length >= 6 ? 2 : 1;
+            while (imposterIndices.length < imposterCount) {
+                const idx = Math.floor(Math.random() * players.length);
+                if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
+            }
+        }
+
+        currentPlayerIndex = 0;
+        pickWord();
+
+        setupScreen.style.display = "none";
+        gameScreen.style.display = "block";
+        nextPlayerBtn.style.display = "inline-block";
+        revealImposterBtn.style.display = "none";
+        imposterDisplay.textContent = "";
+        flipContainer.style.display = "block";
+        updateCard();
+    });
+
+    function pickWord() {
+        const catList = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
+        currentCategory = catList[Math.floor(Math.random() * catList.length)];
+        const wordsList = categories[currentCategory] || [];
+
+        const selection = wordsList[Math.floor(Math.random() * wordsList.length)];
+
+        if (selection) {
+            currentWord = selection.word;
+            const hints = selection.hints || [];
+            if (hints.length > 0) {
+                currentHint = hints[Math.floor(Math.random() * hints.length)];
+            } else {
+                currentHint = currentCategory;
+            }
+        } else {
+            currentWord = "Error";
+            currentHint = "Error";
+        }
+    }
+
+    // === Update Card (NOW INCLUDES CATEGORY) ===
+    function updateCard(direction = null) {
+        cardFront.textContent = players[currentPlayerIndex];
+
+        if (imposterIndices.includes(currentPlayerIndex)) {
+            // Imposter sees Category AND Hint
+            cardBack.innerHTML = `
+                <div class="imposter-title">⚠️ Imposter</div>
+                <div class="imposter-category">${currentCategory}</div>
+                <div class="imposter-hint-label">Your Hint</div>
+                <div class="imposter-hint-text">${currentHint}</div>
+            `;
+        } else {
+            // Innocent View
+            cardBack.innerHTML = `
+                <div style="font-size: 24px; font-weight: bold;">${currentWord}</div>
+            `;
+        }
+
+        flipper.classList.remove("flipped");
+
+        if (direction) {
+            const offset = direction === "left" ? "-100%" : "100%";
+            flipContainer.style.transition = "none";
+            flipContainer.style.transform = `translateX(${offset})`;
+            requestAnimationFrame(() => {
+                flipContainer.style.transition = "transform 0.4s ease";
+                flipContainer.style.transform = "translateX(0)";
+            });
+        }
+    }
+
+    // Hold to flip
+    flipper.addEventListener("mousedown", () => flipper.classList.add("flipped"));
+    flipper.addEventListener("mouseup", () => flipper.classList.remove("flipped"));
+    flipper.addEventListener("mouseleave", () => flipper.classList.remove("flipped"));
+    flipper.addEventListener("touchstart", e => { e.preventDefault(); flipper.classList.add("flipped"); });
+    flipper.addEventListener("touchend", e => { e.preventDefault(); flipper.classList.remove("flipped"); });
+
+    // Next player
+    nextPlayerBtn.addEventListener("click", () => {
+        if (currentPlayerIndex >= players.length - 1) {
+            nextPlayerBtn.style.display = "none";
+            flipContainer.style.display = "none";
+            revealImposterBtn.style.display = "inline-block";
+        } else {
+            currentPlayerIndex++;
+            updateCard("right");
+        }
+    });
+
+    // Reveal
+    revealImposterBtn.addEventListener("click", () => {
+        const names = imposterIndices.map(i => players[i]).join(", ");
+        if (imposterIndices.length === players.length) {
+            imposterDisplay.innerHTML = `EVERYONE was the Imposter!<br>😈 TROLL MODE 😈`;
+        } else {
+            imposterDisplay.textContent = `IMPOSTER(s): ${names}`;
+        }
+        revealImposterBtn.style.display = "none";
+        restartBtn.style.display = "inline-block";
+    });
+
+    function resetGame() {
+        gameScreen.style.display = "none";
+        setupScreen.style.display = "block";
+        flipContainer.style.display = "block";
+        nextPlayerBtn.style.display = "inline-block";
+        revealImposterBtn.style.display = "none";
+        restartBtn.style.display = "none";
+        imposterDisplay.textContent = "";
+        currentPlayerIndex = 0;
+        flipper.classList.remove("flipped");
+        updatePlayerList();
+        renderCategoryCheckboxes();
+    }
+
+    restartBtn.addEventListener("click", resetGame);
+    exitGameBtn.addEventListener("click", () => {
+        if (confirm("Are you sure you want to quit to the main menu?")) {
+            resetGame();
+        }
+    });
+});

@@ -36,25 +36,32 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(err => console.error("Failed to load categories:", err));
 
-    // === Render category selection (REVERTED TO OLD STYLE) ===
+    // === Render category selection (GRID BUTTON STYLE) ===
     function renderCategoryCheckboxes() {
         categoriesContainer.innerHTML = "";
-        Object.keys(categories).forEach(cat => {
+        Object.keys(categories).forEach((cat, index) => {
             const saved = localStorage.getItem(`cat_${cat}`);
             const checkedAttr = saved === "true" || saved === null ? "checked" : "";
 
-            const div = document.createElement("div");
-            div.className = "category-checkbox";
-
+            // Unique ID is needed for the label to trigger the input
+            const uniqueId = `cat_checkbox_${index}`;
             const formattedCat = cat.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
 
-            div.innerHTML = `
-                <input type="checkbox" value="${cat}" ${checkedAttr}>
-                <label>${formattedCat}</label>
+            // Container div (optional, but keeps things tidy)
+            const wrapper = document.createElement("div");
+            wrapper.className = "category-option";
+
+            // 1. The Input (Hidden by CSS)
+            // 2. The Label (Styled as the Button)
+            // When label is clicked, it toggles the input via 'for' attribute
+            wrapper.innerHTML = `
+                <input type="checkbox" id="${uniqueId}" value="${cat}" class="category-input" ${checkedAttr}>
+                <label for="${uniqueId}" class="category-tile">${formattedCat}</label>
             `;
-            categoriesContainer.appendChild(div);
+            categoriesContainer.appendChild(wrapper);
         });
 
+        // Listener to save state
         categoriesContainer.querySelectorAll("input").forEach(inp => {
             inp.addEventListener("change", () => {
                 localStorage.setItem(`cat_${inp.value}`, inp.checked);
@@ -64,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     showCategoriesBtn.addEventListener("click", () => {
         const isHidden = categoriesContainer.style.display === "none";
-        categoriesContainer.style.display = isHidden ? "block" : "none";
+        categoriesContainer.style.display = isHidden ? "grid" : "none"; // Use 'grid' display
         showCategoriesBtn.textContent = isHidden ? "Hide Categories" : "Show Categories";
     });
 
@@ -156,7 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // === Update Card (NOW INCLUDES CATEGORY) ===
+    // === Update Card ===
     function updateCard(direction = null) {
         cardFront.textContent = players[currentPlayerIndex];
 
