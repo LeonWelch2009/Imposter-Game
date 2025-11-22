@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cardFront = document.getElementById("cardFront");
     const cardBack = document.getElementById("cardBack");
     const nextPlayerBtn = document.getElementById("nextPlayerBtn");
-    const prevPlayerBtn = document.getElementById("prevPlayerBtn"); // NEW: Previous Player Button
+    const prevPlayerBtn = document.getElementById("prevPlayerBtn"); // ✅ CORRECTED: This was missing previously!
     const revealImposterBtn = document.getElementById("revealImposterBtn");
     const imposterDisplay = document.getElementById("imposterDisplay");
     const restartBtn = document.getElementById("restartBtn");
@@ -221,8 +221,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         updateButtonVisibility(); // Update button state after moving
     }
-    
-    // NEW: Function to handle button visibility logic
+
+    // Function to handle button visibility logic
     function updateButtonVisibility() {
         if (!gameStarted) return; // Only run if distribution is active
 
@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Next Player Button: Visible unless it's the last player
         nextPlayerBtn.style.display = isLastPlayer ? "none" : "inline-block";
-        
+
         // Previous Player Button: Visible unless it's the first player
         prevPlayerBtn.style.display = isFirstPlayer ? "none" : "inline-block";
 
@@ -262,7 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // NEW: Previous player
+    // Previous player
     prevPlayerBtn.addEventListener("click", () => {
         if (currentPlayerIndex > 0) {
             currentPlayerIndex--;
@@ -280,7 +280,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "inline-block";
-        
+
         // Hide movement buttons after reveal
         nextPlayerBtn.style.display = "none";
         prevPlayerBtn.style.display = "none";
