@@ -4,59 +4,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imposter Word Game</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Imposter Game</title>
+    <link rel="stylesheet" href="static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <div class="app">
-        <header>
-            <h1>Imposter Word Game</h1>
-        </header>
+        <h1>Imposter Game</h1>
 
-        <div id="setupScreen" class="card screen active">
-            <div class="message" id="message">Add players and select categories to start</div>
-
-            <input type="text" id="playerName" placeholder="Enter player name">
-            <button class="primary" id="addPlayerBtn">Add Player</button>
-
-            <ul id="playerList"></ul>
-
-            <div id="categories" style="display:none;"></div>
-
-            <div class="btn-row">
-                <button class="secondary" id="showCategoriesBtn">Show/Hide Categories</button>
-                <button class="primary" id="startGameBtn">Start Game</button>
+        <div id="setupScreen">
+            <div class="card">
+                <h2>Players</h2>
+                <input type="text" id="playerName" placeholder="Enter player name">
+                <button id="addPlayerBtn" class="primary">Add Player</button>
+                <ul id="playerList">
+                    </ul>
             </div>
+
+            <div class="card">
+                <button id="showCategoriesBtn" class="secondary">Show Categories</button>
+                <h3>Category Selection</h3>
+                <div id="categories" style="display: none;">
+                    </div>
+            </div>
+
+            <button id="startGameBtn" class="accent">Start Game</button>
         </div>
-
-        <div id="gameScreen" class="card screen" style="display:none;">
-
-            <button id="exitGameBtn" class="close-btn" title="Exit to Main Menu">×</button>
-
-            <div class="flip-container" id="flipContainer">
-                <div class="flipper" id="flipper">
-                    <div class="front" id="cardFront">Player</div>
-                    <div class="back" id="cardBack">Word</div>
+        <div id="gameScreen" style="display: none;">
+            
+            <div id="distributionPhase">
+                <div class="flip-container" id="flipContainer">
+                    <div class="flipper" id="flipper">
+                        <div class="front" id="cardFront">
+                            Tap/Click to View Role
+                        </div>
+                        <div class="back" id="cardBack">
+                            </div>
+                    </div>
                 </div>
+                
+                <div class="btn-row" id="movementControls">
+                    <button id="prevPlayerBtn" class="secondary" style="display: none;">Previous Player</button>
+                    <button id="nextPlayerBtn" class="primary" style="display: none;">Next Player</button>
+                </div>
+                
+                <button id="revealImposterBtn" class="accent" style="display: none;">Reveal Imposter</button>
             </div>
 
-            <div class="btn-row">
-                <button class="accent" id="nextPlayerBtn">Next Player</button>
-            </div>
+            <div class="message" id="imposterDisplay">
+                </div>
 
-            <div id="endControls" class="btn-row" style="flex-direction: column; align-items: center;">
-                <button class="primary" id="revealImposterBtn" style="display:none;">Reveal Imposter(s)</button>
-
-                <div id="imposterDisplay" style="margin-top: 20px; font-weight: bold; color: #ff4d4d;"></div>
-
-                <button class="primary" id="restartBtn" style="display:none; margin-top: 12px;">New Game</button>
+            <div class="btn-row" id="endControls">
+                <button id="exitGameBtn" class="secondary">Exit to Setup</button>
+                <button id="restartBtn" class="primary" style="display: none;">Play Again</button>
             </div>
         </div>
-    </div>
+        </div>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="static/script.js"></script>
 </body>
 
 </html>

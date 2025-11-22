@@ -7,7 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentHint = "";
     let categories = {};
     let availableCategories = [];
-    let trollModeHints = []; // NEW: Array to store individual hints/categories for Troll Mode
+    let trollModeHints = [];
+    let gameStarted = false; // Flag to track distribution phase
 
     // DOM elements
     const playerNameInput = document.getElementById("playerName");
@@ -23,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cardFront = document.getElementById("cardFront");
     const cardBack = document.getElementById("cardBack");
     const nextPlayerBtn = document.getElementById("nextPlayerBtn");
+    const prevPlayerBtn = document.getElementById("prevPlayerBtn"); // NEW: Previous Player Button
     const revealImposterBtn = document.getElementById("revealImposterBtn");
     const imposterDisplay = document.getElementById("imposterDisplay");
     const restartBtn = document.getElementById("restartBtn");
@@ -124,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("😈 Troll Mode Activated");
             imposterIndices = players.map((_, index) => index);
 
-            // NEW: Generate unique random hints/categories for every player
+            // Generate unique random hints/categories for every player
             for (let i = 0; i < players.length; i++) {
                 trollModeHints.push(pickRandomWordAndCategory(availableCategories));
             }
@@ -142,17 +144,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         currentPlayerIndex = 0;
+        gameStarted = true;
 
         setupScreen.style.display = "none";
         gameScreen.style.display = "block";
-        nextPlayerBtn.style.display = "inline-block";
-        revealImposterBtn.style.display = "none";
         imposterDisplay.textContent = "";
         flipContainer.style.display = "block";
         updateCard();
+        updateButtonVisibility(); // Ensure correct initial state
     });
 
-    // NEW: Function to pick a random word/category/hint set
+    // Function to pick a random word/category/hint set
     function pickRandomWordAndCategory(categoryList) {
         const selectedCategory = categoryList[Math.floor(Math.random() * categoryList.length)];
         const wordsList = categories[selectedCategory] || [];
@@ -217,6 +219,32 @@ document.addEventListener("DOMContentLoaded", () => {
                 flipContainer.style.transform = "translateX(0)";
             });
         }
+        updateButtonVisibility(); // Update button state after moving
+    }
+    
+    // NEW: Function to handle button visibility logic
+    function updateButtonVisibility() {
+        if (!gameStarted) return; // Only run if distribution is active
+
+        const isLastPlayer = currentPlayerIndex === players.length - 1;
+        const isFirstPlayer = currentPlayerIndex === 0;
+
+        // Next Player Button: Visible unless it's the last player
+        nextPlayerBtn.style.display = isLastPlayer ? "none" : "inline-block";
+        
+        // Previous Player Button: Visible unless it's the first player
+        prevPlayerBtn.style.display = isFirstPlayer ? "none" : "inline-block";
+
+        // Card and Reveal Button logic
+        if (isLastPlayer) {
+            // Last player shown: Hide card, show reveal button
+            flipContainer.style.display = "none";
+            revealImposterBtn.style.display = "inline-block";
+        } else {
+            // Not last player: Show card, hide reveal button
+            flipContainer.style.display = "block";
+            revealImposterBtn.style.display = "none";
+        }
     }
 
     // Hold to flip
@@ -228,13 +256,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Next player
     nextPlayerBtn.addEventListener("click", () => {
-        if (currentPlayerIndex >= players.length - 1) {
-            nextPlayerBtn.style.display = "none";
-            flipContainer.style.display = "none";
-            revealImposterBtn.style.display = "inline-block";
-        } else {
+        if (currentPlayerIndex < players.length - 1) {
             currentPlayerIndex++;
             updateCard("right");
+        }
+    });
+
+    // NEW: Previous player
+    prevPlayerBtn.addEventListener("click", () => {
+        if (currentPlayerIndex > 0) {
+            currentPlayerIndex--;
+            updateCard("left");
         }
     });
 
@@ -248,13 +280,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "inline-block";
+        
+        // Hide movement buttons after reveal
+        nextPlayerBtn.style.display = "none";
+        prevPlayerBtn.style.display = "none";
     });
 
     function resetGame() {
+        gameStarted = false; // Reset game started flag
         gameScreen.style.display = "none";
         setupScreen.style.display = "block";
         flipContainer.style.display = "block";
-        nextPlayerBtn.style.display = "inline-block";
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "none";
         imposterDisplay.textContent = "";
@@ -262,6 +298,7 @@ document.addEventListener("DOMContentLoaded", () => {
         flipper.classList.remove("flipped");
         updatePlayerList();
         renderCategoryCheckboxes();
+        updateButtonVisibility(); // Reset button states
     }
 
     restartBtn.addEventListener("click", resetGame);
@@ -270,4 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
             resetGame();
         }
     });
+
+    // Initialize button visibility on load
+    updateButtonVisibility();
 });

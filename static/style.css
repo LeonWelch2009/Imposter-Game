@@ -142,7 +142,7 @@ ul#playerList {
 
 /* === BUTTONS === */
 button {
-  width: 100%;
+  /* Removed width: 100% to allow for flex layout in btn-row */
   padding: 10px 14px;
   margin: 6px 0;
   border-radius: 10px;
@@ -176,6 +176,13 @@ button.secondary {
 
 button.secondary:hover {
   background: #666;
+}
+
+/* New styling for Previous/Next buttons in the main row */
+#nextPlayerBtn,
+#prevPlayerBtn {
+  flex-grow: 1; /* Allows them to fill space equally */
+  width: auto; /* Override default 100% */
 }
 
 /* === CARD CONTAINER === */
@@ -287,6 +294,7 @@ button.secondary:hover {
   display: flex;
   justify-content: space-between;
   gap: 10px;
+  /* Ensures buttons are side-by-side */
 }
 
 #endControls {
