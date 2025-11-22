@@ -4,11 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let imposterIndices = [];
     let currentCategory = "";
     let currentWord = "";
-    let currentHint = ""; 
+    let currentHint = "";
     let categories = {};
     let availableCategories = [];
-    let trollModeHints = [];
-    let gameStarted = false; // NEW: Track if the distribution phase has started
+    let trollModeHints = []; // NEW: Array to store individual hints/categories for Troll Mode
 
     // DOM elements
     const playerNameInput = document.getElementById("playerName");
@@ -24,7 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const cardFront = document.getElementById("cardFront");
     const cardBack = document.getElementById("cardBack");
     const nextPlayerBtn = document.getElementById("nextPlayerBtn");
-    const prevPlayerBtn = document.getElementById("prevPlayerBtn"); // NEW: Previous Player Button
     const revealImposterBtn = document.getElementById("revealImposterBtn");
     const imposterDisplay = document.getElementById("imposterDisplay");
     const restartBtn = document.getElementById("restartBtn");
@@ -45,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
         Object.keys(categories).forEach((cat, index) => {
             const saved = localStorage.getItem(`cat_${cat}`);
             const checkedAttr = saved === "true" || saved === null ? "checked" : "";
-            
+
             // Unique ID is needed for the label to trigger the input
             const uniqueId = `cat_checkbox_${index}`;
             const formattedCat = cat.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
@@ -117,16 +115,16 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
 
         imposterIndices = [];
-        trollModeHints = [];
-        
+        trollModeHints = []; // Reset hints array
+
         // Troll Mode: 1 in 15 chance
-        const isTrollRound = Math.random() < (1/15);
+        const isTrollRound = Math.random() < (1 / 15);
 
         if (isTrollRound) {
             console.log("😈 Troll Mode Activated");
             imposterIndices = players.map((_, index) => index);
-            
-            // Generate unique random hints/categories for every player
+
+            // NEW: Generate unique random hints/categories for every player
             for (let i = 0; i < players.length; i++) {
                 trollModeHints.push(pickRandomWordAndCategory(availableCategories));
             }
@@ -144,24 +142,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         currentPlayerIndex = 0;
-        gameStarted = true; // Set game started flag
 
         setupScreen.style.display = "none";
         gameScreen.style.display = "block";
+        nextPlayerBtn.style.display = "inline-block";
         revealImposterBtn.style.display = "none";
         imposterDisplay.textContent = "";
         flipContainer.style.display = "block";
         updateCard();
-        updateButtonVisibility(); // NEW: Check button visibility on start
     });
 
-    // Function to pick a random word/category/hint set
+    // NEW: Function to pick a random word/category/hint set
     function pickRandomWordAndCategory(categoryList) {
         const selectedCategory = categoryList[Math.floor(Math.random() * categoryList.length)];
         const wordsList = categories[selectedCategory] || [];
-        
+
         const selection = wordsList[Math.floor(Math.random() * wordsList.length)];
-        
+
         let word = "Error";
         let hint = "Error";
 
@@ -174,18 +171,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 hint = selectedCategory;
             }
         }
-        
+
         return { category: selectedCategory, word: word, hint: hint };
     }
 
     // === Update Card ===
     function updateCard(direction = null) {
         cardFront.textContent = players[currentPlayerIndex];
-        
+
         if (imposterIndices.includes(currentPlayerIndex)) {
             let playerCategory, playerHint;
 
-            if (imposterIndices.length === players.length) { 
+            if (imposterIndices.length === players.length) {
                 // Troll Mode: Get specific random hint for this player
                 const playerDetails = trollModeHints[currentPlayerIndex];
                 playerCategory = playerDetails.category;
@@ -220,31 +217,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 flipContainer.style.transform = "translateX(0)";
             });
         }
-        updateButtonVisibility(); // Always check visibility after moving
-    }
-    
-    // NEW: Function to handle button visibility logic
-    function updateButtonVisibility() {
-        const isLastPlayer = currentPlayerIndex >= players.length - 1;
-        const isFirstPlayer = currentPlayerIndex === 0;
-
-        // Next Player Button
-        nextPlayerBtn.style.display = isLastPlayer ? "none" : "inline-block";
-        
-        // Previous Player Button
-        prevPlayerBtn.style.display = isFirstPlayer || !gameStarted ? "none" : "inline-block";
-
-        // Flip Container visibility
-        if (gameStarted) {
-            if (isLastPlayer) {
-                flipContainer.style.display = "none";
-                revealImposterBtn.style.display = "inline-block";
-                nextPlayerBtn.style.display = "none"; // Ensure next is hidden
-            } else {
-                flipContainer.style.display = "block";
-                revealImposterBtn.style.display = "none";
-            }
-        }
     }
 
     // Hold to flip
@@ -256,23 +228,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Next player
     nextPlayerBtn.addEventListener("click", () => {
-        if (currentPlayerIndex < players.length - 1) {
+        if (currentPlayerIndex >= players.length - 1) {
+            nextPlayerBtn.style.display = "none";
+            flipContainer.style.display = "none";
+            revealImposterBtn.style.display = "inline-block";
+        } else {
             currentPlayerIndex++;
             updateCard("right");
-        }
-    });
-    
-    // NEW: Previous player
-    prevPlayerBtn.addEventListener("click", () => {
-        if (currentPlayerIndex > 0) {
-            // If we are looking at the reveal button, go back to the last player
-            if (flipContainer.style.display === "none" && revealImposterBtn.style.display === "inline-block") {
-                flipContainer.style.display = "block";
-                revealImposterBtn.style.display = "none";
-            }
-            
-            currentPlayerIndex--;
-            updateCard("left");
         }
     });
 
@@ -286,14 +248,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "inline-block";
-        updateButtonVisibility(); // Hide prev/next buttons after revealing
     });
 
     function resetGame() {
-        gameStarted = false; // Reset game started flag
         gameScreen.style.display = "none";
         setupScreen.style.display = "block";
         flipContainer.style.display = "block";
+        nextPlayerBtn.style.display = "inline-block";
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "none";
         imposterDisplay.textContent = "";
@@ -301,7 +262,6 @@ document.addEventListener("DOMContentLoaded", () => {
         flipper.classList.remove("flipped");
         updatePlayerList();
         renderCategoryCheckboxes();
-        updateButtonVisibility(); // Reset button states
     }
 
     restartBtn.addEventListener("click", resetGame);
@@ -310,7 +270,4 @@ document.addEventListener("DOMContentLoaded", () => {
             resetGame();
         }
     });
-
-    // Initialize button visibility on load
-    updateButtonVisibility();
 });
