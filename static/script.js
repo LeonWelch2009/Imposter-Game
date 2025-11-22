@@ -7,8 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentHint = "";
     let categories = {};
     let availableCategories = [];
-    let trollModeHints = [];
-    let gameStarted = false; // Flag to track distribution phase
 
     // DOM elements
     const playerNameInput = document.getElementById("playerName");
@@ -24,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const cardFront = document.getElementById("cardFront");
     const cardBack = document.getElementById("cardBack");
     const nextPlayerBtn = document.getElementById("nextPlayerBtn");
-    const prevPlayerBtn = document.getElementById("prevPlayerBtn"); // ✅ CORRECTED: This was missing previously!
     const revealImposterBtn = document.getElementById("revealImposterBtn");
     const imposterDisplay = document.getElementById("imposterDisplay");
     const restartBtn = document.getElementById("restartBtn");
@@ -39,31 +36,25 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(err => console.error("Failed to load categories:", err));
 
-    // === Render category selection (GRID BUTTON STYLE) ===
+    // === Render category selection (REVERTED TO OLD STYLE) ===
     function renderCategoryCheckboxes() {
         categoriesContainer.innerHTML = "";
-        Object.keys(categories).forEach((cat, index) => {
+        Object.keys(categories).forEach(cat => {
             const saved = localStorage.getItem(`cat_${cat}`);
             const checkedAttr = saved === "true" || saved === null ? "checked" : "";
 
-            // Unique ID is needed for the label to trigger the input
-            const uniqueId = `cat_checkbox_${index}`;
+            const div = document.createElement("div");
+            div.className = "category-checkbox";
+
             const formattedCat = cat.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
 
-            // Container div
-            const wrapper = document.createElement("div");
-            wrapper.className = "category-option";
-
-            // 1. The Input (Hidden by CSS)
-            // 2. The Label (Styled as the Button)
-            wrapper.innerHTML = `
-                <input type="checkbox" id="${uniqueId}" value="${cat}" class="category-input" ${checkedAttr}>
-                <label for="${uniqueId}" class="category-tile">${formattedCat}</label>
+            div.innerHTML = `
+                <input type="checkbox" value="${cat}" ${checkedAttr}>
+                <label>${formattedCat}</label>
             `;
-            categoriesContainer.appendChild(wrapper);
+            categoriesContainer.appendChild(div);
         });
 
-        // Listener to save state
         categoriesContainer.querySelectorAll("input").forEach(inp => {
             inp.addEventListener("change", () => {
                 localStorage.setItem(`cat_${inp.value}`, inp.checked);
@@ -73,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     showCategoriesBtn.addEventListener("click", () => {
         const isHidden = categoriesContainer.style.display === "none";
-        categoriesContainer.style.display = isHidden ? "grid" : "none"; // Use 'grid' display
+        categoriesContainer.style.display = isHidden ? "block" : "none";
         showCategoriesBtn.textContent = isHidden ? "Hide Categories" : "Show Categories";
     });
 
@@ -107,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- START GAME ---
+    // === Start Game ===
     startGameBtn.addEventListener("click", () => {
         if (players.length < 3) return alert("Minimum 3 players required!");
         const checked = Array.from(document.querySelectorAll("#categories input:checked")).map(i => i.value);
@@ -117,7 +108,6 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("selected_categories", JSON.stringify(availableCategories));
 
         imposterIndices = [];
-        trollModeHints = []; // Reset hints array
 
         // Troll Mode: 1 in 15 chance
         const isTrollRound = Math.random() < (1 / 15);
@@ -125,81 +115,58 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isTrollRound) {
             console.log("😈 Troll Mode Activated");
             imposterIndices = players.map((_, index) => index);
-
-            // Generate unique random hints/categories for every player
-            for (let i = 0; i < players.length; i++) {
-                trollModeHints.push(pickRandomWordAndCategory(availableCategories));
-            }
         } else {
             const imposterCount = players.length >= 6 ? 2 : 1;
             while (imposterIndices.length < imposterCount) {
                 const idx = Math.floor(Math.random() * players.length);
                 if (!imposterIndices.includes(idx)) imposterIndices.push(idx);
             }
-            // Standard game: Pick one set of word/hint for the round
-            const roundDetails = pickRandomWordAndCategory(availableCategories);
-            currentCategory = roundDetails.category;
-            currentWord = roundDetails.word;
-            currentHint = roundDetails.hint;
         }
 
         currentPlayerIndex = 0;
-        gameStarted = true;
+        pickWord();
 
         setupScreen.style.display = "none";
         gameScreen.style.display = "block";
+        nextPlayerBtn.style.display = "inline-block";
+        revealImposterBtn.style.display = "none";
         imposterDisplay.textContent = "";
         flipContainer.style.display = "block";
         updateCard();
-        updateButtonVisibility(); // Ensure correct initial state
     });
 
-    // Function to pick a random word/category/hint set
-    function pickRandomWordAndCategory(categoryList) {
-        const selectedCategory = categoryList[Math.floor(Math.random() * categoryList.length)];
-        const wordsList = categories[selectedCategory] || [];
+    function pickWord() {
+        const catList = JSON.parse(localStorage.getItem("selected_categories")) || availableCategories;
+        currentCategory = catList[Math.floor(Math.random() * catList.length)];
+        const wordsList = categories[currentCategory] || [];
 
         const selection = wordsList[Math.floor(Math.random() * wordsList.length)];
 
-        let word = "Error";
-        let hint = "Error";
-
         if (selection) {
-            word = selection.word;
+            currentWord = selection.word;
             const hints = selection.hints || [];
             if (hints.length > 0) {
-                hint = hints[Math.floor(Math.random() * hints.length)];
+                currentHint = hints[Math.floor(Math.random() * hints.length)];
             } else {
-                hint = selectedCategory;
+                currentHint = currentCategory;
             }
+        } else {
+            currentWord = "Error";
+            currentHint = "Error";
         }
-
-        return { category: selectedCategory, word: word, hint: hint };
     }
 
-    // === Update Card ===
+    // === Update Card (NOW INCLUDES CATEGORY) ===
     function updateCard(direction = null) {
         cardFront.textContent = players[currentPlayerIndex];
 
         if (imposterIndices.includes(currentPlayerIndex)) {
-            let playerCategory, playerHint;
-
-            if (imposterIndices.length === players.length) {
-                // Troll Mode: Get specific random hint for this player
-                const playerDetails = trollModeHints[currentPlayerIndex];
-                playerCategory = playerDetails.category;
-                playerHint = playerDetails.hint;
-            } else {
-                // Standard Imposter Mode: Get the round's standard hint/category
-                playerCategory = currentCategory;
-                playerHint = currentHint;
-            }
-
+            // Imposter sees Category AND Hint
             cardBack.innerHTML = `
                 <div class="imposter-title">⚠️ Imposter</div>
-                <div class="imposter-category">${playerCategory}</div>
+                <div class="imposter-category">${currentCategory}</div>
                 <div class="imposter-hint-label">Your Hint</div>
-                <div class="imposter-hint-text">${playerHint}</div>
+                <div class="imposter-hint-text">${currentHint}</div>
             `;
         } else {
             // Innocent View
@@ -219,32 +186,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 flipContainer.style.transform = "translateX(0)";
             });
         }
-        updateButtonVisibility(); // Update button state after moving
-    }
-
-    // Function to handle button visibility logic
-    function updateButtonVisibility() {
-        if (!gameStarted) return; // Only run if distribution is active
-
-        const isLastPlayer = currentPlayerIndex === players.length - 1;
-        const isFirstPlayer = currentPlayerIndex === 0;
-
-        // Next Player Button: Visible unless it's the last player
-        nextPlayerBtn.style.display = isLastPlayer ? "none" : "inline-block";
-
-        // Previous Player Button: Visible unless it's the first player
-        prevPlayerBtn.style.display = isFirstPlayer ? "none" : "inline-block";
-
-        // Card and Reveal Button logic
-        if (isLastPlayer) {
-            // Last player shown: Hide card, show reveal button
-            flipContainer.style.display = "none";
-            revealImposterBtn.style.display = "inline-block";
-        } else {
-            // Not last player: Show card, hide reveal button
-            flipContainer.style.display = "block";
-            revealImposterBtn.style.display = "none";
-        }
     }
 
     // Hold to flip
@@ -256,17 +197,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Next player
     nextPlayerBtn.addEventListener("click", () => {
-        if (currentPlayerIndex < players.length - 1) {
+        if (currentPlayerIndex >= players.length - 1) {
+            nextPlayerBtn.style.display = "none";
+            flipContainer.style.display = "none";
+            revealImposterBtn.style.display = "inline-block";
+        } else {
             currentPlayerIndex++;
             updateCard("right");
-        }
-    });
-
-    // Previous player
-    prevPlayerBtn.addEventListener("click", () => {
-        if (currentPlayerIndex > 0) {
-            currentPlayerIndex--;
-            updateCard("left");
         }
     });
 
@@ -280,17 +217,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "inline-block";
-
-        // Hide movement buttons after reveal
-        nextPlayerBtn.style.display = "none";
-        prevPlayerBtn.style.display = "none";
     });
 
     function resetGame() {
-        gameStarted = false; // Reset game started flag
         gameScreen.style.display = "none";
         setupScreen.style.display = "block";
         flipContainer.style.display = "block";
+        nextPlayerBtn.style.display = "inline-block";
         revealImposterBtn.style.display = "none";
         restartBtn.style.display = "none";
         imposterDisplay.textContent = "";
@@ -298,7 +231,6 @@ document.addEventListener("DOMContentLoaded", () => {
         flipper.classList.remove("flipped");
         updatePlayerList();
         renderCategoryCheckboxes();
-        updateButtonVisibility(); // Reset button states
     }
 
     restartBtn.addEventListener("click", resetGame);
@@ -307,7 +239,4 @@ document.addEventListener("DOMContentLoaded", () => {
             resetGame();
         }
     });
-
-    // Initialize button visibility on load
-    updateButtonVisibility();
 });
