@@ -1,7 +1,7 @@
 /* === GENERAL STYLES === */
 body {
-  background-color: #121212;
-  color: #e0e0e0;
+  background-color: #333333; /* Dark Grey */
+  color: #f5f5f5; /* Ivory Text */
   font-family: "Poppins", sans-serif;
   margin: 0;
   display: flex;
@@ -12,15 +12,16 @@ body {
 .app {
   width: 100%;
   max-width: 420px;
-  background-color: #1e1e1e;
+  background-color: #e0e0e0; /* Light Grey/App Background */
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   text-align: center;
+  color: #333333; /* Dark text for light background */
 }
 
 h1 {
-  color: #66b3ff;
+  color: #1a75ff; /* Primary Blue Accent */
   margin-bottom: 12px;
 }
 
@@ -29,9 +30,9 @@ input[type="text"] {
   width: 100%;
   padding: 10px;
   border-radius: 8px;
-  background: #2a2a2a;
-  border: 1px solid #333;
-  color: #f0f0f0;
+  background: #ffffff; /* White input */
+  border: 1px solid #cccccc;
+  color: #333333;
   margin: 8px 0;
   box-sizing: border-box;
   font-size: 16px;
@@ -50,7 +51,7 @@ ul#playerList {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #2a2a2a;
+  background: #f0f0f0; /* Slightly darker list item */
   padding: 8px 12px;
   border-radius: 8px;
   margin-bottom: 6px;
@@ -61,7 +62,7 @@ ul#playerList {
   width: 30px;
   height: 30px;
   background: transparent;
-  color: #666;
+  color: #999;
   font-size: 24px;
   font-weight: bold;
   padding: 0;
@@ -77,16 +78,15 @@ ul#playerList {
 }
 
 .remove-player:hover {
-  background: rgba(255, 77, 77, 0.2);
+  background: rgba(255, 0, 0, 0.1);
   color: #ff4d4d;
   transform: scale(1.1);
 }
 
-/* === CATEGORY GRID BUTTONS (NEW) === */
+/* === CATEGORY GRID BUTTONS === */
 #categories {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  /* Auto-sizing grid */
   gap: 10px;
   margin-bottom: 15px;
   max-height: 300px;
@@ -97,7 +97,6 @@ ul#playerList {
 /* The container for the Input+Label pair */
 .category-option {
   display: contents;
-  /* Allows the label to participate in the grid directly */
 }
 
 /* Hide the actual checkbox input completely */
@@ -110,8 +109,8 @@ ul#playerList {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #2a2a2a;
-  border: 2px solid #333;
+  background-color: #ffffff;
+  border: 2px solid #cccccc;
   border-radius: 12px;
   padding: 10px 5px;
   cursor: pointer;
@@ -120,23 +119,23 @@ ul#playerList {
   text-align: center;
   font-size: 13px;
   font-weight: 600;
-  color: #888;
+  color: #555;
   min-height: 40px;
 }
 
 /* Hover Effect */
 .category-tile:hover {
-  background-color: #333;
-  border-color: #444;
+  background-color: #f0f0f0;
+  border-color: #bbbbbb;
   transform: translateY(-2px);
 }
 
 /* CHECKED STATE: This makes it turn blue when toggled on */
-.category-input:checked+.category-tile {
-  background-color: #007bff;
-  border-color: #007bff;
+.category-input:checked + .category-tile {
+  background-color: #1a75ff; /* Primary Blue Accent */
+  border-color: #1a75ff;
   color: white;
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(26, 117, 255, 0.4);
   transform: translateY(-1px);
 }
 
@@ -152,40 +151,40 @@ button {
 }
 
 button.primary {
-  background: #007bff;
+  background: #1a75ff; /* Primary Blue Accent */
   color: white;
 }
 
 button.primary:hover {
-  background: #339dff;
+  background: #4d94ff;
 }
 
 button.accent {
-  background: #00b36b;
+  background: #33cc33; /* Green Accent */
   color: white;
 }
 
 button.accent:hover {
-  background: #00d47c;
+  background: #4de64d;
 }
 
 button.secondary {
-  background: #444;
+  background: #999999; /* Grey Secondary */
   color: white;
 }
 
 button.secondary:hover {
-  background: #666;
+  background: #b3b3b3;
 }
 
 /* === CARD CONTAINER === */
 .card {
-  background: #1e1e1e;
+  background: #e0e0e0;
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  position: relative;
+  position: relative; 
 }
 
 /* === FLIP CARD ANIMATION === */
@@ -217,8 +216,8 @@ button.secondary:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #2a2a2a;
-  color: white;
+  background: #ffffff; /* White Card Face */
+  color: #333333;
   font-size: 18px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   user-select: none;
@@ -231,7 +230,7 @@ button.secondary:hover {
 
 .back {
   transform: rotateY(180deg);
-  background: #252525;
+  background: #f5f5f5; /* Ivory/Off-White Card Back */
 }
 
 .flipped {
@@ -240,21 +239,21 @@ button.secondary:hover {
 
 /* === IMPOSTER CARD STYLING === */
 .imposter-title {
-  color: #ff4d4d;
+  color: #cc0000; /* Dark Red for danger */
   font-weight: 800;
   font-size: 22px;
   letter-spacing: 1px;
   text-transform: uppercase;
   margin-bottom: 5px;
-  text-shadow: 0 0 8px rgba(255, 77, 77, 0.3);
+  text-shadow: 0 0 8px rgba(204, 0, 0, 0.3);
 }
 
 .imposter-category {
-  color: #aaa;
+  color: #666;
   font-size: 14px;
   font-style: italic;
   margin-bottom: 15px;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid #ccc;
   padding-bottom: 5px;
   width: 80%;
 }
@@ -268,10 +267,10 @@ button.secondary:hover {
 }
 
 .imposter-hint-text {
-  color: #fff;
+  color: #333333;
   font-size: 18px;
   font-weight: 500;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.05); /* Subtle dark background on light card */
   padding: 8px 12px;
   border-radius: 6px;
   width: 100%;
@@ -295,7 +294,7 @@ button.secondary:hover {
 
 input:focus {
   outline: none;
-  border-color: #66b3ff;
+  border-color: #1a75ff;
 }
 
 /* === EXIT (X) BUTTON STYLES === */
@@ -322,7 +321,7 @@ input:focus {
 }
 
 .close-btn:hover {
-  background: rgba(255, 77, 77, 0.2);
-  color: #ff4d4d;
+  background: rgba(255, 0, 0, 0.1);
+  color: #cc0000;
   transform: scale(1.1);
 }
