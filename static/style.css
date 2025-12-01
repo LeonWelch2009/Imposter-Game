@@ -82,40 +82,67 @@ ul#playerList {
   transform: scale(1.1);
 }
 
-/* === CATEGORY CHECKBOXES (REVERTED TO OLD STYLE) === */
-.category-checkbox {
+/* === CATEGORY TOGGLE BUTTONS (NEW STYLE) === */
+
+/* Container for the cloud of buttons */
+.category-grid {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 6px;
+  justify-content: center;
+  margin: 15px 0;
+}
+
+.category-toggle {
+  display: inline-block;
   cursor: pointer;
-  font-size: 14px;
+  user-select: none;
+  /* Prevent text highlighting on rapid clicks */
+  -webkit-tap-highlight-color: transparent;
 }
 
-.category-checkbox input[type="checkbox"] {
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border: 2px solid #555;
-  border-radius: 6px;
+/* Hide the actual ugly checkbox */
+.category-toggle input[type="checkbox"] {
+  display: none;
+}
+
+/* The visible button styling */
+.category-toggle .toggle-btn {
+  display: block;
+  padding: 10px 16px;
   background: #2a2a2a;
-  position: relative;
-  transition: 0.25s ease;
-}
-
-.category-checkbox input[type="checkbox"]:checked {
-  background: #007bff;
-  border-color: #007bff;
-  box-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
-}
-
-.category-checkbox input[type="checkbox"]:checked::after {
-  content: "✓";
-  color: white;
-  position: absolute;
-  left: 3px;
-  top: -1px;
+  color: #888;
+  border: 2px solid #333;
+  border-radius: 25px;
+  /* Pill shape */
   font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover State (Unchecked) */
+.category-toggle:hover .toggle-btn {
+  background: #333;
+  border-color: #444;
+  color: #aaa;
+}
+
+/* === CHECKED STATE === */
+.category-toggle input[type="checkbox"]:checked+.toggle-btn {
+  background: #007bff;
+  /* Primary Blue */
+  border-color: #007bff;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+  transform: translateY(-2px);
+  /* Slight lift effect */
+}
+
+/* Active/Press effect */
+.category-toggle:active .toggle-btn {
+  transform: scale(0.96);
 }
 
 /* === BUTTONS === */

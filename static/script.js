@@ -27,6 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const restartBtn = document.getElementById("restartBtn");
     const exitGameBtn = document.getElementById("exitGameBtn");
 
+    // NEW DOM element
+    const toggleAllCategoriesBtn = document.getElementById("toggleAllCategoriesBtn");
+
     // === Load categories ===
     fetch("/categories")
         .then(res => res.json())
@@ -36,23 +39,26 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(err => console.error("Failed to load categories:", err));
 
-    // === Render category selection (REVERTED TO OLD STYLE) ===
+    // === Render category selection (TOGGLE BUTTON STYLE) ===
     function renderCategoryCheckboxes() {
         categoriesContainer.innerHTML = "";
+        categoriesContainer.className = "category-grid"; // Class for grid layout
+
         Object.keys(categories).forEach(cat => {
             const saved = localStorage.getItem(`cat_${cat}`);
             const checkedAttr = saved === "true" || saved === null ? "checked" : "";
 
-            const div = document.createElement("div");
-            div.className = "category-checkbox";
+            const label = document.createElement("label");
+            label.className = "category-toggle";
 
             const formattedCat = cat.toLowerCase().split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
 
-            div.innerHTML = `
+            // Structure: Hidden Checkbox + Visible Span Button
+            label.innerHTML = `
                 <input type="checkbox" value="${cat}" ${checkedAttr}>
-                <label>${formattedCat}</label>
+                <span class="toggle-btn">${formattedCat}</span>
             `;
-            categoriesContainer.appendChild(div);
+            categoriesContainer.appendChild(label);
         });
 
         categoriesContainer.querySelectorAll("input").forEach(inp => {
@@ -60,12 +66,52 @@ document.addEventListener("DOMContentLoaded", () => {
                 localStorage.setItem(`cat_${inp.value}`, inp.checked);
             });
         });
+        updateToggleAllButtonText(); // Update the button text after rendering
     }
+
+    // Toggle All Categories Logic
+    function toggleAllCategories() {
+        const allCheckboxes = categoriesContainer.querySelectorAll("input[type='checkbox']");
+        const allChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+        const newState = !allChecked;
+
+        allCheckboxes.forEach(inp => {
+            inp.checked = newState;
+            localStorage.setItem(`cat_${inp.value}`, newState);
+
+            // Dispatch a change event to ensure the visible label/span updates its styling immediately
+            inp.dispatchEvent(new Event('change'));
+        });
+        updateToggleAllButtonText(newState);
+    }
+
+    // Helper function to keep the button text consistent
+    function updateToggleAllButtonText(forceState = null) {
+        const allCheckboxes = categoriesContainer.querySelectorAll("input[type='checkbox']");
+        if (allCheckboxes.length === 0) {
+            toggleAllCategoriesBtn.style.display = 'none';
+            return;
+        }
+
+        let isAllChecked;
+        if (forceState !== null) {
+            isAllChecked = forceState;
+        } else {
+            isAllChecked = Array.from(allCheckboxes).every(cb => cb.checked);
+        }
+
+        toggleAllCategoriesBtn.textContent = isAllChecked ? "Deselect All Categories" : "Select All Categories";
+    }
+
+    // Attach event listeners
+    toggleAllCategoriesBtn.addEventListener("click", toggleAllCategories);
 
     showCategoriesBtn.addEventListener("click", () => {
         const isHidden = categoriesContainer.style.display === "none";
-        categoriesContainer.style.display = isHidden ? "block" : "none";
+        categoriesContainer.style.display = isHidden ? "flex" : "none"; // Changed to flex for the new grid
         showCategoriesBtn.textContent = isHidden ? "Hide Categories" : "Show Categories";
+        toggleAllCategoriesBtn.style.display = isHidden ? "block" : "none";
+        updateToggleAllButtonText();
     });
 
     // === Add player ===
